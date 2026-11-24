@@ -10,6 +10,7 @@ import type { BaseRate, Fact, Post } from './lib/types';
 import { Meter, SourceBadge } from './ui/bits';
 import { DossierList, Draft, Formula, Ledger } from './ui/Panels';
 import { Trail } from './ui/Trail';
+import { chromeVersion, downloadJson, playReplay, toReplay, type Replay } from './lib/replay';
 
 type Phase = 'home' | 'scan' | 'result';
 interface Persona { handle: string; posts: Post[]; draft?: string }
@@ -31,9 +32,17 @@ export default function App() {
   const [online, setOnline] = useState(navigator.onLine);
   const [cloudCount, setCloudCount] = useState({ onDevice: 0, cloud: 0, postBytesOut: 0 });
   const abort = useRef<AbortController | null>(null);
+  const [replay, setReplay] = useState<Replay | null>(null);
+  const [replaying, setReplaying] = useState(false);
+  const [lastRun, setLastRun] = useState<ScanProgress | null>(null);
+  const REPLAY_SPEED = 10;
   const problems = useMemo(configProblems, []);
 
   useEffect(() => { onDeviceAvailability().then(setAvail); }, []);
+  // A recorded Gemini Nano run of the synthetic persona, for browsers without on-device AI.
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}personas/p1-replay.json`).then((r) => (r.ok ? r.json() : null)).then((j) => j && setReplay(j as Replay)).catch(() => undefined);
+  }, []);
   // Dev-only visual QA: /?fixture renders the result screen from the persona's answer key,
   // so layouts can be checked without a model. Stripped from production builds.
   useEffect(() => {
@@ -80,11 +89,15 @@ export default function App() {
     setPosts(list);
     setData(kind);
     setFacts([]);
+    setReplaying(false);
+    setLastRun(null);
     setPhase('scan');
     abort.current = new AbortController();
     try {
       const res = await scan(list, kind, (p) => { setProgress(p); setFacts(p.facts); }, abort.current.signal);
       setFacts(res.facts);
+      setLastRun(res);
+      (window as unknown as { __oneofRun?: Replay }).__oneofRun = toReplay(res, persona?.handle ?? 'own');
       setPhase('result');
       if (navigator.onLine) refineRates(res.facts, 'United States', setRates).catch(() => undefined);
     } catch (e) {
@@ -93,6 +106,17 @@ export default function App() {
         ? 'Your own posts only ever run on this device, and this browser has no on-device model. Use desktop Chrome 148+, or try the synthetic persona.'
         : `Scan failed: ${(e as Error).message}`);
     }
+  }
+
+  async function watchReplay() {
+    if (!replay) return;
+    const p = await loadPersona();
+    setError(null); setPosts(p.posts); setData('synthetic'); setFacts([]); setLastRun(null);
+    setReplaying(true); setPhase('scan');
+    abort.current = new AbortController();
+    const res = await playReplay(replay, REPLAY_SPEED, (x) => { setProgress(x); setFacts(x.facts); }, abort.current.signal);
+    setFacts(res.facts);
+    setPhase('result');
   }
 
   async function loadPersona() {
@@ -134,8 +158,18 @@ export default function App() {
             <div className="card">
               <h3>Try it with a synthetic person</h3>
               <p>“quietnight_rn”: six years of posts by a night-shift nurse. <span className="tag">SYNTHETIC, NOT A REAL PERSON</span></p>
-              <button className="primary" onClick={async () => start((await loadPersona()).posts, 'synthetic')}>Scan quietnight_rn</button>
-              <p className="small muted">Runs on-device when available; this demo data may fall back to the cloud.</p>
+              {replay && avail !== 'available' ? (
+                <>
+                  <button className="primary" onClick={watchReplay}>Watch a recorded on-device run</button>
+                  <p className="small muted">This browser has no Gemini Nano, so you’ll see a real run recorded in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)}, played {REPLAY_SPEED}× faster. Every fact and timing is from that run.</p>
+                  <button className="ghost" onClick={async () => start((await loadPersona()).posts, 'synthetic')}>Or run it live through the cloud</button>
+                </>
+              ) : (
+                <>
+                  <button className="primary" onClick={async () => start((await loadPersona()).posts, 'synthetic')}>Scan quietnight_rn</button>
+                  <p className="small muted">Runs on-device when available; this demo data may fall back to the cloud.</p>
+                </>
+              )}
             </div>
             <div className="card">
               <h3>Check your own history</h3>
@@ -163,6 +197,7 @@ export default function App() {
 
       {phase === 'scan' && progress && (
         <main className="scan">
+          {replaying && replay && <div className="banner warn mono">REPLAY · recorded with Gemini Nano in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)} · {REPLAY_SPEED}× speed · real timings shown</div>}
           <h2>Reading {progress.total} posts like an attacker would</h2>
           <div className="scan-stats mono">
             <span>{progress.done} / {progress.considered} posts read</span>
@@ -192,6 +227,10 @@ export default function App() {
               <div className="eyebrow mono">{persona && data === 'synthetic' ? `u/${persona.handle} · SYNTHETIC` : 'your history'} · {posts.length} posts · {facts.length} facts · {dossier.region.label}</div>
               <Meter e={now} />
               <button className="ghost" onClick={() => setFormulaOpen((v) => !v)}>{formulaOpen ? 'Hide' : 'Show'} the math</button>
+              {replaying && replay && <p className="small muted mono">Replay of a recorded on-device run ({replay.recordedAt.slice(0, 10)}).</p>}
+              {lastRun && data === 'synthetic' && lastRun.onDevice > 0 && (
+                <button className="ghost" onClick={() => downloadJson('p1-replay.json', toReplay(lastRun, persona?.handle ?? 'quietnight_rn'))}>Export this run as a replay</button>
+              )}
             </div>
             <div className="r-trail">
               <h3>Your crumb trail</h3>

@@ -2,6 +2,7 @@ import { prefilter } from './prefilter';
 import { BlockedError, extractFromPost, lookupBaseRate, type DataKind } from './ai';
 import { buildDossier, rateKey } from './dossier';
 import type { BaseRate, Fact, Post } from './types';
+import type { RunLogEntry } from './replay';
 
 export interface ScanProgress {
   total: number;
@@ -14,6 +15,8 @@ export interface ScanProgress {
   onDevice: number;
   inCloud: number;
   lastMs: number;
+  /** Per-post record of the run; exported as a replay. */
+  log: RunLogEntry[];
   current?: Post;
 }
 
@@ -34,7 +37,7 @@ export async function scan(
   const fast = scannable.filter(({ v }) => v.keep).map(({ p }) => p);
   const deep = scannable.filter(({ v }) => !v.keep).map(({ p }) => p);
   const considered = [...fast, ...deep];
-  const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass: fast.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0 };
+  const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass: fast.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
   onUpdate({ ...st });
   for (const post of considered) {
     if (signal?.aborted) break;
@@ -44,10 +47,12 @@ export async function scan(
       st.facts.push(...r.facts);
       st.rejected += r.rejected;
       st.lastMs = r.ms;
+      st.log.push({ postId: post.id, ms: Math.round(r.ms), source: r.source, facts: r.facts });
       if (r.source === 'on_device') st.onDevice++;
       else st.inCloud++;
     } catch (e) {
       if (e instanceof BlockedError) throw e;
+      st.log.push({ postId: post.id, ms: 0, source: 'error', facts: [] });
       // A single failed call shouldn't kill a 10-minute scan.
     }
     st.done++;
