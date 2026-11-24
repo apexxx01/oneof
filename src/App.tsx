@@ -165,8 +165,9 @@ export default function App() {
         <main className="scan">
           <h2>Reading {progress.total} posts like an attacker would</h2>
           <div className="scan-stats mono">
-            <span>{progress.done} / {progress.considered} candidate posts</span>
-            <span>{progress.total - progress.considered} skipped by the deterministic filter</span>
+            <span>{progress.done} / {progress.considered} posts read</span>
+            <span>{progress.done < progress.fastPass ? `fast pass · ${progress.fastPass} posts with life-detail cues first` : `deep pass · the other ${progress.considered - progress.fastPass}`}</span>
+            {progress.total > progress.considered && <span>{progress.total - progress.considered} empty or link-only</span>}
             <span><SourceBadge source="on_device" /> {progress.onDevice}</span>
             <span><SourceBadge source="in_cloud" /> {progress.inCloud}</span>
             <span><b>{cloudCount.postBytesOut}</b> bytes of your posts sent</span>

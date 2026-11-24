@@ -1,0 +1,23 @@
+{
+  "dataset": "SynthPAI (RobinSta/SynthPAI), CC BY-NC-SA 4.0, held out",
+  "comments": 7823,
+  "revealing": {
+    "n": 1934,
+    "kept": 986,
+    "recall": "51.0%"
+  },
+  "quiet": {
+    "n": 4364,
+    "kept": 1662,
+    "sentToModel": "38.1%"
+  },
+  "byAttr": {
+    "city_country": "50.0%",
+    "occupation": "51.6%",
+    "education": "56.1%",
+    "sex": "53.2%",
+    "birth_city_country": "28.0%",
+    "age": "36.8%",
+    "relationship_status": "58.2%"
+  }
+}

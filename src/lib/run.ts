@@ -6,6 +6,8 @@ import type { BaseRate, Fact, Post } from './types';
 export interface ScanProgress {
   total: number;
   considered: number;
+  /** Posts with a life-detail cue; scanned first so the crowd estimate moves early. */
+  fastPass: number;
   done: number;
   facts: Fact[];
   rejected: number;
@@ -15,15 +17,24 @@ export interface ScanProgress {
   current?: Post;
 }
 
-/** Scan posts one at a time (batch 1 measured best in spike S1: 96% recall). */
+/**
+ * Scan posts one at a time (batch 1 measured best in spike S1).
+ * The prefilter only orders the work: on held-out SynthPAI a keyword gate kept just 51% of
+ * revealing comments, so it no longer excludes anything except empty and link-only posts.
+ * Fast pass = posts with a cue, deep pass = everything else. Stopping early is always allowed.
+ */
 export async function scan(
   posts: Post[],
   data: DataKind,
   onUpdate: (p: ScanProgress) => void,
   signal?: AbortSignal,
 ): Promise<ScanProgress> {
-  const considered = posts.filter((p) => prefilter(p.text).keep);
-  const st: ScanProgress = { total: posts.length, considered: considered.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0 };
+  const verdicts = posts.map((p) => ({ p, v: prefilter(p.text) }));
+  const scannable = verdicts.filter(({ v }) => v.reason !== 'too_short' && v.reason !== 'link_only');
+  const fast = scannable.filter(({ v }) => v.keep).map(({ p }) => p);
+  const deep = scannable.filter(({ v }) => !v.keep).map(({ p }) => p);
+  const considered = [...fast, ...deep];
+  const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass: fast.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0 };
   onUpdate({ ...st });
   for (const post of considered) {
     if (signal?.aborted) break;

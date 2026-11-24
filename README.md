@@ -26,7 +26,7 @@ Built for the Firebase #BuildHybridAI hackathon.
 ## How it works
 
 1. **Import.** Your Reddit export (`posts.csv` and `comments.csv` only), a JSON or CSV file, or pasted text. Parsing happens in the browser.
-2. **Prefilter.** A deterministic check drops posts with no disclosure cue (too short, link-only, no self-reference or life detail). Skipped posts are counted, not sent.
+2. **Order.** A deterministic check puts posts with a life-detail cue first (fast pass), then reads everything else (deep pass). Only empty and link-only posts are skipped. It used to be a filter; on held-out SynthPAI it kept only 51% of revealing comments, so it now orders work instead of excluding it (`receipts/heldout-prefilter-synthpai.json`).
 3. **Extract.** On-device Gemini Nano returns facts as schema-constrained JSON: category, value, quote, whether the fact is about the author, and certainty.
 4. **Verify.** A deterministic gate drops any fact whose quote is not a verbatim substring of the post, that is not about the author, that is hypothetical, or whose value is not grounded in the text.
 5. **Dossier.** Facts map to attributes with base rates. Bundled tables are used first; grounded cloud lookups fill the gaps. Nested attributes collapse into the most specific one.
@@ -35,7 +35,7 @@ Built for the Firebase #BuildHybridAI hackathon.
 ```mermaid
 flowchart LR
   subgraph Device["Your device: Chrome with Gemini Nano"]
-    I[Import] --> P[Prefilter]
+    I[Import] --> P[Order: fast pass, deep pass]
     P --> X[Extract facts]
     X --> V[Verify gate]
     V --> D[Dossier]
@@ -112,7 +112,7 @@ Spike S1 ran Gemini Nano extraction on the synthetic persona `quietnight_rn` (20
 
 Caveats, stated plainly:
 
-- The `verify()` gate was tuned on this same persona. A held-out evaluation is in progress.
+- The `verify()` gate was tuned on this same persona. The held-out check is `/?eval`: SynthPAI (Yukhymenko et al., NeurIPS 2024, CC BY-NC-SA 4.0), split by persona, test half never used for tuning, fetched live from Hugging Face and never vendored. Results land in `receipts/heldout-synthpai-*.json`.
 - The 64% precision after `verify()` is below the 80% precision bar in the spike gate, so the on-device path does not yet match the cloud baseline on precision.
 - The receipt's grounding test returned HTTP 429 quota errors on the free tier. Grounded base rates were therefore not verified in S1. Without grounding, a live estimate is graded C and labelled "model estimate, no source".
 - One synthetic persona is not a general accuracy claim.
@@ -131,7 +131,7 @@ npm run dev                  # http://localhost:5173
 - Set `VITE_APPCHECK=off` in `.env.local` for local runs until App Check is configured.
 - In dev, the console prints an App Check debug token. Register it under App Check, Manage debug tokens. Never commit it.
 - Click "Download Gemini Nano (one time)" on the home page. The download needs a user gesture.
-- The spike benchmark page is at `/?spike`.
+- The spike benchmark page is at `/?spike`; the held-out SynthPAI evaluation is at `/?eval`.
 - The synthetic persona "quietnight_rn" runs on the home page. It is labelled SYNTHETIC on screen.
 
 ## Guardrails
@@ -156,7 +156,7 @@ npm run dev                  # http://localhost:5173
 - The base-rate pack is US-first. Its only India entry is the Bengaluru Urban region. About half the attribute rates in the pack are grade C (rough, widest ranges).
 - Lift values for overlaps are hand-entered and mostly grade C.
 - Google Search grounding was rate-limited on the free tier. Live estimates without a source are labelled "model estimate, no source".
-- The verify gate and the S1 numbers come from one synthetic persona, with a held-out evaluation still in progress.
+- The verify gate and the S1 numbers come from one synthetic persona; see the held-out SynthPAI receipts for numbers on data we never tuned on.
 
 ## License
 

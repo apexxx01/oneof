@@ -89,8 +89,10 @@ export { verify };
 
 export interface ExtractResult { facts: Fact[]; rejected: number; source: 'on_device' | 'in_cloud'; ms: number }
 
-export async function extractFromPost(post: Post, data: DataKind, task: 'extract' | 'draft' = 'extract'): Promise<ExtractResult> {
-  const r = route(task, data);
+export async function extractFromPost(post: Post, data: DataKind, task: 'extract' | 'draft' = 'extract', forceMode?: Mode): Promise<ExtractResult> {
+  // forceMode exists only for the eval page's cloud baseline on synthetic data; own data can never be forced.
+  const base = route(task, data);
+  const r = forceMode && data === 'synthetic' ? { mode: forceMode, reason: `Eval baseline on synthetic data: ${forceMode}` } : base;
   if (r.mode === 'ONLY_ON_DEVICE' && (await onDeviceAvailability()) !== 'available') {
     record({ task, mode: r.mode, reason: r.reason, source: 'blocked', ms: 0, sentToCloud: '' });
     throw new BlockedError();
