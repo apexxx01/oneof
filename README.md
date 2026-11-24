@@ -119,8 +119,11 @@ Comments sampled with a fixed seed from the test personas of SynthPAI. "Label re
 | Gemini Nano, `ONLY_ON_DEVICE` (Chrome 158) | 80 | 0 | 44% (21/48) | 9/40 | 2.6 s |
 | `gemini-3.5-flash-lite`, `ONLY_IN_CLOUD`, free tier | 40 | 11 (28%) | 60% (9/15) | 0/15 | 2.0 s |
 | Same 29 comments the cloud answered, Nano vs cloud | 29 | | 33% vs 60% | 4/15 vs 0/15 | |
+| Prompt x3 on Nano (**rejected**, see below) | 80 | 0 | 50% (24/48) | 20/40 | 3.2 s |
 
-Receipts: `receipts/heldout-synthpai-on_device.json`, `receipts/heldout-synthpai-cloud.json`. What this says: on data we never tuned on, Gemini Nano catches roughly half of what the cloud model catches and makes more false calls, in exchange for zero bytes leaving the device and zero failed calls. Nano mostly finds what people state outright; it misses what has to be inferred ("crushing bugs" → developer). Closing that gap is ongoing work tuned on the dev half only.
+Receipts: `receipts/heldout-synthpai-on_device.json`, `receipts/heldout-synthpai-cloud.json`.
+
+**A regression the eval caught.** Prompt x3 was tuned on the dev personas to stop Nano throwing away the author's own job or degree as "someone else's". On dev it lifted recall from 40% to 50% at the same false-alarm rate. On the untouched test half it lifted recall 44% to 50% but more than doubled false alarms (9/40 to 20/40), nearly all invented jobs ("financial advisor" from a post about money). We rolled it back. The shipped prompt is x2 plus checker rules that only ever remove facts (`x2r`). Receipt: `receipts/heldout-synthpai-on_device-x3-rejected.json`; the rejected prompt stays in `src/lib/prompts.ts` for the record. What this says: on data we never tuned on, Gemini Nano catches roughly half of what the cloud model catches and makes more false calls, in exchange for zero bytes leaving the device and zero failed calls. Nano mostly finds what people state outright; it misses what has to be inferred ("crushing bugs" → developer). Closing that gap is ongoing work tuned on the dev half only.
 
 ### Full persona run, recorded
 

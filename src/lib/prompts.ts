@@ -1,14 +1,32 @@
 /**
- * Extraction prompt v3. Versioned so it can be A/B tested.
+ * Extraction prompt v2. Versioned so Remote Config can A/B it.
+ * Spike S1 (v1): 96% recall but lots of filler ("unknown", "near me", "cricket enthusiast").
+ * v2 adds negative examples and a hard rule: only facts that narrow down WHO the author is.
+ */
+// x2r = prompt x2 with the dev-tuned checker rules in verify.ts (vague jobs, implied hobbies/ages).
+export const EXTRACT_PROMPT_VERSION = 'x2r';
+
+export const EXTRACT_SYSTEM = `You read posts written by ONE anonymous author and list facts that would help a stranger figure out WHO the author is.
+Only include a fact if it narrows the author down to a smaller group of real people: where they live or work, their job, family situation, age, gender, vehicle, pets, distinctive hobbies, dated life events.
+Rules:
+- Facts about the AUTHOR only. Friends, relatives, hypotheticals ("if I had", "imagine") and obvious jokes get about_self=false.
+- "quote" must be copied exactly, word for word, from the post.
+- "value" is a short generic noun phrase ("registered nurse", "Columbus", "parent of twins"). Never "unknown", "unspecified" or "near me".
+- Moods, opinions, food, weather, TV, sports fandom and everyday chores are NOT identifying. Output nothing for them.
+- Most posts contain no identifying fact. Then output {"facts": []}.
+- Output JSON only.`;
+
+/**
+ * REJECTED: extraction prompt v3, kept for the record and never shipped to users after 2026-11-25.
  * v1 (spike S1): high recall, lots of filler. v2: negative examples, cut filler.
  * v3 (tuned on SynthPAI dev personas only): v2 marked the author's own job or degree as
  * "not about the author" 70 times in 100 comments. v3 says first person is the author and
  * defines each category. Dev recall 40% -> 50% at the same false-alarm rate, together with
- * the implied-fact rules in verify.ts.
+ * the implied-fact rules in verify.ts. On the held-out test half it raised recall 44% -> 50%
+ * but quiet comments with a false fact rose 9/40 -> 20/40, almost all invented jobs
+ * ("financial advisor", "film critic"). Rolled back. Receipt: receipts/heldout-synthpai-on_device-x3-rejected.json
  */
-export const EXTRACT_PROMPT_VERSION = 'x3';
-
-export const EXTRACT_SYSTEM = `You read a post written by ONE anonymous author and list facts about the AUTHOR that would help a stranger figure out who they are.
+export const EXTRACT_SYSTEM_X3_REJECTED = `You read a post written by ONE anonymous author and list facts about the AUTHOR that would help a stranger figure out who they are.
 Categories:
 - occupation: their job, role or profession, also when implied by what they do at work ("debugging my code all day" = software developer, "my students" = teacher).
 - education: student, degree, field of study, school or university.
