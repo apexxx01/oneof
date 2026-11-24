@@ -1,0 +1,799 @@
+{
+  "spike": "S1",
+  "at": "2026-11-24T10:24:31.473Z",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/158.0.0.0 Safari/537.36",
+  "availability": "unknown",
+  "hardwareConcurrency": 10,
+  "reports": [
+    {
+      "label": "on_device · batch 1 · x1",
+      "target": "on_device",
+      "batch": 1,
+      "concurrency": 1,
+      "calls": 69,
+      "postsSent": 69,
+      "wallSec": 455.76460000002385,
+      "secPerCallP50": 2.5391999999284742,
+      "secPerCallP95": 3.3235,
+      "validJsonRate": 0.9855072463768116,
+      "sources": {
+        "on_device": 68
+      },
+      "errors": {
+        "The response exceeded output limits and was truncated.": 1
+      },
+      "score": {
+        "predicted": 75,
+        "selfVerified": 35,
+        "tp": 7,
+        "recall": 0.875,
+        "precision": 0.2,
+        "trapHits": 2,
+        "unlabeled": 26,
+        "quoteFailRate": 0.013333333333333334
+      },
+      "predictions": [
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "Seattle",
+          "quote": "my sister in Seattle says it is cold there",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0000",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "near me",
+          "quote": "new bakery opened near me",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0002",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "three years since separation",
+          "quote": "three years since I left him",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0003",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "destination song",
+          "quote": "why do all the good songs come on when you reach your destination",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0005",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "near me",
+          "quote": "new bakery opened near me",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0008",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "pronunciation",
+          "quote": "just realised I have been pronouncing quinoa wrong for years",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0009",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "response to a common experience",
+          "quote": "why do all the good songs come on when you reach your destination",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0011",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "destination song",
+          "quote": "why do all the good songs come on when you reach your destination",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0015",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "occupation",
+          "value": "unknown",
+          "quote": "finally cleaned my inbox. 4000 unread to zero. I am a new person",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0017",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "unknown",
+          "quote": "the power went out",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0021",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "board games",
+          "quote": "and I remembered that board games exist",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0021",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "family",
+          "value": "parent of five children",
+          "quote": "imagine having five kids. some days I am already a ghost",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0022",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "2023",
+          "quote": "have not slept since 2023",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0028",
+          "verified": false
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "travel",
+          "quote": "why do all the good songs come on when you reach your destination",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0029",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "commuting",
+          "quote": "why do all the good songs come on when you reach your destination",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0032",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "Chicago",
+          "quote": "my friend moved to Chicago",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0033",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "relationship",
+          "value": "friend",
+          "quote": "my friend moved",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0033",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "work_location",
+          "value": "night shift",
+          "quote": "after a night shift the sunrise feels like a personal insult",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0034",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "relationship",
+          "value": "brother",
+          "quote": "my brother is",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0036",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "near me",
+          "quote": "new bakery opened near me",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0042",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "near me",
+          "quote": "new bakery opened near me",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0045",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "health",
+          "value": "expensive eggs",
+          "quote": "can we talk about how expensive eggs are right now",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0052",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "Inbox Cleanup",
+          "quote": "finally cleaned my inbox. 4000 unread to zero. I am a new person",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0060",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "occupation",
+          "value": "unknown",
+          "quote": "finally cleaned my inbox",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0076",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "quinoa pronunciation",
+          "quote": "just realised I have been pronouncing quinoa wrong for years",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0079",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "unknown",
+          "quote": "can we talk about how expensive eggs are right now",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0083",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "near me",
+          "quote": "new bakery opened near me",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0086",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "occupation",
+          "value": "unknown",
+          "quote": "my alarm and I are no longer on speaking terms",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0088",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "pet",
+          "value": "cat",
+          "quote": "my cat has decided the laundry basket is his kingdom now",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0093",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "current",
+          "quote": "can we talk about how expensive eggs are right now",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0099",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "football highlights enthusiast",
+          "quote": "watching football highlights at 2am is self care",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0102",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "pronunciation",
+          "quote": "just realised I have been pronouncing quinoa wrong for years",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0104",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "occupation",
+          "value": "registered nurse",
+          "quote": "as a registered nurse I promise you Nobody reads the discharge paperwork",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0108",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "cooking",
+          "quote": "just realised I have been pronouncing quinoa wrong for years",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0110",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "quinoa pronunciation",
+          "quote": "just realised I have been pronouncing quinoa wrong for years",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0111",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "2am",
+          "quote": "watching football highlights at 2am",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0113",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "watching football highlights",
+          "quote": "watching football highlights at 2am is self care",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0117",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "cooking",
+          "quote": "just realised I have been pronouncing quinoa wrong for years!!",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0118",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "near me",
+          "quote": "new bakery opened near me",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0121",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "near me",
+          "quote": "new bakery opened near me",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0122",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "clean inbox",
+          "quote": "finally cleaned my inbox. 4000 unread to zero.",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0127",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "August",
+          "quote": "pumpkin spice season started in august",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0129",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "watching football highlights",
+          "quote": "watching football highlights at 2am is self care",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0131",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "pronunciation",
+          "quote": "just realised I have been pronouncing quinoa wrong for years 😭",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0133",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "completion",
+          "quote": "why do all the good songs come on when you reach your destination",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0138",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "health",
+          "value": "sleep deprivation",
+          "quote": "my alarm and I are no longer on speaking terms",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0140",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "watching football highlights",
+          "quote": "watching football highlights at 2am is self care",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0143",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "unknown",
+          "quote": "can we talk about how expensive eggs are right now (serious question)",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0145",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "destination",
+          "quote": "why do all the good songs come on when you reach your destination honestly",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0146",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "2am",
+          "quote": "watching football highlights at 2am",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0150",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "family",
+          "value": "single mom",
+          "quote": "single mom tip",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0151",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "relationship",
+          "value": "self",
+          "quote": "why do all the good songs come on when you reach your destination honestly",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0158",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "unknown",
+          "quote": "the power went out",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0159",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "board games",
+          "quote": "I remembered that board games exist",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0159",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "unknown",
+          "quote": "the power went out",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0160",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "neighborhood",
+          "quote": "new bakery opened near me",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0162",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "august",
+          "quote": "pumpkin spice season started in august",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0165",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "divorce",
+          "quote": "since the divorce",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0166",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "occupation",
+          "value": "handyman",
+          "quote": "I have learned to fix the water heater myself",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0166",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "unknown",
+          "quote": "the power went out",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0168",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "board games",
+          "quote": "I remembered that board games exist",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0168",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "health",
+          "value": "feeling elderly",
+          "quote": "I feel 80 years old after that shift",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0171",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "occupation",
+          "value": "doctor",
+          "quote": "the doctor on duty tonight asked me",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0174",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "glove box",
+          "quote": "they are in the glove box",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0174",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "family",
+          "value": "single mom",
+          "quote": "being a single mom",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0175",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "work_location",
+          "value": "night shifts",
+          "quote": "night shifts",
+          "about_self": true,
+          "certainty": "stated",
+          "postId": "p1_0175",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "dated_event",
+          "value": "August",
+          "quote": "pumpkin spice season started in august",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0177",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "unknown",
+          "quote": "can we talk about how expensive eggs are right now",
+          "about_self": false,
+          "certainty": "stated",
+          "postId": "p1_0179",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "occupation",
+          "value": "alarm",
+          "quote": "my alarm and I are no longer on speaking terms",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0184",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "rare_hobby",
+          "value": "cooking",
+          "quote": "just realised I have been pronouncing quinoa wrong for years",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0185",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "near me",
+          "quote": "new bakery opened near me",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0187",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "family",
+          "value": "parent",
+          "quote": "my alarm and I are no longer on speaking terms",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0191",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "other",
+          "value": "destination",
+          "quote": "why do all the good songs come on when you reach your destination",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0193",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "home_location",
+          "value": "unknown",
+          "quote": "can we talk about how expensive eggs are right now",
+          "about_self": false,
+          "certainty": "implied",
+          "postId": "p1_0194",
+          "verified": true
+        },
+        {
+          "p": 0,
+          "cat": "occupation",
+          "value": "unknown",
+          "quote": "finally cleaned my inbox. 4000 unread to zero.",
+          "about_self": true,
+          "certainty": "implied",
+          "postId": "p1_0199",
+          "verified": true
+        }
+      ]
+    }
+  ],
+  "grounding": {
+    "groundedText": {
+      "ok": false,
+      "error": "AI: Error fetching from https://firebasevertexai.googleapis.com/v1beta/projects/oneof-8d62e/models/gemini-3.5-flash-lite:generateContent: [429 ] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit.  [{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://aistudio.google.com/docs/rate-limits\"}]}] (AI/fetch-error)"
+    },
+    "groundedJson": {
+      "ok": false,
+      "error": "AI: Error fetching from https://firebasevertexai.googleapis.com/v1beta/projects/oneof-8d62e/models/gemini-3.5-flash-lite:generateContent: [429 ] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit.  [{\"@type\":\"type.googleapis.com/google.rpc.Help\",\"links\":[{\"description\":\"Learn more about Gemini API quotas\",\"url\":\"https://aistudio.google.com/docs/rate-limits\"}]}] (AI/fetch-error)"
+    }
+  }
+}
