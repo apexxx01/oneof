@@ -102,7 +102,8 @@ export async function onDeviceAvailability(): Promise<Availability> {
 const models = new Map<string, GenerativeModel>();
 
 function extractModel(mode: Mode, tier: (typeof CLOUD_CHAIN)[number] = CLOUD_CHAIN[0]): GenerativeModel {
-  const key = `extract:${mode}:${tier.model}`;
+  const system = promptOverride ?? EXTRACT_SYSTEM;
+  const key = `extract:${mode}:${tier.model}:${hash(system)}`;
   if (models.has(key)) return models.get(key)!;
   const { ai } = getFirebase();
   const m = getGenerativeModel(ai, {
@@ -112,7 +113,7 @@ function extractModel(mode: Mode, tier: (typeof CLOUD_CHAIN)[number] = CLOUD_CHA
         expectedInputs: [{ type: 'text', languages: ['en'] }],
         expectedOutputs: [{ type: 'text', languages: ['en'] }],
         initialPrompts: [
-          { role: 'system', content: [{ type: 'text', value: EXTRACT_SYSTEM }] },
+          { role: 'system', content: [{ type: 'text', value: system }] },
           { role: 'user', content: [{ type: 'text', value: EXTRACT_EXAMPLE_USER }] },
           { role: 'assistant', content: [{ type: 'text', value: EXTRACT_EXAMPLE_ASSISTANT }] },
         ],
@@ -121,7 +122,7 @@ function extractModel(mode: Mode, tier: (typeof CLOUD_CHAIN)[number] = CLOUD_CHA
     },
     inCloudParams: {
       model: tier.model,
-      systemInstruction: `${EXTRACT_SYSTEM}\n\nExample input:\n${EXTRACT_EXAMPLE_USER}\n\nExample output:\n${EXTRACT_EXAMPLE_ASSISTANT}`,
+      systemInstruction: `${system}\n\nExample input:\n${EXTRACT_EXAMPLE_USER}\n\nExample output:\n${EXTRACT_EXAMPLE_ASSISTANT}`,
       generationConfig: { responseMimeType: 'application/json', responseJsonSchema: FACT_BATCH_JSON_SCHEMA, temperature: 0 },
     },
   }, { timeout: tier.timeout });
@@ -138,7 +139,16 @@ export async function prepareOnDevice(onProgress: (p: number) => void) {
 import { verify } from './verify';
 export { verify };
 
-export interface ExtractResult { facts: Fact[]; rejected: number; source: 'on_device' | 'in_cloud'; ms: number }
+export interface RawVerdict { cat: string; value: string; about_self: boolean; certainty: string; why: string }
+export interface ExtractResult { facts: Fact[]; rejected: number; source: 'on_device' | 'in_cloud'; ms: number; raw: RawVerdict[] }
+
+/**
+ * Eval-only prompt override, so prompt variants can be compared on the SynthPAI dev split without
+ * a deploy. Read only on the /?eval page; the product never reads it.
+ */
+let promptOverride: string | null = null;
+export function setPromptOverride(p: string | null) { promptOverride = p && p.trim() ? p : null; }
+const hash = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
 
 export async function extractFromPost(post: Post, data: DataKind, task: 'extract' | 'draft' = 'extract', forceMode?: Mode): Promise<ExtractResult> {
   // forceMode exists only for the eval page's cloud baseline on synthetic data; own data can never be forced.
@@ -156,18 +166,21 @@ export async function extractFromPost(post: Post, data: DataKind, task: 'extract
     const source = res.response.inferenceSource === 'in_cloud' ? 'in_cloud' : 'on_device';
     record({ task, mode: r.mode, reason: r.reason, source, ms, sentToCloud: source === 'in_cloud' ? prompt : '', model: source === 'in_cloud' ? model : undefined });
     const parsed = FactBatchZ.safeParse(JSON.parse(res.response.text()));
-    if (!parsed.success) return { facts: [], rejected: 0, source, ms };
+    if (!parsed.success) return { facts: [], rejected: 0, source, ms, raw: [] };
     let rejected = 0;
     const facts: Fact[] = [];
+    const raw: RawVerdict[] = [];
     for (const f of parsed.data.facts) {
       if (f.p !== 0) continue;
-      if (!verify(f, post).ok) { rejected++; continue; }
+      const v = verify(f, post);
+      raw.push({ cat: f.cat, value: f.value.slice(0, 60), about_self: f.about_self, certainty: f.certainty, why: v.ok ? 'ok' : v.why ?? 'rejected' });
+      if (!v.ok) { rejected++; continue; }
       facts.push({
         id: `${post.id}:${facts.length}`, postId: post.id, date: post.date, cat: f.cat, value: f.value.slice(0, 60),
         quote: f.quote.slice(0, 160), certainty: f.certainty, source,
       });
     }
-    return { facts, rejected, source, ms };
+    return { facts, rejected, source, ms, raw };
   } catch (e) {
     const ms = performance.now() - t0;
     record({ task, mode: r.mode, reason: r.reason, source: 'error', ms, sentToCloud: '', error: String((e as Error).message ?? e).slice(0, 200) });

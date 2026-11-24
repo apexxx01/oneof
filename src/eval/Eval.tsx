@@ -1,12 +1,15 @@
 import { useRef, useState } from 'react';
-import { extractFromPost, onDeviceAvailability } from '../lib/ai';
-import { SYNTHPAI_URL, isTestPersona, parseJsonl, sampleSet, scoreItem, summarize, countable, type ItemResult, type PaiItem } from './synthpai';
+import { extractFromPost, onDeviceAvailability, setPromptOverride } from '../lib/ai';
+import { EXTRACT_SYSTEM } from '../lib/prompts';
+import { SYNTHPAI_URL, isTestPersona, isDevPersona, parseJsonl, sampleSet, scoreItem, summarize, countable, type ItemResult, type PaiItem } from './synthpai';
 
 type Arm = 'on_device' | 'cloud';
 
 export default function Eval() {
   const [n, setN] = useState(40);
   const [arm, setArm] = useState<Arm>('on_device');
+  const [split, setSplit] = useState<'test' | 'dev'>('test');
+  const [prompt, setPrompt] = useState<string>(() => { try { return localStorage.getItem('oneof.eval.prompt') ?? ''; } catch { return ''; } });
   const [status, setStatus] = useState('idle');
   const [results, setResults] = useState<ItemResult[]>([]);
   const [set, setSet] = useState<{ pos: PaiItem[]; neg: PaiItem[] }>();
@@ -14,9 +17,12 @@ export default function Eval() {
 
   async function run() {
     stop.current = false; setResults([]);
+    // A prompt override is a tuning tool: it is only allowed on the dev split.
+    setPromptOverride(split === 'dev' ? prompt : null);
+    try { localStorage.setItem('oneof.eval.prompt', prompt); } catch { /* storage unavailable */ }
     if (arm === 'on_device' && (await onDeviceAvailability()) !== 'available') { setStatus('Gemini Nano is not available in this browser: open the home page and download it first.'); return; }
     setStatus('fetching SynthPAI from Hugging Face (20 MB, not stored)…');
-    const items = parseJsonl(await (await fetch(SYNTHPAI_URL)).text()).filter((i) => isTestPersona(i.author));
+    const items = parseJsonl(await (await fetch(SYNTHPAI_URL)).text()).filter((i) => (split === 'test' ? isTestPersona(i.author) : isDevPersona(i.author)));
     const s = sampleSet(items, n, n, 7); setSet(s);
     const queue = [...s.pos.map((it) => ({ it, kind: 'pos' as const })), ...s.neg.map((it) => ({ it, kind: 'neg' as const }))];
     const out: ItemResult[] = [];
@@ -25,21 +31,22 @@ export default function Eval() {
       setStatus(`${i + 1} / ${queue.length} · ${arm}`);
       try {
         const r = await extractFromPost({ id: it.id, date: '2024-01-01', text: it.text }, 'synthetic', 'extract', arm === 'cloud' ? 'ONLY_IN_CLOUD' : 'ONLY_ON_DEVICE');
-        out.push(scoreItem(it, kind, r.facts.map((f) => f.cat), r.ms, r.source));
+        out.push({ ...scoreItem(it, kind, r.facts.map((f) => f.cat), r.ms, r.source), raw: r.raw });
       } catch (e) {
         out.push({ id: it.id, kind, cats: [], hit: 0, total: kind === 'pos' ? countable(it).length : 0, ms: 0, source: 'error', error: String((e as Error).message).slice(0, 120) });
       }
       setResults([...out]);
     }
+    (window as unknown as { __eval?: unknown }).__eval = { split, arm, override: split === 'dev' && !!prompt.trim(), summary: summarize(out), results: out };
     setStatus('done');
   }
 
   const sum = summarize(results);
   function exportReceipt() {
-    const body = { dataset: 'SynthPAI (RobinSta/SynthPAI), CC BY-NC-SA 4.0', split: 'test personas (odd ids), never used for tuning', arm, seed: 7, perKind: n, at: new Date().toISOString(), summary: sum, results };
+    const body = { dataset: 'SynthPAI (RobinSta/SynthPAI), CC BY-NC-SA 4.0', split: split === 'test' ? 'test personas (odd ids), never used for tuning' : 'dev personas (even ids), used for tuning', promptOverride: split === 'dev' && !!prompt.trim(), arm, seed: 7, perKind: n, at: new Date().toISOString(), summary: sum, results };
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(body, null, 2)], { type: 'application/json' }));
-    a.download = `heldout-synthpai-${arm}.json`; a.click();
+    a.download = `synthpai-${split}-${arm}.json`; a.click();
   }
   const pct = (x: number) => `${Math.round(x * 100)}%`;
 
@@ -51,10 +58,17 @@ export default function Eval() {
         <label>per side <input type="number" value={n} min={5} max={200} onChange={(e) => setN(+e.target.value)} /></label>
         <label><input type="radio" checked={arm === 'on_device'} onChange={() => setArm('on_device')} /> Gemini Nano (ONLY_ON_DEVICE)</label>
         <label><input type="radio" checked={arm === 'cloud'} onChange={() => setArm('cloud')} /> Cloud baseline (ONLY_IN_CLOUD)</label>
+        <label><select value={split} onChange={(e) => setSplit(e.target.value as 'test' | 'dev')}><option value="test">test split (report)</option><option value="dev">dev split (tune)</option></select></label>
         <button onClick={run} disabled={status !== 'idle' && status !== 'done' && !status.startsWith('Gemini')}>Run</button>
         <button className="ghost" onClick={() => (stop.current = true)}>Stop</button>
         <button className="ghost" disabled={!results.length} onClick={exportReceipt}>Export receipt</button>
       </div>
+      {split === 'dev' && (
+        <details>
+          <summary className="small">Prompt override (dev split only; empty = shipped prompt {'x2'})</summary>
+          <textarea rows={10} style={{ width: '100%' }} value={prompt} placeholder={EXTRACT_SYSTEM} onChange={(e) => setPrompt(e.target.value)} />
+        </details>
+      )}
       <p className="mono">{status}</p>
       {results.length > 0 && (
         <pre>{`label recall      ${pct(sum.labelRecall)}  (${sum.hit}/${sum.total} labels caught on revealing comments)

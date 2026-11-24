@@ -57,6 +57,7 @@ export function countable(it: PaiItem, maxHardness = 2) {
 
 /** Split by persona so nothing tuned on the dev half can leak into the reported test half. */
 export const isTestPersona = (author: string) => Number(author.replace(/\D/g, '')) % 2 === 1;
+export const isDevPersona = (author: string) => !isTestPersona(author);
 
 /** Deterministic sample: nPos comments that reveal something, nNeg that annotators marked as revealing nothing. */
 export function sampleSet(items: PaiItem[], nPos: number, nNeg: number, seed = 7) {
@@ -67,13 +68,14 @@ export function sampleSet(items: PaiItem[], nPos: number, nNeg: number, seed = 7
   return { pos, neg };
 }
 
-export interface ItemResult { id: string; kind: 'pos' | 'neg'; cats: Category[]; hit: number; total: number; ms: number; source: string; error?: string }
+export interface ItemResult { id: string; kind: 'pos' | 'neg'; cats: Category[]; hit: number; total: number; ms: number; source: string; error?: string; missed?: string[]; raw?: Array<{ cat: string; value: string; about_self: boolean; certainty: string; why: string }> }
 
 /** Label recall: how many countable labels have at least one extracted fact in a matching category. */
 export function scoreItem(it: PaiItem, kind: 'pos' | 'neg', cats: Category[], ms: number, source: string): ItemResult {
   const labels = kind === 'pos' ? countable(it) : [];
-  const hit = labels.filter((l) => ATTR_TO_CATS[l.attr]!.some((c) => cats.includes(c))).length;
-  return { id: it.id, kind, cats, hit, total: labels.length, ms, source };
+  const caught = (l: PaiLabel) => ATTR_TO_CATS[l.attr]!.some((c) => cats.includes(c));
+  const hit = labels.filter(caught).length;
+  return { id: it.id, kind, cats, hit, total: labels.length, ms, source, missed: labels.filter((l) => !caught(l)).map((l) => `${l.attr}:h${l.hardness}`) };
 }
 
 export function summarize(rs: ItemResult[]) {
