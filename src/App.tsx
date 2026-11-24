@@ -34,6 +34,18 @@ export default function App() {
   const problems = useMemo(configProblems, []);
 
   useEffect(() => { onDeviceAvailability().then(setAvail); }, []);
+  // Dev-only visual QA: /?fixture renders the result screen from the persona's answer key,
+  // so layouts can be checked without a model. Stripped from production builds.
+  useEffect(() => {
+    if (!import.meta.env.DEV || !new URLSearchParams(location.search).has('fixture')) return;
+    (async () => {
+      const p = (await (await fetch(`${import.meta.env.BASE_URL}personas/p1.json`)).json()) as Persona & { truth: Array<{ postId: string; cat: Fact['cat']; value: string; quote: string }> };
+      const dates = new Map(p.posts.map((x) => [x.id, x.date]));
+      setPersona(p); setPosts(p.posts); setData('synthetic');
+      setFacts(p.truth.map((t, i) => ({ id: `fx${i}`, postId: t.postId, date: dates.get(t.postId) ?? '', cat: t.cat, value: t.value, quote: t.quote, certainty: 'stated', source: 'on_device' })));
+      setPhase('result');
+    })();
+  }, []);
   useEffect(() => subscribe((e) => setCloudCount(summary(e))), []);
   useEffect(() => {
     const on = () => setOnline(true), off = () => setOnline(false);
@@ -183,7 +195,7 @@ export default function App() {
             <div className="r-trail">
               <h3>Your crumb trail</h3>
               <p className="small muted">No single post gave you away. Together, they did.</p>
-              <Trail points={trail} left={left} />
+              <Trail points={trail} left={left} span={posts.length ? [posts.reduce((m, p) => (p.date < m ? p.date : m), posts[0].date), posts.reduce((m, p) => (p.date > m ? p.date : m), posts[0].date)] : undefined} />
             </div>
           </section>
           {formulaOpen && <Formula d={dossier} e={now} />}
