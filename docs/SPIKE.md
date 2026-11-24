@@ -1,3 +1,5 @@
+> Historical: the Nov 20–22 spike plan, kept for the record. Some details changed later (App Check provider, persona size: the final persona has 8 planted facts).
+
 # Day-1 spikes (run these before any product code)
 
 ## Setup (once)
@@ -23,7 +25,7 @@ Click the buttons in order:
 3. **Prepare on-device model.** This is a click, because the download needs a user gesture.
 4. **Run full suite.** It runs the batch sizes 1/5/10 on-device, then 5 with two runs in parallel, then a cloud baseline.
 5. **Test grounding.** It checks whether Google Search grounding works on the free tier, with and without a JSON schema.
-6. **Download results.** Drop the JSON into the chat.
+6. **Download results.** Save the JSON into `receipts/`.
 
 Gate **G1**:
 - ✅ GO: recall ≥ 70% and precision ≥ 80%, ≤ 6 s per call, and ≥ 95% of responses are valid JSON.

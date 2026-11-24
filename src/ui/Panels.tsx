@@ -142,7 +142,8 @@ export function Draft({ history, rates, before, placeholder }: {
   return (
     <div className="draft">
       <div className="draft-edit">
-        <textarea value={text} onChange={(e) => { setText(e.target.value); setBlur(null); }} placeholder={placeholder ?? 'Write your next post here. OneOf checks it on this device before you share it.'} rows={4} />
+        <textarea value={text} onChange={(e) => { setText(e.target.value); setBlur(null); }} placeholder="Write your next post here. OneOf checks it on this device before you share it." rows={4} />
+        {placeholder && !text && <button className="ghost small" onClick={() => setText(placeholder)}>Try a sample draft: “{placeholder.slice(0, 48)}…”</button>}
         <div className="draft-status mono">
           {busy ? 'reading on-device…' : draftFacts.length ? `${draftFacts.length} new fact${draftFacts.length > 1 ? 's' : ''} in this draft` : 'nothing identifying yet'}
           {err && <span className="err"> · {err}</span>}
@@ -197,6 +198,7 @@ export function Ledger({ open, onClose }: { open: boolean; onClose: () => void }
         <div><b>{s.onDevice}</b> calls on this device</div>
         <div><b>{s.cloud}</b> calls to the cloud</div>
         <div><b>{s.postBytesOut}</b> bytes of your posts sent</div>
+        <div><b>{s.attrBytesOut}</b> bytes of generic attributes sent</div>
       </div>
       <button onClick={exportJson} disabled={!entries.length}>Export receipts.json</button>
       <ol className="ledger-list">
@@ -205,7 +207,12 @@ export function Ledger({ open, onClose }: { open: boolean; onClose: () => void }
             <div className="l-top mono">
               <SourceBadge source={e.source} /> {e.task}{e.decoy ? ' · decoy' : ''} · {e.mode} · {Math.round(e.ms)} ms
             </div>
-            {e.sentToCloud ? <pre className="payload">{e.sentToCloud}</pre> : <div className="small muted">Nothing left the device.</div>}
+            {e.sentToCloud ? (
+              <>
+                {e.source === 'error' && <div className="small warn-text">Sent, then the call failed:</div>}
+                <pre className="payload">{e.sentToCloud}</pre>
+              </>
+            ) : <div className="small muted">Nothing left the device.</div>}
             {e.error && <div className="small err">{e.error}</div>}
           </li>
         ))}

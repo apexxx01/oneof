@@ -190,7 +190,9 @@ export async function extractFromPost(post: Post, data: DataKind, task: 'extract
     return { facts, rejected, source, ms, raw };
   } catch (e) {
     const ms = performance.now() - t0;
-    record({ task, mode: r.mode, reason: r.reason, source: 'error', ms, sentToCloud: '', error: String((e as Error).message ?? e).slice(0, 200) });
+    // A failed cloud call still sent the prompt; the ledger must say so.
+    const attempted = r.mode === 'ONLY_IN_CLOUD' || (r.mode === 'PREFER_ON_DEVICE' && (await onDeviceAvailability()) !== 'available');
+    record({ task, mode: r.mode, reason: r.reason, source: 'error', ms, sentToCloud: attempted ? prompt : '', error: String((e as Error).message ?? e).slice(0, 200) });
     throw e;
   }
 }

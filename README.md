@@ -9,7 +9,7 @@ OneOf reads your own post history with on-device AI, builds the dossier an AI at
 [![CI](https://github.com/apexxx01/oneof/actions/workflows/ci.yml/badge.svg)](https://github.com/apexxx01/oneof/actions/workflows/ci.yml)
 ![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)
 
-Live demo: **https://apexxx01.github.io/oneof/** (desktop Chrome 148+ for on-device mode; other browsers run the synthetic demo through cloud fallback)
+Live demo: **https://apexxx01.github.io/oneof/** (desktop Chrome with Gemini Nano for on-device mode, tested on Chrome 158; other browsers get a labelled replay of a recorded on-device run, or cloud fallback for the synthetic demo)
 
 Demo video: (coming soon)
 
@@ -19,7 +19,7 @@ Built for the Firebase #BuildHybridAI hackathon.
 
 ## Why
 
-- **Pseudonyms leak through combinations.** Lermen et al. report 68% recall at 90% precision for LLM-driven deanonymization of online profiles, at $1–4 per profile (USENIX Security '26). Each harmless detail on its own is common; the combination is not.
+- **Pseudonyms leak through combinations.** Lermen et al. (USENIX Security '26) show LLM agents re-identifying 25–67% of Hacker News and Reddit users at 70–90% precision from pseudonymous profiles alone. Each harmless detail on its own is common; the combination is not.
 - **You can't ask a server whether your own history gives you away.** Checking every draft against years of posts is only reasonable on the device that holds them.
 - **Existing tools look at one post.** Per-post PII scanners and single-post estimators miss what the whole history adds up to. OneOf aggregates the full history and reports the crowd size for the combination.
 
@@ -89,7 +89,7 @@ Copy rules: the output never says "safe" or "identified". Every factor opens to 
 ## Privacy guarantees
 
 - **Your posts stay on the device.** Extraction, draft checks and Blur for your own data are `ONLY_ON_DEVICE`. No on-device model means the scan is blocked, not sent elsewhere.
-- **The cloud sees one generic attribute per request.** A base-rate request carries an attribute such as `occupation: registered nurse` and a country name. Decoy requests with unrelated attributes are mixed in, in random order.
+- **The cloud sees one generic attribute per request, and only after you say yes.** A base-rate request carries an attribute such as `occupation: registered nurse` and a country name. `cloudSafeAttribute()` keeps anything that looks like a name, a number, a place, a health detail or a long phrase on the device. For your own data the app shows the exact strings and asks before sending any; the header counts these bytes separately from post bytes. (Earlier builds mixed in decoy requests; they were removed because a decoy list published in this repo is trivial to filter.)
 - **Sensitive categories never leave the device.** `health` and `religion_community` are in `LOCAL_ONLY_CATS`. They are not counted in the estimate and are never sent.
 - **Every off-device call is recorded.** The in-app "What the cloud saw" panel lists each call, its mode, its reason, and the exact text sent. Entries are kept in `src/lib/ledger.ts`.
 - **Reddit exports are read narrowly.** Only `posts.csv` and `comments.csv` are parsed. Every other entry (IP logs, messages, chat history, payments and similar) is listed by filename and never opened. The CSV parser keeps only text, date, subreddit or channel, and permalink, and ignores the `ip` column.
@@ -103,12 +103,11 @@ Copy rules: the output never says "safe" or "identified". Every factor opens to 
 
 ## Results
 
-Spike S1 ran Gemini Nano extraction on the synthetic persona `quietnight_rn` (200 posts, 8 planted facts, 8 traps: jokes, other people, hypotheticals). Raw results are in `receipts/s1-nano-promptv2.json`; reproduce the post-gate numbers with `npx tsx scripts/rescore.ts receipts/s1-nano-promptv2.json`.
+Spike S1 ran Gemini Nano extraction on the 69 posts of the synthetic persona `quietnight_rn` that passed the old keyword prefilter (of 200; 8 planted facts, 8 traps: jokes, other people, hypotheticals). The `verify()` gate was tuned on this same persona, so the 64% below is optimistic; the held-out numbers further down are the honest ones. Raw results are in `receipts/s1-nano-promptv2.json`; reproduce the post-gate numbers with `npx tsx scripts/rescore.ts receipts/s1-nano-promptv2.json`.
 
 | Configuration | Recall | Precision | Notes |
 |---|---|---|---|
 | On-device Gemini Nano, batch 1, prompt v2 | 88% (7 of 8 planted facts) | 20% raw; 64% after `verify()` | p50 2.5 s per call, p95 3.3 s, 98.6% valid JSON |
-| Cloud baseline, `gemini-3.5-flash-lite` | re-run pending | | receipt will be added to `receipts/` |
 
 ### Held-out: SynthPAI test half (never used for tuning)
 
@@ -118,13 +117,13 @@ Comments sampled with a fixed seed from the test personas of SynthPAI. "Label re
 |---|---|---|---|---|---|
 | Gemini Nano, `ONLY_ON_DEVICE` (Chrome 158) | 80 | 0 | 44% (21/48) | 9/40 | 2.6 s |
 | `gemini-3.5-flash-lite`, `ONLY_IN_CLOUD`, free tier | 40 | 11 (28%) | 60% (9/15) | 0/15 | 2.0 s |
-| Same 29 comments the cloud answered, Nano vs cloud | 29 | | 33% vs 60% | 4/15 vs 0/15 | |
+| Same 29 comments the cloud answered (14 revealing, 15 quiet): shipped `x2r` vs cloud | 29 | | 20% (3/15) vs 60% (9/15) | 4/15 vs 0/15 | |
 | Prompt x3 on Nano (**rejected**, see below) | 80 | 0 | 50% (24/48) | 20/40 | 3.2 s |
 | Shipped `x2r` on Nano (re-run, same sample) | 80 | 0 | 40% (19/48) | 9/40 | 2.8 s |
 
 Receipts: `receipts/heldout-synthpai-on_device.json`, `receipts/heldout-synthpai-cloud.json`.
 
-**A regression the eval caught.** Prompt x3 was tuned on the dev personas to stop Nano throwing away the author's own job or degree as "someone else's". On dev it lifted recall from 40% to 50% at the same false-alarm rate. On the untouched test half it lifted recall 44% to 50% but more than doubled false alarms (9/40 to 20/40), nearly all invented jobs ("financial advisor" from a post about money). We rolled it back. The shipped prompt is x2 plus checker rules that only ever remove facts (`x2r`). Receipt: `receipts/heldout-synthpai-on_device-x3-rejected.json`; the rejected prompt stays in `src/lib/prompts.ts` for the record. Re-running the shipped config on the same sample gave 40% recall vs 44% for the first x2 run: Gemini Nano varies by a few points between identical runs, so differences smaller than that are noise (`receipts/heldout-synthpai-on_device-x2r.json`). What this says: on data we never tuned on, Gemini Nano catches roughly half of what the cloud model catches and makes more false calls, in exchange for zero bytes leaving the device and zero failed calls. Nano mostly finds what people state outright; it misses what has to be inferred ("crushing bugs" → developer). Closing that gap is ongoing work tuned on the dev half only.
+**A regression the eval caught.** Prompt x3 was tuned on the dev personas to stop Nano throwing away the author's own job or degree as "someone else's". On dev it lifted recall from 40% to 50% at the same false-alarm rate. On the untouched test half it lifted recall 44% to 50% but more than doubled false alarms (9/40 to 20/40), nearly all invented jobs ("financial advisor" from a post about money). We rolled it back. The shipped prompt is x2 plus checker rules that only ever remove facts (`x2r`). Receipt: `receipts/heldout-synthpai-on_device-x3-rejected.json`; the rejected prompt stays in `src/lib/prompts.ts` for the record. Re-running the shipped config on the same sample gave 40% recall vs 44% for the first x2 run: Gemini Nano varies by a few points between identical runs, so differences smaller than that are noise (`receipts/heldout-synthpai-on_device-x2r.json`). What this says, with small samples: on data we never tuned on, the on-device model catches clearly less than the cloud model (20–44% of labels vs 60% for the cloud on the comments it answered) and makes more false calls, in exchange for zero bytes leaving the device and zero failed calls. Counted the other way, the free-tier cloud's 11 failed calls make its recall 39% (9/23) over everything it was asked. Because missed facts make the crowd look bigger, the app tells users to treat the number as an upper bound. Nano mostly finds what people state outright; it misses what has to be inferred ("crushing bugs" → developer). Closing that gap is ongoing work tuned on the dev half only.
 
 ### Full persona run, recorded
 
@@ -139,7 +138,7 @@ Caveats, stated plainly:
 
 ## Quickstart
 
-Requirements: Node.js, and desktop Chrome 148 or later for on-device mode. Check `chrome://on-device-internals` for the model status. The model download needs about 22 GB free on the drive that holds the Chrome profile.
+Requirements: Node.js, and desktop Chrome with the Prompt API and Gemini Nano for on-device mode (tested on Chrome 158). Check `chrome://on-device-internals` for the model status. The model download needs about 22 GB free on the drive that holds the Chrome profile.
 
 ```bash
 npm install
@@ -164,7 +163,7 @@ npm run dev                  # http://localhost:5173
 
 ## Prior art and credits
 
-- **BRANCH / Privacy Mirror** (CMU, arXiv 2503.09674). Estimates one post, with base rates from what an LLM remembers. OneOf aggregates the full history and uses cited tables.
+- **Zheng, Das, Ritter, Xu** (arXiv 2503.09674), LLM-based k-anonymity estimation. Estimates one post, with base rates from what an LLM remembers. OneOf aggregates the full history and uses cited tables.
 - **Krsek et al.** (arXiv 2412.15047). A per-post disclosure detector that explains why a post is flagged. OneOf shows the formula and a quote for every flag.
 - **reddacted** and **Redact.dev**. PII scanning and bulk deletion. OneOf reports a crowd range and the smallest set of posts to edit.
 - **Lermen et al.**, "Large-scale online deanonymization with LLMs", USENIX Security '26. The threat model this project responds to.
@@ -172,7 +171,7 @@ npm run dev                  # http://localhost:5173
 ## Known limits
 
 - English only.
-- On-device mode works only in desktop Chrome 148 or later with the Gemini Nano model.
+- On-device mode works only in desktop Chrome with the Gemini Nano model (tested on Chrome 158).
 - The base-rate pack is US-first. Its only India entry is the Bengaluru Urban region. About half the attribute rates in the pack are grade C (rough, widest ranges).
 - Lift values for overlaps are hand-entered and mostly grade C.
 - Google Search grounding was rate-limited on the free tier. Live estimates without a source are labelled "model estimate, no source".

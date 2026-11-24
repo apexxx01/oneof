@@ -1,5 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, ReCaptchaV3Provider, type AppCheck } from 'firebase/app-check';
 import { getAI, GoogleAIBackend, type AI } from 'firebase/ai';
 
 const env = import.meta.env;
@@ -36,24 +36,40 @@ export function configProblems(): string[] {
 
 let app: FirebaseApp | undefined;
 let ai: AI | undefined;
+let appCheck: AppCheck | undefined;
+
+/** Which App Check provider this build uses, shown in the header so judges can see it. */
+export type AppCheckMode = 'enterprise' | 'recaptcha-v3' | 'debug-token' | 'off';
+export function appCheckMode(): AppCheckMode {
+  if (env.VITE_APPCHECK === 'off') return 'off';
+  if (env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY) return 'enterprise';
+  if (env.VITE_RECAPTCHA_V3_SITE_KEY) return 'recaptcha-v3';
+  if (env.VITE_APPCHECK_DEBUG_TOKEN || env.DEV) return 'debug-token';
+  return 'off';
+}
 
 export function getFirebase(): { app: FirebaseApp; ai: AI } {
   if (app && ai) return { app, ai };
   app = initializeApp(firebaseConfig);
-  if (env.DEV) {
-    // Local dev only: prints a debug token you register in Firebase console → App Check.
-    (self as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN: boolean }).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  const mode = appCheckMode();
+  if (mode === 'debug-token') {
+    // Firebase App Check debug provider. The hackathon rules accept debug tokens. Locally this
+    // prints a token to register in the console; a deployed build can carry a registered token.
+    (self as unknown as { FIREBASE_APPCHECK_DEBUG_TOKEN: boolean | string }).FIREBASE_APPCHECK_DEBUG_TOKEN = env.VITE_APPCHECK_DEBUG_TOKEN || true;
   }
-  // App Check is required for submission. Local runs tolerate it being off; Firebase only
-  // rejects calls when enforcement is on in the console.
-  if (env.VITE_APPCHECK !== 'off' && env.VITE_RECAPTCHA_V3_SITE_KEY) {
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(env.VITE_RECAPTCHA_V3_SITE_KEY),
-      isTokenAutoRefreshEnabled: true,
-    });
+  if (mode !== 'off') {
+    // The debug provider is selected by the global above; the site key is then unused.
+    const provider = mode === 'enterprise'
+      ? new ReCaptchaEnterpriseProvider(env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY)
+      : new ReCaptchaV3Provider(env.VITE_RECAPTCHA_V3_SITE_KEY || 'debug-provider');
+    appCheck = initializeAppCheck(app, { provider, isTokenAutoRefreshEnabled: true });
   } else {
-    console.warn('[oneof] App Check disabled for this run');
+    console.warn('[oneof] App Check disabled for this build');
   }
-  ai = getAI(app, { backend: new GoogleAIBackend() });
+  // Limited-use tokens: each AI Logic request carries a fresh, single-use App Check token
+  // (replay protection), recommended for AI Logic.
+  ai = getAI(app, { backend: new GoogleAIBackend(), useLimitedUseAppCheckTokens: mode !== 'off' });
   return { app, ai };
 }
+
+export function hasAppCheck() { return !!appCheck; }

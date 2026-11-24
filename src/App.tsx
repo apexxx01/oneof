@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlockedError, onDeviceAvailability, prepareOnDevice, type Availability, type DataKind } from './lib/ai';
+import { appCheckMode } from './lib/firebase';
 import { buildDossier, crowdNow, crumbTrail, leftTheCrowd, minimumFix } from './lib/dossier';
 import { estimate, humanCount } from './lib/estimate';
 import { fromPaste, importFile } from './lib/importers';
@@ -112,10 +113,11 @@ export default function App() {
       (window as unknown as { __oneofRun?: Replay }).__oneofRun = toReplay(res, kind === 'synthetic' ? 'quietnight_rn' : 'own');
       setPhase('result');
       const plan = plannedLookups(res.facts);
+      const country = buildDossier(res.facts, rates).region.key.startsWith('in:') ? 'India' : 'United States';
       setLookupState('idle');
       if (kind === 'synthetic') {
         setPendingLookups(null);
-        if (navigator.onLine && plan.length) refineRates(plan, 'United States', setRates).catch(() => undefined);
+        if (navigator.onLine && plan.length) refineRates(plan, country, setRates).catch(() => undefined);
       } else {
         setPendingLookups(plan.length ? plan : null);
       }
@@ -153,6 +155,7 @@ export default function App() {
             on-device model: {avail === 'downloading' && dl !== null ? `downloading ${Math.round(dl * 100)}%` : avail}
           </span>
           <span className={`pill ${online ? '' : 'off'}`}>{online ? 'online' : 'offline'}</span>
+          <span className={`pill ${appCheckMode() === 'off' ? 'warn' : 'ok'}`} title="Firebase App Check protects the AI Logic endpoint from abuse">App Check: {appCheckMode() === 'off' ? 'off' : appCheckMode() === 'debug-token' ? 'debug token' : appCheckMode()}</span>
           <button className="ghost" onClick={() => setLedgerOpen(true)}>
             What the cloud saw · <b>{cloudCount.postBytesOut}</b> B of posts{cloudCount.attrBytesOut > 0 && <> · {cloudCount.attrBytesOut} B of attributes</>}
           </button>
@@ -246,8 +249,9 @@ export default function App() {
         <main className="result">
           <section className="r-hero">
             <div>
-              <div className="eyebrow mono">{persona && data === 'synthetic' ? `u/${persona.handle} · SYNTHETIC` : 'your history'} · {posts.length} posts · {facts.length} facts · {dossier.region.label}</div>
+              <div className="eyebrow mono">{persona && data === 'synthetic' ? `u/${persona.handle} · SYNTHETIC` : 'your history'} · {posts.length} posts · {facts.length} facts found · {dossier.attributes.length} counted · {dossier.region.label}</div>
               <Meter e={now} />
+              <p className="small muted">OneOf can miss details an attacker would still find (on held-out data the on-device model caught about 4 in 10 labelled attributes), so treat this as an upper bound: your real crowd is probably smaller.</p>
               <button className="ghost" onClick={() => setFormulaOpen((v) => !v)}>{formulaOpen ? 'Hide' : 'Show'} the math</button>
               {replaying && replay && <p className="small muted mono">Replay of a recorded on-device run ({replay.recordedAt.slice(0, 10)}).</p>}
               {lastRun && data === 'synthetic' && lastRun.onDevice > 0 && (
@@ -281,7 +285,7 @@ export default function App() {
                       <div className="row">
                         <button disabled={lookupState === 'running'} onClick={async () => {
                           setLookupState('running');
-                          await refineRates(pendingLookups, 'United States', setRates).catch(() => undefined);
+                          await refineRates(pendingLookups, dossier.region.key.startsWith('in:') ? 'India' : 'United States', setRates).catch(() => undefined);
                           setLookupState('done');
                         }}>{lookupState === 'running' ? 'Asking…' : `Send these ${pendingLookups.length}`}</button>
                         <button className="ghost" onClick={() => setLookupState('declined')}>Keep everything on this device</button>

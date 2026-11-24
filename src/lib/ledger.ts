@@ -52,13 +52,15 @@ export function resetLedger() {
 export function summary(list = entries) {
   const onDevice = list.filter((e) => e.source === 'on_device').length;
   const cloud = list.filter((e) => e.source === 'in_cloud');
-  const bytesOut = cloud.reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
-  const postBytesOut = list
-    .filter((e) => e.source === 'in_cloud' && (e.task === 'extract' || e.task === 'draft' || e.task === 'blur'))
+  // Bytes count whenever something left the device, including calls that then failed.
+  const sent = list.filter((e) => e.sentToCloud);
+  const bytesOut = sent.reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
+  const postBytesOut = sent
+    .filter((e) => e.task === 'extract' || e.task === 'draft' || e.task === 'blur')
     .reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
   // Generic attributes sent for base-rate lookups, counted separately and shown next to post bytes.
-  const attrBytesOut = list
-    .filter((e) => e.source === 'in_cloud' && e.task === 'baserate')
+  const attrBytesOut = sent
+    .filter((e) => e.task === 'baserate')
     .reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
   return { total: list.length, onDevice, cloud: cloud.length, bytesOut, postBytesOut, attrBytesOut };
 }
