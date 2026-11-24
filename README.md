@@ -110,12 +110,28 @@ Spike S1 ran Gemini Nano extraction on the synthetic persona `quietnight_rn` (20
 | On-device Gemini Nano, batch 1, prompt v2 | 88% (7 of 8 planted facts) | 20% raw; 64% after `verify()` | p50 2.5 s per call, p95 3.3 s, 98.6% valid JSON |
 | Cloud baseline, `gemini-3.5-flash-lite` | re-run pending | | receipt will be added to `receipts/` |
 
+### Held-out: SynthPAI test half (never used for tuning)
+
+Comments sampled with a fixed seed from the test personas of SynthPAI. "Label recall" counts human-labelled attributes (hardness 1–2, certainty ≥ 3) that produced a fact in a matching category. "Quiet" comments are ones annotators marked as revealing none of SynthPAI's 8 attributes.
+
+| Run | Calls | Errors | Label recall | Quiet comments with a fact | p50 latency |
+|---|---|---|---|---|---|
+| Gemini Nano, `ONLY_ON_DEVICE` (Chrome 158) | 80 | 0 | 44% (21/48) | 9/40 | 2.6 s |
+| `gemini-3.5-flash-lite`, `ONLY_IN_CLOUD`, free tier | 40 | 11 (28%) | 60% (9/15) | 0/15 | 2.0 s |
+| Same 29 comments the cloud answered, Nano vs cloud | 29 | | 33% vs 60% | 4/15 vs 0/15 | |
+
+Receipts: `receipts/heldout-synthpai-on_device.json`, `receipts/heldout-synthpai-cloud.json`. What this says: on data we never tuned on, Gemini Nano catches roughly half of what the cloud model catches and makes more false calls, in exchange for zero bytes leaving the device and zero failed calls. Nano mostly finds what people state outright; it misses what has to be inferred ("crushing bugs" → developer). Closing that gap is ongoing work tuned on the dev half only.
+
+### Full persona run, recorded
+
+`receipts/p1-nano-run-2026-11-24.compact.json`: all 200 posts of `quietnight_rn` on Gemini Nano in Chrome 158, 0 errors, 0 bytes of posts sent, 10 min. The estimate (one of ~50, range 7–330; edit 3 posts to get back to ~5.6k) matches the answer-key dry run, because noise facts such as "Sunday" or "member of group chat" have no base rate and do not change the crowd. This recording is what browsers without Nano play back, labelled as a replay.
+
 Caveats, stated plainly:
 
 - The `verify()` gate was tuned on this same persona. The held-out check is `/?eval`: SynthPAI (Yukhymenko et al., NeurIPS 2024, CC BY-NC-SA 4.0), split by persona, test half never used for tuning, fetched live from Hugging Face and never vendored. Results land in `receipts/heldout-synthpai-*.json`.
 - The 64% precision after `verify()` is below the 80% precision bar in the spike gate, so the on-device path does not yet match the cloud baseline on precision.
 - The receipt's grounding test returned HTTP 429 quota errors on the free tier. Grounded base rates were therefore not verified in S1. Without grounding, a live estimate is graded C and labelled "model estimate, no source".
-- One synthetic persona is not a general accuracy claim.
+- One synthetic persona is not a general accuracy claim; the SynthPAI samples are small (80 and 40 comments).
 
 ## Quickstart
 
