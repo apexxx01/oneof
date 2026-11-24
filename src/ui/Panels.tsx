@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { liftFor } from '../data/baserates';
 import { estimate, humanCount } from '../lib/estimate';
 import { buildDossier, type Dossier } from '../lib/dossier';
-import { BlockedError, blurDraft, extractFromPost, type DataKind } from '../lib/ai';
+import { BlockedError, blurDraft, extractFromPost } from '../lib/ai';
 import { subscribe, summary, type LedgerEntry } from '../lib/ledger';
 import type { Attribute, BaseRate, CrowdEstimate, Fact, Post } from '../lib/types';
 import { GradeBadge, Meter, Pct, SourceBadge } from './bits';
@@ -38,7 +38,7 @@ export function Formula({ d, e }: { d: Dossier; e: CrowdEstimate }) {
         <span>= people who match all of this</span>
         <span className="mono">{humanCount(e.p10)} – {humanCount(e.p90)}</span>
         <span />
-        <span className="f-src">P10–P90 of 4,000 draws. Weak evidence widens the range; overlaps (e.g. 88% of nurses are women) are corrected so the crowd is never understated.</span>
+        <span className="f-src">P10–P90 of 4,000 draws. Weak evidence widens the range. Known overlaps (e.g. 88% of nurses are women) are corrected; unknown ones get a deliberately cautious allowance, which is an assumption, not a measurement.</span>
       </div>
     </div>
   );
@@ -74,8 +74,11 @@ function highlight(text: string, quote: string) {
 }
 
 /** Live draft check: every sentence is read on-device as you type. */
-export function Draft({ history, rates, data, before, placeholder }: {
-  history: Fact[]; rates: Map<string, BaseRate>; data: DataKind; before: CrowdEstimate; placeholder?: string;
+/** Stable id for a sentence (two sentences with the same opening must not collide). */
+function hashText(t: string) { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+
+export function Draft({ history, rates, before, placeholder }: {
+  history: Fact[]; rates: Map<string, BaseRate>; before: CrowdEstimate; placeholder?: string;
 }) {
   const [text, setText] = useState('');
   const [facts, setFacts] = useState<Map<string, Fact[]>>(new Map());
@@ -84,29 +87,50 @@ export function Draft({ history, rates, data, before, placeholder }: {
   const [blur, setBlur] = useState<{ rewrite: string; removed: string[]; source: string } | null>(null);
   const timer = useRef<number | undefined>(undefined);
   const sentences = useMemo(() => text.split(/(?<=[.!?])\s+|\n+/).map((s) => s.trim()).filter((s) => s.length > 8), [text]);
+  const sentencesRef = useRef(sentences);
+  sentencesRef.current = sentences;
 
+  // One extraction loop at a time: the SDK destroys the previous on-device session when a new
+  // one starts, so overlapping loops would cancel each other. Facts live in a ref so a later
+  // loop never overwrites an earlier one's results with a stale copy.
+  const factsRef = useRef(facts);
+  const running = useRef(false);
+  const rerun = useRef(false);
   useEffect(() => {
     window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(async () => {
-      const todo = sentences.filter((s) => !facts.has(s));
-      if (!todo.length) return;
-      setBusy(true);
+    const go = async () => {
+      if (running.current) { rerun.current = true; return; }
+      running.current = true;
       setErr(null);
-      const next = new Map(facts);
-      for (const s of todo) {
-        try {
-          const r = await extractFromPost({ id: `draft:${s.slice(0, 24)}`, date: new Date().toISOString(), text: s }, data, 'draft');
-          next.set(s, r.facts);
-        } catch (e) {
-          setErr(e instanceof BlockedError ? e.message : 'The on-device model is busy. Keep typing; it will catch up.');
-          break;
+      try {
+        for (;;) {
+          rerun.current = false;
+          const todo = sentencesRef.current.filter((x) => !factsRef.current.has(x));
+          if (!todo.length) break;
+          setBusy(true);
+          for (const s of todo) {
+            if (rerun.current) break;
+            try {
+              // Drafts are always the user's own words: ONLY_ON_DEVICE, whatever data the scan used.
+              const r = await extractFromPost({ id: `draft:${hashText(s)}`, date: new Date().toISOString(), text: s }, 'own', 'draft');
+              factsRef.current = new Map(factsRef.current).set(s, r.facts);
+              setFacts(factsRef.current);
+            } catch (e) {
+              setErr(e instanceof BlockedError ? 'Drafts are checked on this device only, and this browser has no Gemini Nano. Open OneOf in desktop Chrome to check drafts.' : 'The on-device model is busy. Keep typing; it will catch up.');
+              rerun.current = false;
+              break;
+            }
+          }
+          if (!rerun.current) break;
         }
+      } finally {
+        running.current = false;
+        setBusy(false);
       }
-      setFacts(next);
-      setBusy(false);
-    }, 650);
+    };
+    timer.current = window.setTimeout(go, 650);
     return () => window.clearTimeout(timer.current);
-  }, [sentences, data]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sentences]);
 
   const draftFacts = sentences.flatMap((s) => facts.get(s) ?? []);
   const d = buildDossier([...history, ...draftFacts], rates);
@@ -136,7 +160,7 @@ export function Draft({ history, rates, data, before, placeholder }: {
         )}
         <div className="row">
           <button disabled={!text || busy} onClick={async () => {
-            try { setBlur(await blurDraft(text, data)); } catch (e) { setErr((e as Error).message); }
+            try { setBlur(await blurDraft(text, 'own')); } catch (e) { setErr(e instanceof BlockedError ? 'Blur runs on this device only, and this browser has no Gemini Nano.' : (e as Error).message); }
           }}>Blur it (on-device)</button>
           {blur && <button className="ghost" onClick={() => { setText(blur.rewrite); setBlur(null); }}>Use rewrite</button>}
         </div>

@@ -56,5 +56,9 @@ export function summary(list = entries) {
   const postBytesOut = list
     .filter((e) => e.source === 'in_cloud' && (e.task === 'extract' || e.task === 'draft' || e.task === 'blur'))
     .reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
-  return { total: list.length, onDevice, cloud: cloud.length, bytesOut, postBytesOut };
+  // Generic attributes sent for base-rate lookups, counted separately and shown next to post bytes.
+  const attrBytesOut = list
+    .filter((e) => e.source === 'in_cloud' && e.task === 'baserate')
+    .reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
+  return { total: list.length, onDevice, cloud: cloud.length, bytesOut, postBytesOut, attrBytesOut };
 }

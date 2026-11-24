@@ -27,9 +27,19 @@ describe('scan resilience', () => {
     expect(out.onDevice).toBe(4);
     expect(out.log.filter((e) => e.source === 'error')).toHaveLength(0);
   });
-  it('logs a post as an error only if its retry also fails', async () => {
+  it('recovers a post whose first attempt fails', async () => {
     calls.length = 0; failIds = new Set(['p0']);
     const out = await scan([post(0)], 'synthetic', () => undefined, undefined, { coolMs: 1 });
     expect(out.onDevice).toBe(1);
+    expect(out.log.filter((e) => e.source === 'error')).toHaveLength(0);
+  });
+  it('logs a post as an error when its retry fails too', async () => {
+    calls.length = 0; failIds = new Set(['p0']);
+    const { extractFromPost } = await import('./ai');
+    (extractFromPost as unknown as { mockImplementationOnce: (f: unknown) => void }).mockImplementationOnce(async () => { throw new Error('timed out'); });
+    (extractFromPost as unknown as { mockImplementationOnce: (f: unknown) => void }).mockImplementationOnce(async () => { throw new Error('timed out'); });
+    const out = await scan([post(0)], 'synthetic', () => undefined, undefined, { coolMs: 1 });
+    expect(out.log.filter((e) => e.source === 'error')).toHaveLength(1);
+    expect(out.onDevice).toBe(0);
   });
 });

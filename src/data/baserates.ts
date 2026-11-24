@@ -29,8 +29,8 @@ export const REGIONS: Array<Region & { aliases: RegExp }> = [
     aliases: /\b(usa|united states|america|american)\b/i,
   },
   {
-    key: 'in:ka:bengaluru', label: 'Bengaluru Urban district', population: 9_621_551, adultShare: 0.72, grade: 'A',
-    source: 'Census of India 2011', url: 'https://en.wikipedia.org/wiki/Bangalore_Urban_district',
+    key: 'in:ka:bengaluru', label: 'Bengaluru Urban district', population: 9_621_551, adultShare: 0.72, grade: 'C',
+    source: 'Census of India 2011: 15 years old and the city has grown a lot since, so graded C (wide range)', url: 'https://en.wikipedia.org/wiki/Bangalore_Urban_district',
     aliases: /\b(bengaluru|bangalore|koramangala|indiranagar|whitefield|hsr layout)\b/i,
   },
 ];
@@ -43,8 +43,8 @@ export const PACK: PackEntry[] = [
   // ---------- occupation ----------
   {
     key: 'occupation:nurse', label: 'registered nurses', cat: 'occupation',
-    low: 3_391_000 / US_ADULTS * 0.95, high: 3_391_000 / US_ADULTS * 1.05, grade: 'A',
-    source: 'BLS Occupational Outlook: 3,391,000 RN jobs (2024) ÷ US population',
+    low: 3_465_400 / US_ADULTS * 0.95, high: 3_465_400 / US_ADULTS * 1.05, grade: 'A',
+    source: 'BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults',
     url: 'https://www.bls.gov/ooh/healthcare/registered-nurses.htm', aliases: /\bnurs(e|es|ing)\b|\brn\b/i,
   },
   {
@@ -75,13 +75,13 @@ export const PACK: PackEntry[] = [
     url: 'https://fred.stlouisfed.org/series/OPFWCUMO', aliases: /\bsingle (mom|mum|mother|parent)\b/i,
   },
   {
-    key: 'family:twins', label: 'parents of twins under 18', cat: 'family', low: 0.0031, high: 0.0046, grade: 'B',
-    source: 'CDC NCHS: twin birth rate 30.1 per 1,000 births (2024) → ~55k twin sets/yr × 18 yrs ÷ US adults',
+    key: 'family:twins', label: 'parents of twins under 18', cat: 'family', low: 0.0038, high: 0.0075, grade: 'B',
+    source: 'CDC NCHS: twin birth rate 30.1 per 1,000 births (2024) → ~55k twin sets/yr × 18 yrs × 1–2 parents each ÷ US adults',
     url: 'https://www.cdc.gov/nchs/data/hestat/hestat117.htm', aliases: /\btwins?\b/i,
   },
   {
-    key: 'family:kindergartner', label: 'parents of a kindergartner this year', cat: 'family', low: 0.012, high: 0.017, grade: 'B',
-    source: 'NCES: ~3.7M kindergarten enrollments ÷ US adults', aliases: /\bkindergarten|pre-?k\b/i,
+    key: 'family:kindergartner', label: 'parents of a kindergartner this year', cat: 'family', low: 0.014, high: 0.028, grade: 'C',
+    source: 'Rough: NCES ~3.7M kindergarten enrollments × 1–2 parents each ÷ US adults', aliases: /\bkindergarten|pre-?k\b/i,
   },
   {
     key: 'relationship:divorced', label: 'divorced or separated', cat: 'relationship', low: 0.07, high: 0.11, grade: 'C',
@@ -95,8 +95,8 @@ export const PACK: PackEntry[] = [
   },
   // ---------- possessions / hobbies / education / events ----------
   {
-    key: 'hobby:half_marathon', label: 'half-marathon finishers', cat: 'rare_hobby', low: 0.0055, high: 0.0075, grade: 'B',
-    source: 'Running USA: 1.85M US half-marathon finishers (2012) ÷ US adults', url: 'https://www.runningusa.org/',
+    key: 'hobby:half_marathon', label: 'half-marathon finishers', cat: 'rare_hobby', low: 0.0035, high: 0.0075, grade: 'C',
+    source: 'Running USA: 1.85M US half-marathon finishes (2012; finishes, not people) ÷ US adults', url: 'https://www.runningusa.org/',
     aliases: /\bhalf[- ]?marathon/i,
   },
   {

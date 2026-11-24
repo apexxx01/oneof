@@ -30,19 +30,22 @@ const trippedUntil = new Map<string, number>();
  * logged as an error and the next post gets a fresh session.
  */
 export const ON_DEVICE_BUDGET_MS = 20_000;
-export function withBudget<T>(p: Promise<T>, ms: number, what = 'on-device call'): Promise<T> {
+export function withBudget<T>(p: Promise<T>, ms: number, what = 'on-device call', signal?: AbortSignal): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error(`${what} timed out after ${ms / 1000}s`)), ms);
-    p.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+    if (signal?.aborted) { reject(new DOMException('Stopped', 'AbortError')); return; }
+    const onAbort = () => { clearTimeout(t); reject(new DOMException('Stopped', 'AbortError')); };
+    const t = setTimeout(() => { signal?.removeEventListener('abort', onAbort); reject(new Error(`${what} timed out after ${ms / 1000}s`)); }, ms);
+    signal?.addEventListener('abort', onAbort, { once: true });
+    p.then((v) => { clearTimeout(t); signal?.removeEventListener('abort', onAbort); resolve(v); }, (e) => { clearTimeout(t); signal?.removeEventListener('abort', onAbort); reject(e); });
   });
 }
 
-async function hedged<T>(mode: Mode, make: (tier: (typeof CLOUD_CHAIN)[number], i: number) => GenerativeModel, run: (m: GenerativeModel) => Promise<T>): Promise<{ value: T; model: string }> {
-  if (mode === 'ONLY_ON_DEVICE') return { value: await withBudget(run(make(CLOUD_CHAIN[0], 0)), ON_DEVICE_BUDGET_MS), model: 'on-device' };
+async function hedged<T>(mode: Mode, make: (tier: (typeof CLOUD_CHAIN)[number], i: number) => GenerativeModel, run: (m: GenerativeModel) => Promise<T>, signal?: AbortSignal): Promise<{ value: T; model: string }> {
+  if (mode === 'ONLY_ON_DEVICE') return { value: await withBudget(run(make(CLOUD_CHAIN[0], 0)), ON_DEVICE_BUDGET_MS, 'on-device call', signal), model: 'on-device' };
   if (mode === 'PREFER_ON_DEVICE' && (await onDeviceAvailability()) === 'available') {
     // Nano present: the SDK will route on-device, so the on-device budget applies. A stall is logged
     // as an error for that one post rather than silently re-sent to the cloud.
-    return { value: await withBudget(run(make(CLOUD_CHAIN[0], 0)), ON_DEVICE_BUDGET_MS), model: 'on-device' };
+    return { value: await withBudget(run(make(CLOUD_CHAIN[0], 0)), ON_DEVICE_BUDGET_MS, 'on-device call', signal), model: 'on-device' };
   }
   const now = Date.now();
   const open = CLOUD_CHAIN.filter((t) => (trippedUntil.get(t.model) ?? 0) <= now);
@@ -53,6 +56,7 @@ async function hedged<T>(mode: Mode, make: (tier: (typeof CLOUD_CHAIN)[number], 
       return { value: await run(make(tier, i)), model: tier.model };
     } catch (e) {
       last = e;
+      if (signal?.aborted) throw e;
       const retryable = RETRYABLE.test(String((e as Error)?.message ?? e));
       if (retryable) trippedUntil.set(tier.model, Date.now() + BREAKER_MS);
       if (i === tiers.length - 1 || !retryable) throw e;
@@ -150,7 +154,10 @@ let promptOverride: string | null = null;
 export function setPromptOverride(p: string | null) { promptOverride = p && p.trim() ? p : null; }
 const hash = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
 
-export async function extractFromPost(post: Post, data: DataKind, task: 'extract' | 'draft' = 'extract', forceMode?: Mode): Promise<ExtractResult> {
+/** Long posts are cut to stay well inside Gemini Nano's context (system prompt + example are re-sent per call). */
+export const MAX_POST_CHARS = 2000;
+
+export async function extractFromPost(post: Post, data: DataKind, task: 'extract' | 'draft' = 'extract', forceMode?: Mode, signal?: AbortSignal): Promise<ExtractResult> {
   // forceMode exists only for the eval page's cloud baseline on synthetic data; own data can never be forced.
   const base = route(task, data);
   const r = forceMode && data === 'synthetic' ? { mode: forceMode, reason: `Eval baseline on synthetic data: ${forceMode}` } : base;
@@ -159,9 +166,9 @@ export async function extractFromPost(post: Post, data: DataKind, task: 'extract
     throw new BlockedError();
   }
   const t0 = performance.now();
-  const prompt = batchPrompt([post.text]);
+  const prompt = batchPrompt([post.text.length > MAX_POST_CHARS ? post.text.slice(0, MAX_POST_CHARS) : post.text]);
   try {
-    const { value: res, model } = await hedged(r.mode, (tier) => extractModel(r.mode, tier), (m) => m.generateContent(prompt));
+    const { value: res, model } = await hedged(r.mode, (tier) => extractModel(r.mode, tier), (m) => m.generateContent(prompt, { signal }), signal);
     const ms = performance.now() - t0;
     const source = res.response.inferenceSource === 'in_cloud' ? 'in_cloud' : 'on_device';
     record({ task, mode: r.mode, reason: r.reason, source, ms, sentToCloud: source === 'in_cloud' ? prompt : '', model: source === 'in_cloud' ? model : undefined });
@@ -189,20 +196,19 @@ export async function extractFromPost(post: Post, data: DataKind, task: 'extract
 }
 
 // ---------- base rates (cloud + Google Search grounding) ----------
-const DECOYS = [
-  'occupation: dental hygienist', 'pet: owns a parrot', 'hobby: plays pickleball', 'vehicle: drives a pickup truck',
-  'occupation: electrician', 'family: has three children', 'hobby: amateur astronomer', 'occupation: pharmacist',
-  'vehicle: rides a motorcycle', 'hobby: plays chess competitively',
-];
+import { cloudSafeAttribute } from './attribute';
+export { cloudSafeAttribute };
 
-function generalize(f: Fact) {
-  // One rung up and stripped of anything personal: the category plus a short generic noun phrase.
-  return `${f.cat.replace(/_/g, ' ')}: ${f.value.toLowerCase().replace(/\b(my|our|his|her)\b/g, '').replace(/\s+/g, ' ').trim()}`;
-}
+/** After a 429 we stop asking for grounding for 10 minutes rather than for the whole session. */
+let groundingOffUntil = 0;
 
-let groundingDisabled = false;
-
-export async function lookupBaseRate(f: Fact, country: string, decoys = 1): Promise<BaseRate | undefined> {
+/**
+ * One cloud call per attribute, and only for attributes cloudSafeAttribute() allows. No decoys:
+ * a fixed decoy list published in this repo would be trivially filtered, so it added cost, not privacy.
+ */
+export async function lookupBaseRate(f: Fact, country: string): Promise<BaseRate | undefined> {
+  const safe = cloudSafeAttribute(f);
+  if (!safe.ok) return undefined;
   const r = route('baserate', 'own');
   const { ai } = getFirebase();
   // The router's decision is enforced, not just displayed: ONLY_IN_CLOUD via the hybrid API.
@@ -222,11 +228,11 @@ export async function lookupBaseRate(f: Fact, country: string, decoys = 1): Prom
       // ungrounded estimate, which is graded C and labelled "model estimate, no source".
       let res;
       try {
-        if (groundingDisabled) throw new Error('grounding disabled');
+        if (Date.now() < groundingOffUntil) throw new Error('grounding disabled');
         res = (await hedged(r.mode, groundedAt, (m) => m.generateContent(payload))).value;
       } catch (e) {
         if (/429|quota|grounding disabled/i.test(String((e as Error).message))) {
-          groundingDisabled = true;
+          groundingOffUntil = Date.now() + 10 * 60_000;
           res = (await hedged(r.mode, plainAt, (m) => m.generateContent(payload))).value;
         } else throw e;
       }
@@ -237,16 +243,8 @@ export async function lookupBaseRate(f: Fact, country: string, decoys = 1): Prom
       return undefined;
     }
   };
-  // Decoys go out in random order around the real query, so no single request stands out.
-  const attribute = generalize(f);
-  const decoyList = [...DECOYS].sort(() => Math.random() - 0.5).slice(0, decoys);
-  const order = [...decoyList.map((d) => ({ d, decoy: true })), { d: attribute, decoy: false }].sort(() => Math.random() - 0.5);
-  let real: Awaited<ReturnType<typeof ask>>;
-  for (const o of order) {
-    const res = await ask(o.d, o.decoy);
-    if (!o.decoy) real = res;
-  }
-  if (!real!) return undefined;
+  const real = await ask(safe.attribute, false);
+  if (!real) return undefined;
   const text = real.response.text().replace(/```json|```/g, '').trim();
   const m = text.match(/\{[\s\S]*\}/);
   if (!m) return undefined;
@@ -296,9 +294,17 @@ export async function blurDraft(draft: string, data: DataKind): Promise<{ rewrit
   return models.get(key)!;
   };
   const t0 = performance.now();
-  const { value: res } = await hedged(r.mode, blurModel, (m) => m.generateContent(draft));
-  const source = res.response.inferenceSource === 'in_cloud' ? 'in_cloud' : 'on_device';
-  record({ task: 'blur', mode: r.mode, reason: r.reason, source, ms: performance.now() - t0, sentToCloud: source === 'in_cloud' ? draft : '' });
-  const j = JSON.parse(res.response.text()) as { rewrite: string; removed: string[] };
-  return { ...j, source };
+  try {
+    const { value: res } = await hedged(r.mode, blurModel, (m) => m.generateContent(draft));
+    const source = res.response.inferenceSource === 'in_cloud' ? 'in_cloud' : 'on_device';
+    record({ task: 'blur', mode: r.mode, reason: r.reason, source, ms: performance.now() - t0, sentToCloud: source === 'in_cloud' ? draft : '' });
+    const j = JSON.parse(res.response.text()) as { rewrite?: unknown; removed?: unknown };
+    if (typeof j.rewrite !== 'string' || !j.rewrite.trim()) throw new Error('The model returned no rewrite. Try again.');
+    const removed = Array.isArray(j.removed) ? j.removed.filter((x): x is string => typeof x === 'string') : [];
+    return { rewrite: j.rewrite, removed, source };
+  } catch (e) {
+    if (e instanceof SyntaxError) e = new Error('The model returned malformed output. Try again.');
+    record({ task: 'blur', mode: r.mode, reason: r.reason, source: 'error', ms: performance.now() - t0, sentToCloud: '', error: String((e as Error).message).slice(0, 200) });
+    throw e;
+  }
 }

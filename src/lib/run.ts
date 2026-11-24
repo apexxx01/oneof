@@ -1,5 +1,6 @@
 import { prefilter } from './prefilter';
 import { BlockedError, extractFromPost, lookupBaseRate, type DataKind } from './ai';
+import { cloudSafeAttribute } from './attribute';
 import { buildDossier, rateKey } from './dossier';
 import type { BaseRate, Fact, Post } from './types';
 import type { RunLogEntry } from './replay';
@@ -21,6 +22,8 @@ export interface ScanProgress {
   /** Set while the scan pauses to let Gemini Nano recover after repeated timeouts. */
   cooling?: boolean;
   retried?: number;
+  /** True while the tab is hidden and the scan is waiting for it to come back. */
+  paused?: boolean;
 }
 
 /**
@@ -51,7 +54,7 @@ export async function scan(
   const readOne = async (post: Post, retry: boolean) => {
     st.current = post;
     try {
-      const r = await extractFromPost(post, data);
+      const r = await extractFromPost(post, data, 'extract', undefined, signal);
       st.facts.push(...r.facts);
       st.rejected += r.rejected;
       st.lastMs = r.ms;
@@ -62,6 +65,7 @@ export async function scan(
       return true;
     } catch (e) {
       if (e instanceof BlockedError) throw e;
+      if (signal?.aborted) return false;
       if (!retry) failed.push(post);
       else st.log.push({ postId: post.id, ms: 0, source: 'error', facts: [] });
       streak++;
@@ -73,7 +77,17 @@ export async function scan(
     await new Promise<void>((res) => { const t = setTimeout(res, COOL_MS); signal?.addEventListener('abort', () => { clearTimeout(t); res(); }, { once: true }); });
     st.cooling = false; streak = 0;
   };
+  // Chrome pauses on-device AI in background tabs; wait for the tab to come back rather than
+  // burning a 20 s timeout per post.
+  const whileHidden = () => new Promise<void>((res) => {
+    if (typeof document === 'undefined' || !document.hidden) return res();
+    const on = () => { if (!document.hidden) { document.removeEventListener('visibilitychange', on); res(); } };
+    document.addEventListener('visibilitychange', on);
+    signal?.addEventListener('abort', () => { document.removeEventListener('visibilitychange', on); res(); }, { once: true });
+  });
   for (const post of considered) {
+    if (signal?.aborted) break;
+    { st.paused = typeof document !== 'undefined' && document.hidden; if (st.paused) onUpdate({ ...st, facts: [...st.facts] }); await whileHidden(); st.paused = false; }
     if (signal?.aborted) break;
     await readOne(post, false);
     st.done++;
@@ -117,23 +131,41 @@ function saveRateCache(m: Map<string, BaseRate>) {
  * get a live, grounded base rate from the cloud, one generic attribute per request.
  * Offline, the bundled ranges stand (wider, amber).
  */
-export async function refineRates(facts: Fact[], country: string, onUpdate: (rates: Map<string, BaseRate>) => void) {
+const LOOKUP_CATS = new Set(['occupation', 'employer_type', 'education', 'family', 'relationship', 'vehicle', 'pet', 'rare_hobby', 'language', 'age']);
+
+export interface PlannedLookup { fact: Fact; attribute: string }
+
+/**
+ * Exactly what a base-rate refresh would send, one generic attribute per call. Values that look
+ * like names, numbers or long phrases are filtered out by cloudSafeAttribute() and stay local.
+ * For the user's own data the UI shows this list and asks before sending anything.
+ */
+export function plannedLookups(facts: Fact[]): PlannedLookup[] {
   const cache = loadRateCache();
   const d = buildDossier(facts, cache);
-  const LOOKUP_CATS = new Set(['occupation', 'employer_type', 'education', 'family', 'relationship', 'vehicle', 'pet', 'rare_hobby', 'language', 'age']);
   const wanted: Fact[] = [
     ...d.unresolved.filter((f) => LOOKUP_CATS.has(f.cat)),
     ...d.attributes.filter((a) => a.rate.grade === 'C' && a.rate.origin === 'bundled').map((a) => a.facts[0]),
   ];
   const seen = new Set<string>();
+  const out: PlannedLookup[] = [];
   for (const f of wanted) {
     const k = rateKey(f);
     if (seen.has(k) || cache.has(k)) continue;
     seen.add(k);
+    const safe = cloudSafeAttribute(f);
+    if (safe.ok) out.push({ fact: f, attribute: safe.attribute });
+  }
+  return out;
+}
+
+export async function refineRates(plan: PlannedLookup[], country: string, onUpdate: (rates: Map<string, BaseRate>) => void) {
+  const cache = loadRateCache();
+  for (const { fact } of plan) {
     if (!navigator.onLine) break;
-    const r = await lookupBaseRate(f, country);
+    const r = await lookupBaseRate(fact, country);
     if (r) {
-      cache.set(k, r);
+      cache.set(rateKey(fact), r);
       saveRateCache(cache);
       onUpdate(new Map(cache));
     }

@@ -147,3 +147,6 @@ footer { margin-top: 40px; }
 .spike .log { max-height: 280px; }
 
 .warn-text { color: var(--amber); }
+
+.consent { margin-top: 1.25rem; padding: 1rem; border: 1px solid var(--line, #2a2a2a); border-radius: 12px; }
+.consent h4 { margin: 0 0 .4rem; }
