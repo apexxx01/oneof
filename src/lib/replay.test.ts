@@ -22,3 +22,13 @@ describe('replay', () => {
     expect(out.done).toBe(0);
   });
 });
+
+import { withBudget } from './ai';
+describe('withBudget', () => {
+  it('rejects a call that never resolves', async () => {
+    await expect(withBudget(new Promise(() => undefined), 20)).rejects.toThrow(/timed out/);
+  });
+  it('passes a fast result through', async () => {
+    await expect(withBudget(Promise.resolve(7), 1000)).resolves.toBe(7);
+  });
+});

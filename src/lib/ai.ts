@@ -24,8 +24,26 @@ const BREAKER_MS = 60_000;
 const trippedUntil = new Map<string, number>();
 
 /** Runs a call down the cloud chain. make(tier) must return a model whose cloud side uses that tier. */
+/**
+ * Gemini Nano occasionally never resolves a prompt (seen live: one post stalled a 200-post scan).
+ * The SDK exposes no abort for on-device calls, so we race a budget and move on; the call is
+ * logged as an error and the next post gets a fresh session.
+ */
+export const ON_DEVICE_BUDGET_MS = 20_000;
+export function withBudget<T>(p: Promise<T>, ms: number, what = 'on-device call'): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error(`${what} timed out after ${ms / 1000}s`)), ms);
+    p.then((v) => { clearTimeout(t); resolve(v); }, (e) => { clearTimeout(t); reject(e); });
+  });
+}
+
 async function hedged<T>(mode: Mode, make: (tier: (typeof CLOUD_CHAIN)[number], i: number) => GenerativeModel, run: (m: GenerativeModel) => Promise<T>): Promise<{ value: T; model: string }> {
-  if (mode === 'ONLY_ON_DEVICE') return { value: await run(make(CLOUD_CHAIN[0], 0)), model: 'on-device' };
+  if (mode === 'ONLY_ON_DEVICE') return { value: await withBudget(run(make(CLOUD_CHAIN[0], 0)), ON_DEVICE_BUDGET_MS), model: 'on-device' };
+  if (mode === 'PREFER_ON_DEVICE' && (await onDeviceAvailability()) === 'available') {
+    // Nano present: the SDK will route on-device, so the on-device budget applies. A stall is logged
+    // as an error for that one post rather than silently re-sent to the cloud.
+    return { value: await withBudget(run(make(CLOUD_CHAIN[0], 0)), ON_DEVICE_BUDGET_MS), model: 'on-device' };
+  }
   const now = Date.now();
   const open = CLOUD_CHAIN.filter((t) => (trippedUntil.get(t.model) ?? 0) <= now);
   const tiers = open.length ? open : [...CLOUD_CHAIN];
