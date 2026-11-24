@@ -97,7 +97,7 @@ export default function App() {
       const res = await scan(list, kind, (p) => { setProgress(p); setFacts(p.facts); }, abort.current.signal);
       setFacts(res.facts);
       setLastRun(res);
-      (window as unknown as { __oneofRun?: Replay }).__oneofRun = toReplay(res, persona?.handle ?? 'own');
+      (window as unknown as { __oneofRun?: Replay }).__oneofRun = toReplay(res, kind === 'synthetic' ? 'quietnight_rn' : 'own');
       setPhase('result');
       if (navigator.onLine) refineRates(res.facts, 'United States', setRates).catch(() => undefined);
     } catch (e) {
