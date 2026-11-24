@@ -1,0 +1,1 @@
+on_device · batch 1 · x1   raw recall 88% precision 20%  →  after verify(): recall 88% precision 64% (traps 1, extra 3)

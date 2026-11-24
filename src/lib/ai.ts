@@ -139,8 +139,15 @@ let groundingDisabled = false;
 export async function lookupBaseRate(f: Fact, country: string, decoys = 1): Promise<BaseRate | undefined> {
   const r = route('baserate', 'own');
   const { ai } = getFirebase();
-  const grounded = getGenerativeModel(ai, { model: CLOUD_MODEL, systemInstruction: BASERATE_SYSTEM, tools: [{ googleSearch: {} }] });
-  const plain = getGenerativeModel(ai, { model: CLOUD_MODEL, systemInstruction: BASERATE_SYSTEM.replace('using Google Search for current official statistics', 'from your knowledge of official statistics') });
+  // The router's decision is enforced, not just displayed: ONLY_IN_CLOUD via the hybrid API.
+  const grounded = getGenerativeModel(ai, {
+    mode: InferenceMode[r.mode],
+    inCloudParams: { model: CLOUD_MODEL, systemInstruction: BASERATE_SYSTEM, tools: [{ googleSearch: {} }] },
+  });
+  const plain = getGenerativeModel(ai, {
+    mode: InferenceMode[r.mode],
+    inCloudParams: { model: CLOUD_MODEL, systemInstruction: BASERATE_SYSTEM.replace('using Google Search for current official statistics', 'from your knowledge of official statistics') },
+  });
   const ask = async (attribute: string, decoy: boolean) => {
     const payload = `Attribute: ${attribute}\nCountry: ${country}`;
     const t0 = performance.now();

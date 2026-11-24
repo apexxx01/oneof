@@ -4,9 +4,9 @@ import type { Post } from './types';
 
 /**
  * Importers for the user's OWN data. Everything is parsed locally in the browser.
- * Reddit exports also contain IP logs, messages and chat history; we never open them.
+ * Reddit exports also contain IP logs, messages and chat history. Only posts.csv and comments.csv
+ * are read (an allow-list); every other file is listed as skipped and never opened.
  */
-export const IGNORED_REDDIT_FILES = /ip_logs|messages|chat_history|message_headers|sessions|payment|purchases|subscriptions|drafts|account_gender|linked_identities|birthdate|stripe|twitter|user_preferences/i;
 
 export interface ImportResult { posts: Post[]; skippedFiles: string[]; format: string }
 

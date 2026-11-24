@@ -127,7 +127,7 @@ export default function App() {
               AI can now unmask pseudonymous accounts for <b>$1–4 a profile</b> by stitching together harmless details across years of posts.
               OneOf builds that dossier first, <b>on your own device</b>, and shows how small a crowd you’re really hiding in.
             </p>
-            <p className="cite small">Lermen et al., “Large-scale online deanonymization with LLMs”, USENIX Security ’26: 68% recall at 90% precision.</p>
+            <p className="cite small">English only for now. Lermen et al., “Large-scale online deanonymization with LLMs”, USENIX Security ’26: 68% recall at 90% precision.</p>
           </section>
 
           <section className="start">
