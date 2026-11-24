@@ -18,6 +18,8 @@ export interface LedgerEntry {
   sentToCloud: string;
   decoy?: boolean;
   error?: string;
+  /** Cloud model that answered, when a fallback tier was used. */
+  model?: string;
 }
 
 type Listener = (entries: LedgerEntry[]) => void;

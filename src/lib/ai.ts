@@ -9,6 +9,39 @@ import type { BaseRate, Fact, Post } from './types';
 import { rateKey } from './dossier';
 
 export const CLOUD_MODEL = 'gemini-3.5-flash-lite';
+/**
+ * Hedged cloud chain. Flash-Lite is fast and cheap but has hung for minutes at a time; when it
+ * doesn't answer within its budget we retry once on Flash. On-device calls never use this.
+ */
+export const CLOUD_CHAIN = [
+  { model: CLOUD_MODEL, timeout: 12_000 },
+  { model: 'gemini-3.5-flash', timeout: 45_000 },
+] as const;
+
+const RETRYABLE = /timeout|timed out|abort|fetch|network|429|quota|exhausted|50\d|overloaded|unavailable|deadline|internal/i;
+/** Circuit breaker: a tier that just failed is skipped for a minute instead of costing every post a timeout. */
+const BREAKER_MS = 60_000;
+const trippedUntil = new Map<string, number>();
+
+/** Runs a call down the cloud chain. make(tier) must return a model whose cloud side uses that tier. */
+async function hedged<T>(mode: Mode, make: (tier: (typeof CLOUD_CHAIN)[number], i: number) => GenerativeModel, run: (m: GenerativeModel) => Promise<T>): Promise<{ value: T; model: string }> {
+  if (mode === 'ONLY_ON_DEVICE') return { value: await run(make(CLOUD_CHAIN[0], 0)), model: 'on-device' };
+  const now = Date.now();
+  const open = CLOUD_CHAIN.filter((t) => (trippedUntil.get(t.model) ?? 0) <= now);
+  const tiers = open.length ? open : [...CLOUD_CHAIN];
+  let last: unknown;
+  for (const [i, tier] of tiers.entries()) {
+    try {
+      return { value: await run(make(tier, i)), model: tier.model };
+    } catch (e) {
+      last = e;
+      const retryable = RETRYABLE.test(String((e as Error)?.message ?? e));
+      if (retryable) trippedUntil.set(tier.model, Date.now() + BREAKER_MS);
+      if (i === tiers.length - 1 || !retryable) throw e;
+    }
+  }
+  throw last;
+}
 
 /** Whose data is this? Decides how far it may travel. */
 export type DataKind = 'own' | 'synthetic';
@@ -50,8 +83,8 @@ export async function onDeviceAvailability(): Promise<Availability> {
 // ---------- models (cached per mode) ----------
 const models = new Map<string, GenerativeModel>();
 
-function extractModel(mode: Mode): GenerativeModel {
-  const key = `extract:${mode}`;
+function extractModel(mode: Mode, tier: (typeof CLOUD_CHAIN)[number] = CLOUD_CHAIN[0]): GenerativeModel {
+  const key = `extract:${mode}:${tier.model}`;
   if (models.has(key)) return models.get(key)!;
   const { ai } = getFirebase();
   const m = getGenerativeModel(ai, {
@@ -69,11 +102,11 @@ function extractModel(mode: Mode): GenerativeModel {
       promptOptions: { responseConstraint: FACT_BATCH_JSON_SCHEMA },
     },
     inCloudParams: {
-      model: CLOUD_MODEL,
+      model: tier.model,
       systemInstruction: `${EXTRACT_SYSTEM}\n\nExample input:\n${EXTRACT_EXAMPLE_USER}\n\nExample output:\n${EXTRACT_EXAMPLE_ASSISTANT}`,
       generationConfig: { responseMimeType: 'application/json', responseJsonSchema: FACT_BATCH_JSON_SCHEMA, temperature: 0 },
     },
-  });
+  }, { timeout: tier.timeout });
   models.set(key, m);
   return m;
 }
@@ -100,10 +133,10 @@ export async function extractFromPost(post: Post, data: DataKind, task: 'extract
   const t0 = performance.now();
   const prompt = batchPrompt([post.text]);
   try {
-    const res = await extractModel(r.mode).generateContent(prompt);
+    const { value: res, model } = await hedged(r.mode, (tier) => extractModel(r.mode, tier), (m) => m.generateContent(prompt));
     const ms = performance.now() - t0;
     const source = res.response.inferenceSource === 'in_cloud' ? 'in_cloud' : 'on_device';
-    record({ task, mode: r.mode, reason: r.reason, source, ms, sentToCloud: source === 'in_cloud' ? prompt : '' });
+    record({ task, mode: r.mode, reason: r.reason, source, ms, sentToCloud: source === 'in_cloud' ? prompt : '', model: source === 'in_cloud' ? model : undefined });
     const parsed = FactBatchZ.safeParse(JSON.parse(res.response.text()));
     if (!parsed.success) return { facts: [], rejected: 0, source, ms };
     let rejected = 0;
@@ -142,14 +175,14 @@ export async function lookupBaseRate(f: Fact, country: string, decoys = 1): Prom
   const r = route('baserate', 'own');
   const { ai } = getFirebase();
   // The router's decision is enforced, not just displayed: ONLY_IN_CLOUD via the hybrid API.
-  const grounded = getGenerativeModel(ai, {
+  const groundedAt = (t: (typeof CLOUD_CHAIN)[number]) => getGenerativeModel(ai, {
     mode: InferenceMode[r.mode],
-    inCloudParams: { model: CLOUD_MODEL, systemInstruction: BASERATE_SYSTEM, tools: [{ googleSearch: {} }] },
-  });
-  const plain = getGenerativeModel(ai, {
+    inCloudParams: { model: t.model, systemInstruction: BASERATE_SYSTEM, tools: [{ googleSearch: {} }] },
+  }, { timeout: t.timeout });
+  const plainAt = (t: (typeof CLOUD_CHAIN)[number]) => getGenerativeModel(ai, {
     mode: InferenceMode[r.mode],
-    inCloudParams: { model: CLOUD_MODEL, systemInstruction: BASERATE_SYSTEM.replace('using Google Search for current official statistics', 'from your knowledge of official statistics') },
-  });
+    inCloudParams: { model: t.model, systemInstruction: BASERATE_SYSTEM.replace('using Google Search for current official statistics', 'from your knowledge of official statistics') },
+  }, { timeout: t.timeout });
   const ask = async (attribute: string, decoy: boolean) => {
     const payload = `Attribute: ${attribute}\nCountry: ${country}`;
     const t0 = performance.now();
@@ -159,11 +192,11 @@ export async function lookupBaseRate(f: Fact, country: string, decoys = 1): Prom
       let res;
       try {
         if (groundingDisabled) throw new Error('grounding disabled');
-        res = await grounded.generateContent(payload);
+        res = (await hedged(r.mode, groundedAt, (m) => m.generateContent(payload))).value;
       } catch (e) {
         if (/429|quota|grounding disabled/i.test(String((e as Error).message))) {
           groundingDisabled = true;
-          res = await plain.generateContent(payload);
+          res = (await hedged(r.mode, plainAt, (m) => m.generateContent(payload))).value;
         } else throw e;
       }
       record({ task: 'baserate', mode: r.mode, reason: r.reason, source: 'in_cloud', ms: performance.now() - t0, sentToCloud: payload, decoy });
@@ -212,7 +245,8 @@ const BLUR_SCHEMA = {
 export async function blurDraft(draft: string, data: DataKind): Promise<{ rewrite: string; removed: string[]; source: string }> {
   const r = route('blur', data);
   if (r.mode === 'ONLY_ON_DEVICE' && (await onDeviceAvailability()) !== 'available') throw new BlockedError();
-  const key = `blur:${r.mode}`;
+  const blurModel = (tier: (typeof CLOUD_CHAIN)[number]) => {
+  const key = `blur:${r.mode}:${tier.model}`;
   if (!models.has(key)) {
     const { ai } = getFirebase();
     models.set(key, getGenerativeModel(ai, {
@@ -225,11 +259,13 @@ export async function blurDraft(draft: string, data: DataKind): Promise<{ rewrit
         },
         promptOptions: { responseConstraint: BLUR_SCHEMA },
       },
-      inCloudParams: { model: CLOUD_MODEL, systemInstruction: BLUR_SYSTEM, generationConfig: { responseMimeType: 'application/json', responseJsonSchema: BLUR_SCHEMA } },
-    }));
+      inCloudParams: { model: tier.model, systemInstruction: BLUR_SYSTEM, generationConfig: { responseMimeType: 'application/json', responseJsonSchema: BLUR_SCHEMA } },
+    }, { timeout: tier.timeout }));
   }
+  return models.get(key)!;
+  };
   const t0 = performance.now();
-  const res = await models.get(key)!.generateContent(draft);
+  const { value: res } = await hedged(r.mode, blurModel, (m) => m.generateContent(draft));
   const source = res.response.inferenceSource === 'in_cloud' ? 'in_cloud' : 'on_device';
   record({ task: 'blur', mode: r.mode, reason: r.reason, source, ms: performance.now() - t0, sentToCloud: source === 'in_cloud' ? draft : '' });
   const j = JSON.parse(res.response.text()) as { rewrite: string; removed: string[] };
