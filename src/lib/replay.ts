@@ -5,6 +5,7 @@
  */
 import type { Fact } from './types';
 import type { ScanProgress } from './run';
+import { EXTRACT_PROMPT_VERSION } from './prompts';
 
 export interface RunLogEntry { postId: string; ms: number; source: 'on_device' | 'in_cloud' | 'error'; facts: Fact[] }
 
@@ -13,6 +14,8 @@ export interface Replay {
   recordedAt: string;
   userAgent: string;
   persona: string;
+  /** Extraction prompt version the run was recorded with. */
+  promptVersion?: string;
   postsTotal: number;
   postsRead: number;
   fastPass: number;
@@ -25,7 +28,7 @@ export interface Replay {
 
 export function toReplay(p: ScanProgress, persona: string): Replay {
   return {
-    version: 1, recordedAt: new Date().toISOString(), userAgent: navigator.userAgent, persona,
+    version: 1, recordedAt: new Date().toISOString(), userAgent: navigator.userAgent, persona, promptVersion: EXTRACT_PROMPT_VERSION,
     postsTotal: p.total, postsRead: p.done, fastPass: p.fastPass, onDevice: p.onDevice, inCloud: p.inCloud, rejected: p.rejected,
     totalMs: Math.round(p.log.reduce((s, e) => s + e.ms, 0)), log: p.log,
   };

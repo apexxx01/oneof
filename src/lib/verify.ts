@@ -7,6 +7,10 @@ const PLACEHOLDER = /\b(unknown|unspecified|not specified|n\/a|none|near me|some
 const HYPOTHETICAL = /\b(imagine|if i (had|were|was|lived)|i wish i|someday|hypothetically|pretend)\b/i;
 /** Everyday interests that never narrow anyone down. */
 const GENERIC = /\b(cooking|board games?|football|soccer|basketball|music|movies?|tv|netflix|reading|books?|gaming|video games?|coffee|tea|sleep|food|baking|walking|shopping|travel)\b/i;
+/** Family values that name an actual role. */
+const FAMILY_ROLE = /\b(mom|mum|mother|dad|father|parent|single|twins?|kids?|children|son|daughter|wife|husband|divorced|widow)/i;
+/** Values that name no actual job. */
+const VAGUE_OCCUPATION = /^(an? )?(job|work|worker|grind|person|people|professional|expert|individual|employee|staff|someone|flexible.*|intellectual.*|career)$/i;
 const GROUNDED_CATS = new Set(['home_location', 'work_location', 'vehicle', 'pet', 'language', 'education', 'employer_type']);
 const tokens = (s: string) => new Set(s.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter((w) => w.length > 2));
 
@@ -23,6 +27,12 @@ export function verify(f: RawFact, post: Post): { ok: boolean; why?: string } {
   const lead = normalize(post.text).slice(0, normalize(post.text).indexOf(normalize(f.quote)) + normalize(f.quote).length);
   if (HYPOTHETICAL.test(lead)) return { ok: false, why: 'hypothetical' };
   if (f.cat === 'rare_hobby' && GENERIC.test(f.value)) return { ok: false, why: 'generic interest' };
+  if ((f.cat === 'occupation' || f.cat === 'employer_type') && VAGUE_OCCUPATION.test(f.value.trim())) return { ok: false, why: 'vague job' };
+  // Implied hobbies, ages and family facts were mostly noise on SynthPAI dev personas
+  // ("chili enthusiast", "30s", "member of group"). Implied family roles stay: Nano labels
+  // "being a single mom" as implied.
+  if ((f.cat === 'rare_hobby' || f.cat === 'age') && f.certainty === 'implied') return { ok: false, why: 'implied hobby or age' };
+  if (f.cat === 'family' && f.certainty === 'implied' && !FAMILY_ROLE.test(f.value)) return { ok: false, why: 'implied family, no role' };
   if ((f.cat === 'home_location' || f.cat === 'work_location') && !/[A-Z]/.test(f.value) && !/night|day|shift|remote|hospital|office/i.test(f.value)) {
     return { ok: false, why: 'not a place name' };
   }

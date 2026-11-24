@@ -25,3 +25,24 @@ describe('verify (deterministic gate after the model)', () => {
     it(`${ok ? 'keeps' : 'drops'}: ${name}`, () => expect(verify(f, post(text)).ok).toBe(ok));
   }
 });
+
+describe('rules tuned on SynthPAI dev personas', () => {
+  const post = (text: string) => ({ id: 'x', date: '2024-01-01', text });
+  const fact = (cat: 'occupation' | 'rare_hobby' | 'age' | 'family', value: string, quote: string, certainty: 'stated' | 'implied' = 'implied') => ({ p: 0, cat, value, quote, about_self: true, certainty });
+  it('drops jobs that name nothing', () => {
+    expect(verify(fact('occupation', 'grind', 'back to the grind', 'stated'), post('back to the grind')).ok).toBe(false);
+    expect(verify(fact('occupation', 'person', 'as a person', 'stated'), post('as a person who hates mornings')).ok).toBe(false);
+  });
+  it('keeps a real implied job', () => {
+    expect(verify(fact('occupation', 'software developer', 'debugging my code all day'), post('debugging my code all day, send help')).ok).toBe(true);
+  });
+  it('drops implied hobbies and ages, keeps stated ones', () => {
+    expect(verify(fact('rare_hobby', 'chili enthusiast', 'good chili recipe'), post('anyone have a good chili recipe')).ok).toBe(false);
+    expect(verify(fact('age', '30s', 'back in my day'), post('back in my day we walked')).ok).toBe(false);
+    expect(verify(fact('age', '34', 'I turned 34', 'stated'), post('I turned 34 today')).ok).toBe(true);
+  });
+  it('keeps implied family roles (Nano marks "being a single mom" as implied) but drops vague ones', () => {
+    expect(verify(fact('family', 'single mom', 'being a single mom'), post('being a single mom on night shifts')).ok).toBe(true);
+    expect(verify(fact('family', 'member of group', 'the group chat'), post('the group chat has been silent')).ok).toBe(false);
+  });
+});

@@ -197,7 +197,7 @@ export default function App() {
 
       {phase === 'scan' && progress && (
         <main className="scan">
-          {replaying && replay && <div className="banner warn mono">REPLAY · recorded with Gemini Nano in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)} · {REPLAY_SPEED}× speed · real timings shown</div>}
+          {replaying && replay && <div className="banner warn mono">REPLAY · recorded with Gemini Nano in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)}{replay.promptVersion ? ` · prompt ${replay.promptVersion}` : ''} · {REPLAY_SPEED}× speed · real timings shown</div>}
           <h2>Reading {progress.total} posts like an attacker would</h2>
           <div className="scan-stats mono">
             <span>{progress.done} / {progress.considered} posts read</span>
