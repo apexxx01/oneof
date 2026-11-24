@@ -145,3 +145,5 @@ footer { margin-top: 40px; }
 .spike th, .spike td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left; white-space: nowrap; }
 .spike pre { background: var(--panel); padding: 12px; border-radius: 8px; overflow: auto; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
 .spike .log { max-height: 280px; }
+
+.warn-text { color: var(--amber); }

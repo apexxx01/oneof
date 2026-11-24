@@ -209,6 +209,8 @@ export default function App() {
           </div>
           <div className="bar"><div style={{ width: `${(progress.done / Math.max(1, progress.considered)) * 100}%` }} /></div>
           <p className="small muted">Keep this tab in front: Chrome can pause on-device AI in background tabs.</p>
+          {progress.cooling && <p className="small mono warn-text">Gemini Nano is slowing down, so we’re pausing 20 s to let it recover. Skipped posts get retried at the end.</p>}
+          {!progress.cooling && progress.retried ? <p className="small mono muted">Retrying {progress.retried} posts that timed out.</p> : null}
           {progress.current && <div className="current mono">“{progress.current.text.slice(0, 120)}”</div>}
           <div className="live">
             <Meter e={estimate(buildDossier(facts, rates).region, buildDossier(facts, rates).attributes)} label="Crowd so far" />

@@ -18,6 +18,9 @@ export interface ScanProgress {
   /** Per-post record of the run; exported as a replay. */
   log: RunLogEntry[];
   current?: Post;
+  /** Set while the scan pauses to let Gemini Nano recover after repeated timeouts. */
+  cooling?: boolean;
+  retried?: number;
 }
 
 /**
@@ -31,6 +34,7 @@ export async function scan(
   data: DataKind,
   onUpdate: (p: ScanProgress) => void,
   signal?: AbortSignal,
+  opts: { coolMs?: number } = {},
 ): Promise<ScanProgress> {
   const verdicts = posts.map((p) => ({ p, v: prefilter(p.text) }));
   const scannable = verdicts.filter(({ v }) => v.reason !== 'too_short' && v.reason !== 'link_only');
@@ -39,8 +43,12 @@ export async function scan(
   const considered = [...fast, ...deep];
   const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass: fast.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
   onUpdate({ ...st });
-  for (const post of considered) {
-    if (signal?.aborted) break;
+  // Gemini Nano slows down or stalls under long sustained load (seen live after ~100 prompts).
+  // Two failures in a row trigger a cool-down; failed posts get one retry at the end.
+  const COOL_MS = opts.coolMs ?? 20_000;
+  const failed: Post[] = [];
+  let streak = 0;
+  const readOne = async (post: Post, retry: boolean) => {
     st.current = post;
     try {
       const r = await extractFromPost(post, data);
@@ -50,13 +58,36 @@ export async function scan(
       st.log.push({ postId: post.id, ms: Math.round(r.ms), source: r.source, facts: r.facts });
       if (r.source === 'on_device') st.onDevice++;
       else st.inCloud++;
+      streak = 0;
+      return true;
     } catch (e) {
       if (e instanceof BlockedError) throw e;
-      st.log.push({ postId: post.id, ms: 0, source: 'error', facts: [] });
-      // A single failed call shouldn't kill a 10-minute scan.
+      if (!retry) failed.push(post);
+      else st.log.push({ postId: post.id, ms: 0, source: 'error', facts: [] });
+      streak++;
+      return false;
     }
+  };
+  const coolDown = async () => {
+    st.cooling = true; onUpdate({ ...st, facts: [...st.facts] });
+    await new Promise<void>((res) => { const t = setTimeout(res, COOL_MS); signal?.addEventListener('abort', () => { clearTimeout(t); res(); }, { once: true }); });
+    st.cooling = false; streak = 0;
+  };
+  for (const post of considered) {
+    if (signal?.aborted) break;
+    await readOne(post, false);
     st.done++;
     onUpdate({ ...st, facts: [...st.facts] });
+    if (streak >= 2) await coolDown();
+  }
+  if (failed.length && !signal?.aborted) {
+    st.retried = failed.length;
+    await coolDown();
+    for (const post of failed) {
+      if (signal?.aborted) break;
+      await readOne(post, true);
+      onUpdate({ ...st, facts: [...st.facts] });
+    }
   }
   st.current = undefined;
   onUpdate({ ...st });
