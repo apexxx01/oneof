@@ -34,9 +34,14 @@ export async function importRedditZip(buf: ArrayBuffer): Promise<ImportResult> {
   return { posts: dedupe(posts), skippedFiles, format: 'Reddit data export' };
 }
 
+const DELETED_BODIES = new Set(['[deleted]', '[removed]']);
+
 function fromCsv(text: string, kind: string): Post[] {
   const parsed = Papa.parse<Record<string, string>>(text, { header: true, skipEmptyLines: true });
   return parsed.data
+    // Check the body fields themselves: a titled post with a deleted body would otherwise
+    // survive, because the joined "title — [deleted]" string never equals "[deleted]".
+    .filter((row) => ![row.body, row.text, row.content].some((v) => DELETED_BODIES.has((v ?? '').trim())))
     .map((row, i) => {
       // We deliberately ignore the "ip" column and anything else not listed here.
       const body = [row.title, row.body, row.text, row.content].filter(Boolean).join(' — ').trim();
