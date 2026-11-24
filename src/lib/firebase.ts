@@ -4,13 +4,27 @@ import { getAI, GoogleAIBackend, type AI } from 'firebase/ai';
 
 const env = import.meta.env;
 
+/**
+ * Firebase web config. These values identify the project; they are not secrets
+ * (https://firebase.google.com/docs/projects/api-keys). Access is protected by App Check
+ * and API-key restrictions, not by hiding them. .env.local overrides for forks.
+ */
+const PUBLIC = {
+  apiKey: 'AIzaSyDhMO0hC9Jn1qGNdpkFAql29nEOBdgzKRY',
+  authDomain: 'oneof-8d62e.firebaseapp.com',
+  projectId: 'oneof-8d62e',
+  storageBucket: 'oneof-8d62e.firebasestorage.app',
+  messagingSenderId: '588996291286',
+  appId: '1:588996291286:web:3d5a2af5169a449caf7777',
+};
+
 export const firebaseConfig = {
-  apiKey: env.VITE_FIREBASE_API_KEY,
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: env.VITE_FIREBASE_APP_ID,
+  apiKey: env.VITE_FIREBASE_API_KEY || PUBLIC.apiKey,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || PUBLIC.authDomain,
+  projectId: env.VITE_FIREBASE_PROJECT_ID || PUBLIC.projectId,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || PUBLIC.storageBucket,
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || PUBLIC.messagingSenderId,
+  appId: env.VITE_FIREBASE_APP_ID || PUBLIC.appId,
 };
 
 export function configProblems(): string[] {

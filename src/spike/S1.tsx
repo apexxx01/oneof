@@ -50,7 +50,7 @@ export default function S1() {
   const say = (m: string) => setLog((l) => [`${new Date().toLocaleTimeString()}  ${m}`, ...l].slice(0, 200));
 
   async function load() {
-    const p = (await (await fetch('/personas/p1.json')).json()) as Persona;
+    const p = (await (await fetch(`${import.meta.env.BASE_URL}personas/p1.json`)).json()) as Persona;
     setPersona(p);
     const kept = p.posts.filter((x) => prefilter(x.text).keep).length;
     say(`Loaded ${p.handle}: ${p.posts.length} posts, ${p.truth.length} planted facts, ${p.traps.length} traps. Prefilter keeps ${kept}.`);

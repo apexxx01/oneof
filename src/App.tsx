@@ -84,7 +84,7 @@ export default function App() {
   }
 
   async function loadPersona() {
-    const p = (await (await fetch('/personas/p1.json')).json()) as Persona;
+    const p = (await (await fetch(`${import.meta.env.BASE_URL}personas/p1.json`)).json()) as Persona;
     setPersona(p);
     return p;
   }
