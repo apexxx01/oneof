@@ -11,6 +11,8 @@ OneOf reads your own post history with on-device AI, builds the dossier an AI at
 
 Live demo: **https://apexxx01.github.io/oneof/** (desktop Chrome with Gemini Nano for on-device mode, tested on Chrome 158; other browsers get a labelled replay of a recorded on-device run, or cloud fallback for the synthetic demo)
 
+Chrome extension: [`extension/`](extension/README.md) — checks a Reddit draft in the comment box before you post it, on-device with Gemini Nano, with no network access at all (CSP `connect-src 'self'`).
+
 iOS app: [`ios/`](ios/README.md) — SwiftUI on Firebase AI Logic hybrid inference, with Apple Intelligence on-device and Gemini in the cloud. It shares the web core through a golden-tested Swift port. [Receipt: 200/200 posts on-device, 0 cloud, same dossier and same number as the web build](receipts/ios/README.md)
 
 Demo video: (coming soon)
