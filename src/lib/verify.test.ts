@@ -46,3 +46,19 @@ describe('rules tuned on SynthPAI dev personas', () => {
     expect(verify(fact('family', 'member of group', 'the group chat'), post('the group chat has been silent')).ok).toBe(false);
   });
 });
+
+describe('facts about relatives (seen live on Nano)', () => {
+  const post = (text: string) => ({ id: 'x', date: '2024-01-01', text });
+  it('drops "my sister in Seattle" as the author\'s location', () => {
+    const text = 'my sister in Seattle says it is cold there';
+    expect(verify({ p: 0, cat: 'home_location', value: 'Seattle', quote: text, about_self: true, certainty: 'stated' }, post(text)).ok).toBe(false);
+  });
+  it('keeps the author\'s own city', () => {
+    const text = 'it has rained for nine days straight here in Columbus';
+    expect(verify({ p: 0, cat: 'home_location', value: 'Columbus', quote: text, about_self: true, certainty: 'stated' }, post(text)).ok).toBe(true);
+  });
+  it('still keeps "my husband" as a relationship fact', () => {
+    const text = 'my husband works nights too';
+    expect(verify({ p: 0, cat: 'relationship', value: 'married', quote: 'my husband', about_self: true, certainty: 'implied' }, post(text)).ok).toBe(true);
+  });
+});

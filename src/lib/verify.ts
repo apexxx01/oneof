@@ -7,6 +7,13 @@ const PLACEHOLDER = /\b(unknown|unspecified|not specified|n\/a|none|near me|some
 const HYPOTHETICAL = /\b(imagine|if i (had|were|was|lived)|i wish i|someday|hypothetically|pretend)\b/i;
 /** Everyday interests that never narrow anyone down. */
 const GENERIC = /\b(cooking|board games?|football|soccer|basketball|music|movies?|tv|netflix|reading|books?|gaming|video games?|coffee|tea|sleep|food|baking|walking|shopping|travel)\b/i;
+/**
+ * "my sister in Seattle", "my cousin drives a Tesla": the fact belongs to the relative. Seen live
+ * on Nano (it set about_self=true for "my sister in Seattle"). Relationship and family facts are
+ * exempt: "my husband" does say something about the author.
+ */
+const SOMEONE_ELSE = /\bmy (sister|brother|cousin|friend|best friend|bff|mom|mum|mother|dad|father|aunt|uncle|grand(ma|pa|mother|father)|neighbou?r|co-?worker|colleague|boss|roommate|son|daughter|kid|niece|nephew|in-laws?)s?\b/i;
+const THIRD_PARTY_CATS = new Set(['home_location', 'work_location', 'occupation', 'employer_type', 'education', 'vehicle', 'pet', 'rare_hobby', 'age']);
 /** Family values that name an actual role. */
 const FAMILY_ROLE = /\b(mom|mum|mother|dad|father|parent|single|twins?|kids?|children|son|daughter|wife|husband|divorced|widow)/i;
 /** Values that name no actual job. */
@@ -24,6 +31,7 @@ export function verify(f: RawFact, post: Post): { ok: boolean; why?: string } {
   if (f.cat === 'other') return { ok: false, why: 'uncategorized' };
   if (PLACEHOLDER.test(f.value)) return { ok: false, why: 'placeholder value' };
   if (!normalize(post.text).includes(normalize(f.quote))) return { ok: false, why: 'quote not in post' };
+  if (THIRD_PARTY_CATS.has(f.cat) && SOMEONE_ELSE.test(f.quote)) return { ok: false, why: 'about someone else' };
   const lead = normalize(post.text).slice(0, normalize(post.text).indexOf(normalize(f.quote)) + normalize(f.quote).length);
   if (HYPOTHETICAL.test(lead)) return { ok: false, why: 'hypothetical' };
   if (f.cat === 'rare_hobby' && GENERIC.test(f.value)) return { ok: false, why: 'generic interest' };
