@@ -11,6 +11,8 @@ OneOf reads your own post history with on-device AI, builds the dossier an AI at
 
 Live demo: **https://apexxx01.github.io/oneof/** (desktop Chrome with Gemini Nano for on-device mode, tested on Chrome 158; other browsers get a labelled replay of a recorded on-device run, or cloud fallback for the synthetic demo)
 
+iOS app: [`ios/`](ios/) — SwiftUI on Firebase AI Logic hybrid inference, with Apple Intelligence on-device and Gemini in the cloud. It shares the web core through a golden-tested Swift port. [Receipt: 200/200 posts on-device, 0 cloud](receipts/ios/README.md)
+
 Demo video: (coming soon)
 
 Built for the Firebase #BuildHybridAI hackathon.
@@ -102,6 +104,24 @@ Copy rules: the output never says "safe" or "identified". Every factor opens to 
 - **Google Search grounding.** Wired in for base-rate lookups (the grounding source URL becomes a grade-B citation), but it needs a paid plan; see below.
 - **Planned:** Remote Config (batch size, debounce, band thresholds, prompt version) and a Firestore public base-rate cache. Neither is wired up in the current code.
 
+## iOS app (Apple Intelligence)
+
+The same product as a native iPhone app, on **Firebase AI Logic hybrid inference for Apple platforms**: Apple's Foundation Models on-device (`FirebaseAI.SystemLanguageModel`), Gemini in the cloud, `HybridModel(primary:secondary:)` for the synthetic demo, and one `GenerativeModelSession` per post.
+
+| Data | iOS session | Same rule as the web |
+|---|---|---|
+| Your posts, your drafts, the blur rewrite | `SystemLanguageModel` only; refuses if Apple Intelligence is off | `ONLY_ON_DEVICE` |
+| Synthetic demo persona | `HybridModel(primary: system, secondary: gemini-3.5-flash-lite)` | `PREFER_ON_DEVICE` |
+| Base rates (one generic attribute, after a consent sheet) | `gemini-3.5-flash-lite` → `gemini-3.5-flash`, Google Search grounding when quota allows | `ONLY_IN_CLOUD` |
+
+- **Where each answer ran is read from the response** (`rawResponse.modelVersion` is Apple's model name for on-device answers). It isn't inferred from the route, and the "What the cloud saw" ledger shows the exact bytes that left the phone.
+- **One core, two languages.** `ios/OneOfCore` ports the checker, cloud-safe filter, estimator, dossier, base rates and router to Swift. `scripts/golden-ios.ts` runs the real TypeScript functions to generate 435 golden cases, and `swift test` (Linux or Mac) must match them: the same `mulberry32` stream bit for bit, the same verdicts and orderings, and the same crowd numbers to 1e-9. The receipt check closes the loop end to end: the web core recomputes the iPhone's crowd from the iPhone's recorded facts and gets the same P50.
+- **Full persona run on the iOS 27.2 simulator:** 200/200 posts on-device, **0 cloud**, median 524 ms per post. The dossier matches the web Nano run (Columbus, nurse, single mother, night shift, divorced) → **one of ~9**. See [`receipts/ios/`](receipts/ios/README.md).
+- **What Apple's model taught us.** With the web prompt it answered `{"facts": []}` to every post. That prompt is worded as "what would help a stranger figure out who the author is", and the model declines that. OneOf's real job is the author auditing their own posts, and iOS prompt `a2` says exactly that. The model then fell for two traps the persona plants ("I feel 80 years old", "the bus driver waited for me"). Both are now rules in the **shared** deterministic checker, so the web build got stricter too.
+- App Check: the debug provider on the simulator (token from a git-ignored `Secrets.xcconfig`), App Attest on devices. Firebase is pinned to **12.19.3**, the last release that ships `HybridModel` and `SystemLanguageModel` (13.0 removed them).
+
+Run it: open `ios/OneOf.xcodeproj` in Xcode 26+ (tested on 27.2), pick an iPhone simulator on an Apple-silicon Mac with Apple Intelligence on, and press Run. Swift Package Manager fetches Firebase. `cd ios/OneOfCore && swift test` runs the parity suite.
+
 ## Built entirely on the free plan ($0)
 
 OneOf was built and runs on Firebase's free Spark plan, by a student, with no billing account. That constraint turned out to be the clearest argument for hybrid inference:
@@ -190,7 +210,8 @@ npm run build                # production build in dist/
 ## Known limits
 
 - English only.
-- On-device mode works only in desktop Chrome with the Gemini Nano model (tested on Chrome 158).
+- On-device mode works only in desktop Chrome with Gemini Nano (tested on Chrome 158), or on an iPhone or simulator with Apple Intelligence on (iOS 26+).
+- The iOS prompt (`a2`) has been run on the demo persona only; the held-out SynthPAI numbers describe the web prompt on Gemini Nano.
 - The base-rate pack is US-first. Its only India entry is the Bengaluru Urban region. About half the attribute rates in the pack are grade C (rough, widest ranges).
 - Lift values for overlaps are hand-entered and mostly grade C.
 - Built on the free plan: Google Search grounding has no free quota, so live lookups are unsourced (shown, never counted), and the cloud path is rate-limited. See "Built entirely on the free plan".
