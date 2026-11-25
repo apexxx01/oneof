@@ -72,6 +72,14 @@ public struct ExtractOutcome: Equatable, Sendable {
 /// Model reply for ONE post → verified facts, exactly as the web build does it (ai.ts extractFromPost).
 public func processReply(_ reply: String, post: Post, source: FactSource) -> ExtractOutcome {
   guard let (raws, malformed) = parseFactBatchCounting(reply) else { return ExtractOutcome(facts: [], rejected: 0, raw: [], unreadable: true) }
+  var o = processFacts(raws, post: post, source: source)
+  o.malformed = malformed
+  return o
+}
+
+/// Already-structured facts (typed generation) → verified facts. The deterministic checker is the
+/// same single gate whichever way the model answered.
+public func processFacts(_ raws: [RawFact], post: Post, source: FactSource) -> ExtractOutcome {
   var facts: [Fact] = [], raw: [RawVerdict] = [], rejected = 0
   for f in raws where f.p == 0 {
     let v = verify(f, post)
@@ -80,7 +88,7 @@ public func processReply(_ reply: String, post: Post, source: FactSource) -> Ext
     facts.append(Fact(id: "\(post.id):\(facts.count)", postId: post.id, date: post.date, cat: f.cat, value: String(f.value.prefix(60)),
                       quote: String(f.quote.prefix(160)), certainty: f.certainty, source: source))
   }
-  return ExtractOutcome(facts: facts, rejected: rejected, raw: raw, unreadable: false, malformed: malformed)
+  return ExtractOutcome(facts: facts, rejected: rejected, raw: raw, unreadable: false)
 }
 
 /// Cloud base-rate reply → BaseRate. Grade B only when grounded (a source came back), else C,

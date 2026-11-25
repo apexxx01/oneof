@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
-import { extractFromPost, onDeviceAvailability, setPromptOverride } from '../lib/ai';
-import { EXTRACT_SYSTEM } from '../lib/prompts';
+import { useEffect, useRef, useState } from 'react';
+import { extractFromPost, onDeviceAvailability, setPromptOverride, type Availability } from '../lib/ai';
+import { EXTRACT_PROMPT_VERSION, EXTRACT_SYSTEM } from '../lib/prompts';
+import { COMMITTED, PREFILTER, receiptUrl } from './receipts';
 import { SYNTHPAI_URL, isTestPersona, isDevPersona, parseJsonl, sampleSet, scoreItem, summarize, countable, type ItemResult, type PaiItem } from './synthpai';
 
 type Arm = 'on_device' | 'cloud';
@@ -15,6 +16,9 @@ export default function Eval() {
   const [results, setResults] = useState<ItemResult[]>([]);
   const [set, setSet] = useState<{ pos: PaiItem[]; neg: PaiItem[] }>();
   const stop = useRef(false);
+  const [nano, setNano] = useState<Availability | 'checking'>('checking');
+  useEffect(() => { onDeviceAvailability().then(setNano); }, []);
+  const nanoReady = nano === 'available';
 
   async function run() {
     stop.current = false; setResults([]);
@@ -74,21 +78,49 @@ export default function Eval() {
 
   return (
     <main className="spike">
+      <a className="home-link" href={import.meta.env.BASE_URL}>← OneOf</a>
       <h1>Held-out eval · SynthPAI</h1>
       <p className="small muted">300 synthetic personas, human-labelled. Test split = odd persona ids, never used to write prompts or verify rules. Labels counted: hardness 1–2, certainty ≥ 3. Income has no OneOf category and is excluded.</p>
+
+      <h2>Committed results</h2>
+      <p className="small muted">Read from the receipts in the repo at build time. Shipped extraction prompt: <span className="mono">{EXTRACT_PROMPT_VERSION}</span>.</p>
+      <div className="receipts" style={{ overflowX: 'auto' }}>
+        <table>
+          <thead><tr><th>run</th><th>label recall</th><th>quiet comments with no fact</th><th>latency p50 / p95</th><th>ran on device</th><th>errors</th><th>receipt</th></tr></thead>
+          <tbody>
+            {COMMITTED.map((r) => (
+              <tr key={r.file}>
+                <td>{r.label}</td>
+                <td className="mono">{pct(r.summary.labelRecall)} ({r.summary.hit}/{r.summary.total})</td>
+                <td className="mono">{pct(r.summary.quietRate)} ({r.summary.neg - r.summary.negWithFacts}/{r.summary.neg})</td>
+                <td className="mono">{(r.summary.p50 / 1000).toFixed(1)} s / {(r.summary.p95 / 1000).toFixed(1)} s</td>
+                <td className="mono">{r.summary.onDevice}/{r.summary.n}</td>
+                <td className="mono">{r.summary.errors}</td>
+                <td><a href={receiptUrl(r.file)} target="_blank" rel="noreferrer">{r.file}</a></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {PREFILTER && (
+        <p className="small muted">Keyword prefilter on {PREFILTER.comments.toLocaleString('en-US')} held-out comments: it kept {PREFILTER.revealing.recall} of revealing ones, so it now only orders the scan and never excludes a post. <a href={receiptUrl('heldout-prefilter-synthpai.json')} target="_blank" rel="noreferrer">heldout-prefilter-synthpai.json</a></p>
+      )}
+
+      <h2>Run it yourself (needs Gemini Nano)</h2>
+      {!nanoReady && <p className="small warn-text mono">{nano === 'checking' ? 'Checking for Gemini Nano…' : 'Gemini Nano isn’t available in this browser, so the runs are off: the cloud baseline would only spend the free tier. Open this page in desktop Chrome with Gemini Nano to reproduce the receipts.'}</p>}
       <div className="row">
         <label>per side <input type="number" value={n} min={5} max={200} onChange={(e) => setN(+e.target.value)} /></label>
         <label><input type="radio" checked={arm === 'on_device'} onChange={() => setArm('on_device')} /> Gemini Nano (ONLY_ON_DEVICE)</label>
         <label><input type="radio" checked={arm === 'cloud'} onChange={() => setArm('cloud')} /> Cloud baseline (ONLY_IN_CLOUD)</label>
         <label><select value={split} onChange={(e) => setSplit(e.target.value as 'test' | 'dev')}><option value="test">test split (report)</option><option value="dev">dev split (tune)</option></select></label>
         <label><select value={which} onChange={(e) => setWhich(e.target.value as 'both' | 'pos' | 'neg')}><option value="both">revealing + quiet</option><option value="pos">revealing only</option><option value="neg">quiet only</option></select></label>
-        <button onClick={run} disabled={status !== 'idle' && status !== 'done' && !status.startsWith('Gemini')}>Run</button>
+        <button onClick={run} disabled={!nanoReady || (status !== 'idle' && status !== 'done' && !status.startsWith('Gemini'))} title={nanoReady ? undefined : 'Needs Gemini Nano'}>Run</button>
         <button className="ghost" onClick={() => (stop.current = true)}>Stop</button>
         <button className="ghost" disabled={!results.length} onClick={exportReceipt}>Export receipt</button>
       </div>
       {split === 'dev' && (
         <details>
-          <summary className="small">Prompt override (dev split only; empty = shipped prompt {'x2'})</summary>
+          <summary className="small">Prompt override (dev split only; empty = shipped prompt {EXTRACT_PROMPT_VERSION})</summary>
           <textarea rows={10} style={{ width: '100%' }} value={prompt} placeholder={EXTRACT_SYSTEM} onChange={(e) => setPrompt(e.target.value)} />
         </details>
       )}

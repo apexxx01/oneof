@@ -75,7 +75,9 @@ Rewrite the user's draft so it keeps its meaning and tone but drops or generaliz
 /// (verify) is unchanged, so anything over-eager is still filtered the same way as on the web.
 /// a2: a1 told the model that weather posts reveal nothing, so it skipped "rain again here in
 /// Columbus" entirely. a2 says the topic doesn't matter, a place or detail named in passing does.
-public let EXTRACT_PROMPT_VERSION_APPLE = "a2"
+public let EXTRACT_PROMPT_VERSION_APPLE = "a3"
+// a3: same words as a2, answered through typed generation (@Generable, schema-constrained on-device
+// and sent as a JSON schema to Gemini) instead of free JSON text.
 
 public let EXTRACT_SYSTEM_APPLE = #"""
 You help a person review their OWN social media post, so they can see which personal details about themselves it reveals. This is a privacy check the author runs on their own writing.

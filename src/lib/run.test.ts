@@ -43,3 +43,33 @@ describe('scan resilience', () => {
     expect(out.onDevice).toBe(0);
   });
 });
+
+import { planScan } from './run';
+describe('planScan (the live cloud demo limit)', () => {
+  const day = (i: number) => new Date(Date.UTC(2019, 0, 1) + i * 86400000 * 10).toISOString();
+  // Every 8th post has a life-detail cue; the rest are chatter.
+  const history = Array.from({ length: 200 }, (_, i) => ({ id: `p${i}`, date: day(i), text: i % 8 === 0 ? `my shift at the hospital ran long again, post ${i}` : `lovely weather for a walk today, post ${i}` }));
+  it('reads everything when there is no limit, cue posts first', () => {
+    const out = planScan(history);
+    expect(out.considered).toHaveLength(200);
+    expect(out.fastPass).toBe(25);
+    expect(out.considered.slice(0, 25).every((p) => p.text.includes('hospital'))).toBe(true);
+  });
+  it('spreads a 25-post sample across the whole timeline instead of the first posts', () => {
+    const out = planScan(history, 25);
+    expect(out.considered).toHaveLength(25);
+    const dates = out.considered.map((p) => p.date).sort();
+    // Covers the first and the last tenth of the history.
+    expect(dates[0] <= history[20].date).toBe(true);
+    expect(dates.at(-1)! >= history[180].date).toBe(true);
+  });
+  it('prefers a cue post inside each slice and keeps cue posts first', () => {
+    const out = planScan(history, 25);
+    expect(out.fastPass).toBe(25);
+    const mixed = planScan(history, 50);
+    expect(mixed.considered).toHaveLength(50);
+    expect(mixed.fastPass).toBe(25);
+    expect(mixed.considered.slice(0, mixed.fastPass).every((p) => p.text.includes('hospital'))).toBe(true);
+    expect(mixed.considered.slice(mixed.fastPass).every((p) => !p.text.includes('hospital'))).toBe(true);
+  });
+});

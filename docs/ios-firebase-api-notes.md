@@ -1,3 +1,7 @@
+# Firebase AI Logic iOS 12.19.3: API notes
+
+Verified against the SDK source at tag 12.19.3 while building the iOS app. Kept for reference.
+
 # Firebase AI Logic on-device / hybrid API (firebase-ios-sdk 12.x)
 
 Source: `https://github.com/firebase/firebase-ios-sdk`, tag `CocoaPods-12.19.3`, commit `42cf1417c51c5e3bfbae5d3ab89b778f8fdc4bb8` ("package.swift update for 12.19.3 (#16941)").

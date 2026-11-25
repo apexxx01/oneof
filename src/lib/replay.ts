@@ -81,7 +81,7 @@ export async function playReplay(r: Replay, speed: number, onUpdate: (p: ScanPro
     if (e.source === 'on_device') st.onDevice++; else if (e.source === 'in_cloud') st.inCloud++;
     st.log.push(e);
     st.done++;
-    record({ task: 'extract', mode: 'PREFER_ON_DEVICE', reason: 'Recorded Gemini Nano run, played back', source: e.source === 'in_cloud' ? 'in_cloud' : e.source === 'error' ? 'error' : 'on_device', ms: e.ms, sentToCloud: '', replay: true });
+    record({ task: 'extract', mode: 'PREFER_ON_DEVICE', reason: 'Recorded Gemini Nano run, played back', source: e.source === 'in_cloud' ? 'in_cloud' : e.source === 'error' ? 'error' : 'on_device', ms: e.ms, sentToCloud: '', replay: true, data: 'synthetic' });
     onUpdate({ ...st, facts: [...st.facts] });
   }
   st.rejected += r.rejected;

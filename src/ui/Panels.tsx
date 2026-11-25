@@ -7,6 +7,7 @@ import { chromeVersion, type DraftRecording } from '../lib/replay';
 import { subscribe, summary, type LedgerEntry } from '../lib/ledger';
 import type { Attribute, BaseRate, CrowdEstimate, Fact, Post } from '../lib/types';
 import { GradeBadge, Meter, Pct, SourceBadge } from './bits';
+import { plural } from '../lib/text';
 
 /** The formula, every factor with its source. Nothing hidden. */
 /** Human label for a base-rate key, for the overlap note. */
@@ -63,7 +64,7 @@ export function DossierList({ attrs, posts, onPick }: { attrs: Attribute[]; post
               <span className="mono d-date">{f.date.slice(0, 10)}</span> “…{highlight(posts.get(f.postId)?.text ?? f.quote, f.quote)}…” <SourceBadge source={f.source} />
             </div>
           ))}
-          {a.facts.length > 2 && <div className="d-more">+{a.facts.length - 2} more posts</div>}
+          {a.facts.length > 2 && <div className="d-more">+{plural(a.facts.length - 2, 'more post')}</div>}
         </li>
       ))}
     </ul>
@@ -156,6 +157,10 @@ export function Draft({ history, rates, before, placeholder, nano, recorded }: {
   const after = estimate(d.region, d.attributes);
   const draftAttrs = buildDossier(draftFacts, rates).attributes;
   const draftCounted = draftAttrs.reduce((n, a) => n + a.facts.length, 0);
+  // Several facts can be one detail ("ICU nurse" and "nurse"), so say both counts when they differ.
+  const draftSummary = draftFacts.length === draftAttrs.length
+    ? plural(draftFacts.length, 'new detail')
+    : `${plural(draftFacts.length, 'fact')} → ${plural(draftAttrs.length, 'detail')}`;
   const newKeys = new Set(draftAttrs.map((a) => a.rate.key));
   const combines = d.attributes.filter((a) => !newKeys.has(a.rate.key) && a.facts.some((f) => !f.postId.startsWith('draft'))).slice(0, 3);
   const worse = draftFacts.length > 0 && after.p50 < before.p50 * 0.8;
@@ -168,10 +173,10 @@ export function Draft({ history, rates, before, placeholder, nano, recorded }: {
         {!nano && <p className="small muted">{playingRecording ? 'Blur needs Gemini Nano (desktop Chrome): drafts never leave this device.' : 'Live draft checks and Blur need Gemini Nano (desktop Chrome): drafts never leave this device.'}{recorded && !playingRecording ? ' The sample draft plays a recorded on-device result.' : ''}</p>}
         <div className="draft-status mono">
           {playingRecording
-            ? `REPLAY · recorded on Gemini Nano in Chrome ${chromeVersion(recorded!.userAgent)} on ${recorded!.recordedAt.slice(0, 10)} · ${draftFacts.length} new fact${draftFacts.length === 1 ? '' : 's'}`
+            ? `REPLAY · recorded on Gemini Nano in Chrome ${chromeVersion(recorded!.userAgent)} on ${recorded!.recordedAt.slice(0, 10)} · ${draftSummary}`
             : !nano
               ? (text.trim() ? 'not checked: drafts are read only on this device, and this browser has no Gemini Nano' : 'drafts are checked on this device only')
-              : busy ? 'reading on-device…' : draftFacts.length ? `${draftFacts.length} new fact${draftFacts.length > 1 ? 's' : ''} in this draft` : text.trim() ? 'nothing identifying found' : 'nothing typed yet'}
+              : busy ? 'reading on-device…' : draftFacts.length ? `${draftSummary} in this draft` : text.trim() ? 'nothing identifying found' : 'nothing typed yet'}
           {err && nano && <span className="err"> · {err}</span>}
         </div>
         {draftFacts.length > 0 && (
@@ -224,10 +229,12 @@ export function Ledger({ open, onClose }: { open: boolean; onClose: () => void }
         <button className="ghost" onClick={onClose}>Close (Esc)</button>
       </div>
       <div className="ledger-sum mono">
-        <div><b>{s.onDevice}</b> calls on device{s.replayed ? ` (${s.replayed} from a recorded run)` : ''}</div>
-        <div><b>{s.cloud}</b> calls to the cloud</div>
-        <div><b>{s.postBytesOut}</b> bytes of your posts sent</div>
+        <div><b>{s.onDevice}</b> {s.onDevice === 1 ? 'call' : 'calls'} on device{s.replayed ? ` (${s.replayed} from a recorded run)` : ''}</div>
+        <div><b>{s.cloud}</b> {s.cloud === 1 ? 'call' : 'calls'} to the cloud</div>
+        <div><b>{s.ownPostBytesOut}</b> bytes of your posts sent</div>
+        <div><b>{s.demoPostBytesOut}</b> bytes of demo posts sent <span className="muted">(synthetic persona)</span></div>
         <div><b>{s.attrBytesOut}</b> bytes of generic attributes sent</div>
+        {s.stopped > 0 && <div><b>{s.stopped}</b> {s.stopped === 1 ? 'call' : 'calls'} stopped by you</div>}
       </div>
       {!entries.length && <p className="small muted">Every model call will appear here: where it ran, why, and the exact text that left this device (if any).</p>}
       <button onClick={exportJson} disabled={!entries.length}>Export receipts.json</button>
@@ -235,15 +242,17 @@ export function Ledger({ open, onClose }: { open: boolean; onClose: () => void }
         {[...entries].reverse().map((e) => (
           <li key={e.id} className={e.decoy ? 'decoy' : ''}>
             <div className="l-top mono">
-              <SourceBadge source={e.source} /> {e.task}{e.replay && <span className="replay-tag"> · replay</span>} · {e.mode} · {Math.round(e.ms)} ms
+              <SourceBadge source={e.source} /> {e.task}{e.replay && <span className="replay-tag"> · replay</span>}{e.data === 'synthetic' && <span className="data-tag"> · demo data</span>} · {e.mode} · {Math.round(e.ms)} ms{e.model ? ` · ${e.model}` : ''}
             </div>
+            <div className="l-reason small muted">{e.reason}</div>
             {e.sentToCloud ? (
               <>
                 {e.source === 'error' && <div className="small warn-text">Sent, then the call failed:</div>}
+                {e.source === 'stopped' && <div className="small muted">Sent, then you stopped it:</div>}
                 <pre className="payload">{e.sentToCloud}</pre>
               </>
             ) : <div className="small muted">Nothing left the device.</div>}
-            {e.error && <div className="small err">{e.error}</div>}
+            {e.error && <div className={`small ${e.source === 'stopped' ? 'muted' : 'err'}`}>{e.error}</div>}
           </li>
         ))}
       </ol>

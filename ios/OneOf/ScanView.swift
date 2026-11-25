@@ -49,6 +49,12 @@ struct ScanView: View {
     let hidden = chips.count - shown.count
     ScrollView {
       VStack(alignment: .leading, spacing: 16) {
+        if let r = s.replay {
+          Text("REPLAY · recorded on-device on \(String(r.recordedAt.prefix(10))) · \(r.device) · prompt \(r.promptVersion) · 25× · facts re-checked by today's checker")
+            .font(Theme.mono(10)).foregroundStyle(Theme.amber)
+            .padding(8).frame(maxWidth: .infinity, alignment: .leading)
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Theme.amber.opacity(0.5)))
+        }
         Panel { Meter(e: crowd, label: s.title) }
 
         Panel {

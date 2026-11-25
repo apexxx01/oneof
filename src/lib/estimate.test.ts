@@ -60,5 +60,12 @@ describe('humanCount', () => {
     expect(humanCount(1)).toBe('1');
     expect(humanCount(23)).toBe('25');
     expect(humanCount(1_752_753)).toBe('1.75M');
+    // Axis ticks use the same formatter: no trailing zeros.
+    expect(humanCount(1_000_000)).toBe('1M');
+    expect(humanCount(100_000_000)).toBe('100M');
+    expect(humanCount(10_000)).toBe('10k');
+    expect(humanCount(1_000)).toBe('1k');
+    expect(humanCount(1_500_000)).toBe('1.5M');
+    expect(humanCount(2_000_000_000)).toBe('2B');
   });
 });

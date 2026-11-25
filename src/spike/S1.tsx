@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getGenerativeModel } from 'firebase/ai';
 import { getFirebase, configProblems } from '../lib/firebase';
 import { prefilter } from '../lib/prefilter';
@@ -46,6 +46,11 @@ export default function S1() {
   const [grounding, setGrounding] = useState<Record<string, unknown> | null>(null);
   const [busy, setBusy] = useState(false);
   const problems = useMemo(configProblems, []);
+
+  // Cloud runs and the grounding test spend the free tier; they only make sense next to a Nano run.
+  const nanoReady = availability === 'available';
+  const needsNano = nanoReady ? undefined : 'Needs Gemini Nano: the cloud runs are baselines for an on-device run';
+  useEffect(() => { checkAvailability(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const say = (m: string) => setLog((l) => [`${new Date().toLocaleTimeString()}  ${m}`, ...l].slice(0, 200));
 
@@ -185,6 +190,7 @@ export default function S1() {
 
   return (
     <main className="spike">
+      <a className="home-link" href={import.meta.env.BASE_URL}>← OneOf</a>
       <h1>Spike S1 · on-device extraction</h1>
       <p className="muted">Synthetic persona only. Measures Gemini Nano (via Firebase AI Logic, ONLY_ON_DEVICE) against a planted answer key, with a cloud baseline.</p>
       {problems.length > 0 && <div className="warn">{problems.map((p) => <div key={p}>{p}</div>)}</div>}
@@ -193,16 +199,17 @@ export default function S1() {
         <button onClick={load} disabled={busy}>1 · Load persona</button>
         <button onClick={checkAvailability} disabled={busy}>2 · Check availability</button>
         <button onClick={prepare} disabled={busy}>3 · Prepare on-device model</button>
-        <button onClick={runSuite} disabled={busy || !persona}>4 · Run full suite</button>
-        <button onClick={testGrounding} disabled={busy}>5 · Test grounding</button>
+        <button onClick={runSuite} disabled={busy || !persona || !nanoReady} title={needsNano}>4 · Run full suite</button>
+        <button onClick={testGrounding} disabled={busy || !nanoReady} title={needsNano}>5 · Test grounding</button>
         <button onClick={exportResults} disabled={!reports.length && !grounding}>6 · Download results</button>
       </section>
       <p>Availability: <b>{availability}</b>{download !== null && <> · download {pct(download)}</>}</p>
+      {!nanoReady && <p className="small warn-text mono">Run buttons need Gemini Nano (desktop Chrome). The committed results are in <a href="https://github.com/apexxx01/oneof/blob/main/receipts/s1-nano-promptv2.json" target="_blank" rel="noreferrer">receipts/s1-nano-promptv2.json</a>.</p>}
 
       <section className="row small">
         Single runs:
         {([['on_device', 1, 1], ['on_device', 5, 1], ['on_device', 10, 1], ['on_device', 5, 2], ['on_device', 20, 1], ['cloud', 10, 1]] as const).map(([t, b, c]) => (
-          <button key={`${t}${b}${c}`} onClick={() => run(t, b, c)} disabled={busy || !persona}>{t} b{b} x{c}</button>
+          <button key={`${t}${b}${c}`} onClick={() => run(t, b, c)} disabled={busy || !persona || !nanoReady} title={needsNano}>{t} b{b} x{c}</button>
         ))}
       </section>
 

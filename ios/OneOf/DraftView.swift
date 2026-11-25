@@ -102,12 +102,18 @@ struct DraftView: View {
     }
     .navigationTitle("Draft checker")
     .navigationBarTitleDisplayMode(.inline)
+    .onAppear { takeInbox() }
+    .onChange(of: IntentInbox.shared.draft) { _, _ in takeInbox() }
     .task(id: text) {
       // Debounce: check once typing pauses.
       try? await Task.sleep(nanoseconds: 900_000_000)
       if Task.isCancelled { return }
       await check()
     }
+  }
+
+  private func takeInbox() {
+    if let d = IntentInbox.shared.draft { text = d; IntentInbox.shared.draft = nil }
   }
 
   private func check() async {

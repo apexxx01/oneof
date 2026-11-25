@@ -8,6 +8,7 @@ export function SourceBadge({ source }: { source: string }) {
     in_cloud: ['IN CLOUD', 'b-cloud'],
     blocked: ['BLOCKED', 'b-blocked'],
     error: ['ERROR', 'b-blocked'],
+    stopped: ['STOPPED', 'b-muted'],
     bundled: ['BUNDLED', 'b-muted'],
     cloud: ['GROUNDED', 'b-cloud'],
     cache: ['CACHED', 'b-muted'],

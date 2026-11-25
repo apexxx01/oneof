@@ -46,6 +46,8 @@ struct ScanState {
   var lastError = ""
   /// Per-post record of the run (same shape as the web build's replay log).
   var log: [RunLogEntry] = []
+  /// Playing back a recorded on-device run (for devices without Apple Intelligence).
+  var replay: RecordedRun.Header?
   var lastMs: Double = 0
   var current: Post?
   var running = false
@@ -198,6 +200,45 @@ final class AppModel {
     }
   }
 
+  // MARK: - Replay
+
+  /// Plays back the bundled receipt of a real on-device run at 25×, with every fact re-checked by
+  /// today's checker. Labelled REPLAY on screen and in the ledger; nothing is presented as live.
+  func playRecordedRun() {
+    stopScan()
+    guard let run = RecordedRun.load(), let persona else { return }
+    let posts = Dictionary(uniqueKeysWithValues: persona.asPosts.map { ($0.id, $0) })
+    var st = ScanState()
+    st.data = .synthetic; st.title = "@\(persona.handle)"; st.total = run.postsTotal
+    st.order = run.log.compactMap { posts[$0.postId] }
+    st.running = true; st.startedAt = Date()
+    st.replay = run.header
+    scan = st
+    recompute()
+    scanTask = Task { [weak self] in
+      for (i, e) in run.log.enumerated() {
+        guard let self, !Task.isCancelled else { return }
+        try? await Task.sleep(nanoseconds: UInt64(max(10, e.ms / 25)) * 1_000_000)
+        if Task.isCancelled { return }
+        guard let post = posts[e.postId] else { continue }
+        self.scan.current = post
+        let raws = e.facts.map { RawFact(p: 0, cat: $0.cat, value: $0.value, quote: $0.quote, about_self: true, certainty: $0.certainty) }
+        let o = processFacts(raws, post: post, source: .on_device)
+        self.scan.facts.append(contentsOf: o.facts)
+        self.scan.rejected += o.rejected
+        self.scan.onDevice += 1
+        self.scan.lastMs = Double(e.ms)
+        self.scan.done = i + 1
+        self.ledger.insert(LedgerEntry(task: .extract, mode: .preferOnDevice, reason: "Replay of a recorded on-device run.", source: .on_device,
+                                       ms: Double(e.ms), sentToCloud: "", model: "replay", data: .synthetic), at: 0)
+        if !o.facts.isEmpty { self.recompute() }
+      }
+      self?.scan.current = nil
+      self?.scan.running = false
+      self?.scan.finishedAt = Date()
+    }
+  }
+
   // MARK: - Base rates
 
   var plannedLookups: [PlannedLookup] { OneOfCore.plannedLookups(scan.facts, cache: rateCache) }
@@ -290,5 +331,21 @@ enum Receipts {
         print("receipt not written: \(error)")
       }
     #endif
+  }
+}
+
+/// The bundled receipt of a real on-device run (written by Receipts.write on the simulator).
+struct RecordedRun: Decodable {
+  struct Header: Equatable { var recordedAt: String; var device: String; var promptVersion: String }
+  var recordedAt: String
+  var device: String
+  var promptVersion: String
+  var postsTotal: Int
+  var log: [RunLogEntry]
+  var header: Header { Header(recordedAt: recordedAt, device: device, promptVersion: promptVersion) }
+
+  static func load() -> RecordedRun? {
+    guard let url = Bundle.main.url(forResource: "recorded-run", withExtension: "json"), let d = try? Data(contentsOf: url) else { return nil }
+    return try? JSONDecoder().decode(RecordedRun.self, from: d)
   }
 }

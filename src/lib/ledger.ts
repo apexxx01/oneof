@@ -12,7 +12,8 @@ export interface LedgerEntry {
   task: Task;
   mode: Mode;
   reason: string;
-  source: 'on_device' | 'in_cloud' | 'blocked' | 'error';
+  /** 'stopped' = the user stopped the run while this call was in flight; not a failure. */
+  source: 'on_device' | 'in_cloud' | 'blocked' | 'error' | 'stopped';
   ms: number;
   /** Exact text sent off-device (empty for on-device calls). */
   sentToCloud: string;
@@ -22,6 +23,8 @@ export interface LedgerEntry {
   model?: string;
   /** Played back from a recorded on-device run, not run in this browser. */
   replay?: boolean;
+  /** Whose words were in the call: the user's own ('own') or the synthetic demo persona. */
+  data?: 'own' | 'synthetic';
 }
 
 type Listener = (entries: LedgerEntry[]) => void;
@@ -51,19 +54,26 @@ export function resetLedger() {
   listeners.forEach((l) => l(entries));
 }
 
+const bytes = (t: string) => new TextEncoder().encode(t).length;
+const POST_TASKS = new Set<Task>(['extract', 'draft', 'blur']);
+
 export function summary(list = entries) {
   const onDevice = list.filter((e) => e.source === 'on_device').length;
   const cloud = list.filter((e) => e.source === 'in_cloud');
-  // Bytes count whenever something left the device, including calls that then failed.
+  // Bytes count whenever something left the device, including calls that then failed or were stopped.
   const sent = list.filter((e) => e.sentToCloud);
-  const bytesOut = sent.reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
-  const postBytesOut = sent
-    .filter((e) => e.task === 'extract' || e.task === 'draft' || e.task === 'blur')
-    .reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
+  const bytesOut = sent.reduce((n, e) => n + bytes(e.sentToCloud), 0);
+  const postSent = sent.filter((e) => POST_TASKS.has(e.task));
+  /** Total post text sent, own and demo together (kept for receipts exported before the split). */
+  const postBytesOut = postSent.reduce((n, e) => n + bytes(e.sentToCloud), 0);
+  // An entry without a data label is counted as the user's own: the cautious reading.
+  const demoPostBytesOut = postSent.filter((e) => e.data === 'synthetic').reduce((n, e) => n + bytes(e.sentToCloud), 0);
+  const ownPostBytesOut = postBytesOut - demoPostBytesOut;
   // Generic attributes sent for base-rate lookups, counted separately and shown next to post bytes.
-  const attrBytesOut = sent
-    .filter((e) => e.task === 'baserate')
-    .reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
+  const attrBytesOut = sent.filter((e) => e.task === 'baserate').reduce((n, e) => n + bytes(e.sentToCloud), 0);
   const replayed = list.filter((e) => e.replay).length;
-  return { total: list.length, onDevice, cloud: cloud.length, bytesOut, postBytesOut, attrBytesOut, replayed };
+  const stopped = list.filter((e) => e.source === 'stopped').length;
+  return { total: list.length, onDevice, cloud: cloud.length, bytesOut, postBytesOut, ownPostBytesOut, demoPostBytesOut, attrBytesOut, replayed, stopped };
 }
+
+export type LedgerSummary = ReturnType<typeof summary>;

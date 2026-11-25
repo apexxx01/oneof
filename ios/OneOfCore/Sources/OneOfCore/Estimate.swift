@@ -68,15 +68,21 @@ func toFixed(_ x: Double, _ digits: Int) -> String {
   return String(format: "%.\(digits)f", n)
 }
 
-/// How many people, rounded for humans: 1,752,753 → "1.75M", 23.4 → "~20".
+/// `String(Number(x.toFixed(d)))` in JavaScript: fixed digits, then trailing zeros dropped.
+func trimmed(_ x: Double, _ digits: Int) -> String {
+  let v = Double(toFixed(x, digits))!
+  return v == v.rounded() && abs(v) < 1e15 ? String(Int(v)) : "\(v)"
+}
+
+/// How many people, rounded for humans: 1,752,753 → "1.75M", 1,000,000 → "1M", 23.4 → "25".
 public func humanCount(_ n: Double) -> String {
   if n < 2 { return "1" }
   if n < 10 { return String(Int(n.rounded(.toNearestOrAwayFromZero))) }
   if n < 100 { return String(Int((n / 5).rounded(.toNearestOrAwayFromZero) * 5)) }
   if n < 1000 { return String(Int((n / 10).rounded(.toNearestOrAwayFromZero) * 10)) }
-  if n < 1e6 { return "\(toFixed(n / 1000, n < 1e4 ? 1 : 0))k" }
-  if n < 1e9 { return "\(toFixed(n / 1e6, n < 1e7 ? 2 : 1))M" }
-  return "\(toFixed(n / 1e9, 2))B"
+  if n < 1e6 { return "\(trimmed(n / 1000, n < 1e4 ? 1 : 0))k" }
+  if n < 1e9 { return "\(trimmed(n / 1e6, n < 1e7 ? 2 : 1))M" }
+  return "\(trimmed(n / 1e9, 2))B"
 }
 
 public func rangeLabel(_ e: CrowdEstimate) -> String { "\(humanCount(e.p10))–\(humanCount(e.p90))" }

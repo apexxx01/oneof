@@ -1,23 +1,37 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { BlockedError, onDeviceAvailability, prepareOnDevice, type Availability, type DataKind } from './lib/ai';
-import { appCheckMode } from './lib/firebase';
+import { appCheckMode, type AppCheckMode } from './lib/firebase';
 import { buildDossier, crowdNow, crumbTrail, leftTheCrowd, minimumFix } from './lib/dossier';
 import { estimate, humanCount } from './lib/estimate';
 import { fromPaste, importFile } from './lib/importers';
 import { loadRateCache, plannedLookups, refineRates, scan, type PlannedLookup, type ScanProgress } from './lib/run';
 import { configProblems } from './lib/firebase';
-import { record, subscribe, summary } from './lib/ledger';
+import { record, resetLedger, subscribe, summary, type LedgerSummary } from './lib/ledger';
 import type { BaseRate, Fact, Post } from './lib/types';
 import { Meter, SourceBadge } from './ui/bits';
+import { plural } from './lib/text';
 import { DossierList, Draft, Formula, Ledger } from './ui/Panels';
 import { Trail } from './ui/Trail';
 import { chromeVersion, downloadJson, playReplay, recheck, toReplay, type Replay } from './lib/replay';
+import { isDemoExport } from './lib/demo';
 
 type Phase = 'home' | 'scan' | 'result';
 interface Persona { handle: string; posts: Post[]; draft?: string }
 
 /** The free cloud tier rate-limits after a few dozen calls; a live cloud demo reads the first posts only. */
 const CLOUD_LIVE_LIMIT = 25;
+
+/** Header pill: which App Check provider protects the AI Logic endpoint in this build. */
+const APP_CHECK_LABEL: Record<Exclude<AppCheckMode, 'off'>, string> = {
+  enterprise: 'App Check: reCAPTCHA Enterprise',
+  'recaptcha-v3': 'App Check: reCAPTCHA',
+  'debug-token': 'App Check: debug provider',
+};
+
+/** Phone header: the same states in fewer characters. */
+const NANO_SHORT: Record<Availability, string> = {
+  available: 'on device', downloadable: 'not downloaded', downloading: 'downloading', unavailable: 'none', unsupported: 'none',
+};
 
 const NANO_LABEL: Record<Availability, string> = {
   available: 'Gemini Nano: on this device',
@@ -42,12 +56,13 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [paste, setPaste] = useState('');
   const [online, setOnline] = useState(navigator.onLine);
-  const [cloudCount, setCloudCount] = useState({ onDevice: 0, cloud: 0, postBytesOut: 0, attrBytesOut: 0 });
+  const [cloudCount, setCloudCount] = useState<LedgerSummary>(() => summary([]));
   // Base-rate lookups for the user's own data wait for consent; the exact strings are shown first.
   const [pendingLookups, setPendingLookups] = useState<PlannedLookup[] | null>(null);
   const [lookupState, setLookupState] = useState<'idle' | 'running' | 'done' | 'declined'>('idle');
   const abort = useRef<AbortController | null>(null);
   const [replay, setReplay] = useState<Replay | null>(null);
+  const [replayState, setReplayState] = useState<'loading' | 'ready' | 'failed'>('loading');
   const [replaying, setReplaying] = useState(false);
   const [lastRun, setLastRun] = useState<ScanProgress | null>(null);
   const REPLAY_SPEED = 25;
@@ -56,6 +71,10 @@ export default function App() {
   const coarse = typeof matchMedia !== 'undefined' && matchMedia('(pointer: coarse)').matches;
   const skipReplay = useRef(false);
   const [importNote, setImportNote] = useState<string | null>(null);
+  // Own history picked without Gemini Nano: nothing is scanned or sent; the card says so.
+  const [ownBlocked, setOwnBlocked] = useState<{ demo: boolean } | null>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
+  const actionRef = useRef<HTMLDivElement>(null);
   const problems = useMemo(configProblems, []);
 
   useEffect(() => { onDeviceAvailability().then(setAvail); }, []);
@@ -70,8 +89,13 @@ export default function App() {
   }, []);
   // A recorded Gemini Nano run of the synthetic persona, for browsers without on-device AI.
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}personas/p1-replay.json`).then((r) => (r.ok ? r.json() : null)).then((j) => j && setReplay(j as Replay)).catch(() => undefined);
+    fetch(`${import.meta.env.BASE_URL}personas/p1-replay.json`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => { if (j) { setReplay(j as Replay); setReplayState('ready'); } else setReplayState('failed'); })
+      .catch(() => setReplayState('failed'));
   }, []);
+  // An error can appear while the user is scrolled down a card; bring it into view.
+  useEffect(() => { if (error) errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, [error]);
   // Dev-only visual QA: /?fixture renders the result screen from the persona's answer key,
   // so layouts can be checked without a model. Stripped from production builds.
   useEffect(() => {
@@ -101,6 +125,8 @@ export default function App() {
   const left = useMemo(() => leftTheCrowd(trail), [trail]);
   const fix = useMemo(() => minimumFix(dossier, 1000), [dossier]);
   const fixed = useMemo(() => estimate(dossier.region, dossier.attributes.filter((a) => !fix.includes(a))), [dossier, fix]);
+  // What the full recorded on-device run ends at, quoted under the capped cloud demo.
+  const fullRunCrowd = useMemo(() => (replay ? humanCount(crowdNow(buildDossier(replay.log.flatMap((e) => e.facts), rates)).p50) : '50'), [replay, rates]);
 
   async function prepare() {
     setError(null);
@@ -121,7 +147,11 @@ export default function App() {
   }
 
   async function start(list: Post[], kind: DataKind, maxPosts?: number) {
+    // Without Gemini Nano a synthetic scan goes to the free cloud tier: always capped.
+    if (kind === 'synthetic' && avail !== 'available') maxPosts = Math.min(maxPosts ?? CLOUD_LIVE_LIMIT, CLOUD_LIVE_LIMIT);
     setError(null);
+    setOwnBlocked(null);
+    resetLedger();
     setPosts(list);
     setData(kind);
     setFacts([]);
@@ -143,7 +173,7 @@ export default function App() {
       setLookupState('idle');
       if (kind === 'synthetic') {
         setPendingLookups(null);
-        if (navigator.onLine && plan.length) refineRates(plan, country, setRates).catch(() => undefined);
+        if (navigator.onLine && plan.length) refineRates(plan, country, setRates, 'synthetic').catch(() => undefined);
       } else {
         setPendingLookups(plan.length ? plan : null);
       }
@@ -158,7 +188,9 @@ export default function App() {
   async function watchReplay() {
     if (!replay) return;
     const p = await loadPersona();
-    setError(null); setPosts(p.posts); setData('synthetic'); setFacts([]); setLastRun(null);
+    // Each run gets its own receipts: a second replay must not stack on the first.
+    resetLedger();
+    setError(null); setOwnBlocked(null); setPosts(p.posts); setData('synthetic'); setFacts([]); setLastRun(null);
     setReplaying(true); setPhase('scan');
     skipReplay.current = false;
     abort.current = new AbortController();
@@ -167,11 +199,20 @@ export default function App() {
     // "Skip to the result" shows the whole recorded run, not a partial one, receipts included.
     if (skipReplay.current) {
       for (const e of replay.log.slice(res.done)) {
-        record({ task: 'extract', mode: 'PREFER_ON_DEVICE', reason: 'Recorded Gemini Nano run, played back', source: e.source === 'in_cloud' ? 'in_cloud' : e.source === 'error' ? 'error' : 'on_device', ms: e.ms, sentToCloud: '', replay: true });
+        record({ task: 'extract', mode: 'PREFER_ON_DEVICE', reason: 'Recorded Gemini Nano run, played back', source: e.source === 'in_cloud' ? 'in_cloud' : e.source === 'error' ? 'error' : 'on_device', ms: e.ms, sentToCloud: '', replay: true, data: 'synthetic' });
       }
     }
     setFacts(skipReplay.current ? recheck(replay.log.flatMap((e) => e.facts), postIndex) : res.facts);
     setPhase('result');
+  }
+
+  /** Own posts are only ever read on this device. Without Nano: say so, send nothing, never call start(). */
+  async function scanOwn(list: Post[]) {
+    if (avail === 'available') { start(list, 'own'); return; }
+    setError(null);
+    let demo = isDemoExport(list);
+    if (!demo) { try { demo = isDemoExport(list, (await loadPersona()).posts); } catch { /* persona unavailable: treat as real */ } }
+    setOwnBlocked({ demo });
   }
 
   async function loadPersona() {
@@ -186,23 +227,26 @@ export default function App() {
         <div className="brand" role="link" tabIndex={0} title="Home" onKeyDown={(e) => { if (e.key === 'Enter') { abort.current?.abort('leave'); setPhase('home'); } }} onClick={() => { abort.current?.abort('leave'); setPhase('home'); }}><span className="logo">1/</span>OneOf</div>
         <div className="top-right mono">
           <span className={`pill nano ${avail === 'available' ? 'ok' : 'warn'}`} title="Gemini Nano via Chrome built-in AI">
-            <span className="long">Gemini </span>{NANO_LABEL[avail === 'downloading' && dl !== null ? 'downloading' : avail].replace('Gemini ', '')}{avail === 'downloading' && dl !== null ? ` ${Math.round(dl * 100)}%` : ''}
+            <span className="long">Gemini {NANO_LABEL[avail].replace('Gemini ', '')}</span><span className="short">Nano: {NANO_SHORT[avail]}</span>{avail === 'downloading' && dl !== null ? ` ${Math.round(dl * 100)}%` : ''}
           </span>
           <span className={`pill net ${online ? '' : 'off'}`}>{online ? 'online' : 'offline'}</span>
-          {appCheckMode() !== 'off' && <span className="pill ok ac" title="Firebase App Check protects the AI Logic endpoint">App Check on</span>}
-          <button className="ghost cloud-btn" onClick={() => setLedgerOpen(true)}>
-            <span className="long">What the cloud saw · </span><b>{cloudCount.postBytesOut}</b> B<span className="long"> of posts</span> sent{cloudCount.attrBytesOut > 0 && <span className="long"> · {cloudCount.attrBytesOut} B of attributes</span>}
+          {appCheckMode() !== 'off' && <span className={`pill ac ${appCheckMode() === 'debug-token' ? 'warn' : 'ok'}`} title={appCheckMode() === 'debug-token' ? 'Firebase App Check protects the AI Logic endpoint with the debug provider (a registered debug token), not reCAPTCHA attestation' : 'Firebase App Check protects the AI Logic endpoint'}>{APP_CHECK_LABEL[appCheckMode() as Exclude<AppCheckMode, 'off'>]}</span>}
+          <button className="ghost cloud-btn" onClick={() => setLedgerOpen(true)} title="Open the receipts: every model call, where it ran, and the exact text that left this device">
+            <span className="long">What the cloud saw · </span><b>{cloudCount.ownPostBytesOut}</b> B<span className="long"> of your posts</span> sent
+            {cloudCount.demoPostBytesOut > 0 && <span className="long"> · {cloudCount.demoPostBytesOut} B of demo posts</span>}
+            {cloudCount.attrBytesOut > 0 && <span className="long"> · {cloudCount.attrBytesOut} B of attributes</span>}
           </button>
         </div>
       </header>
 
       {problems.length > 0 && <div className="banner warn">{problems.join(' · ')}</div>}
-      {error && <div className="banner err">{error}</div>}
+      {error && <div className="banner err" ref={errorRef} role="alert">{error}</div>}
 
       {phase === 'home' && (
         <main className="home">
           <section className="hero">
             <h1>How many people<br />could you be?</h1>
+            <a className="jump" href="#try" onClick={(e) => { e.preventDefault(); actionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }}>Watch the demo ↓</a>
             <p className="lede">
               AI agents can now <b>unmask pseudonymous accounts</b> by stitching together harmless details across years of posts.
               OneOf builds that dossier first, <b>on your own device</b>, and shows how small a crowd you’re really hiding in.
@@ -211,19 +255,26 @@ export default function App() {
           </section>
 
           <section className="start">
-            <div className="card">
+            <div className="card" id="try" ref={actionRef}>
               <h3>Try it with a synthetic person</h3>
               <p>“quietnight_rn”: six years of posts by a night-shift nurse. <span className="tag nowrap">SYNTHETIC, NOT A REAL PERSON</span></p>
-              {replay && (avail !== 'available' || forceReplay) ? (
-                <>
-                  <button className="primary" onClick={watchReplay}>Watch a recorded on-device run</button>
-                  <p className="small muted">{avail === 'available' ? 'You’ll see' : 'Gemini Nano isn’t ready in this browser, so you’ll see'} a real run recorded in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)}, played {REPLAY_SPEED}× faster. Every fact and timing is from that run.</p>
-                  <button className="ghost" onClick={async () => start((await loadPersona()).posts, 'synthetic', CLOUD_LIVE_LIMIT)}>Or run {CLOUD_LIVE_LIMIT} posts live through the cloud (free tier, rate-limited)</button>
-                </>
-              ) : (
+              {avail === 'available' && !forceReplay ? (
                 <>
                   <button className="primary" onClick={async () => start((await loadPersona()).posts, 'synthetic')}>Scan quietnight_rn</button>
-                  <p className="small muted">Runs on-device when available; this demo data may fall back to the cloud.</p>
+                  <p className="small muted">Runs on this device with Gemini Nano. All {replay?.postsTotal ?? 200} posts, about 10 minutes.</p>
+                </>
+              ) : replayState === 'loading' ? (
+                <button className="primary" disabled>Loading recorded run…</button>
+              ) : (
+                <>
+                  {replay ? (
+                    <>
+                      <button className="primary" onClick={watchReplay}>Watch a recorded on-device run</button>
+                      <p className="small muted">{avail === 'available' ? 'You’ll see' : 'Gemini Nano isn’t ready in this browser, so you’ll see'} a real run recorded in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)}, played {REPLAY_SPEED}× faster. Every fact and timing is from that run.</p>
+                    </>
+                  ) : <p className="small warn-text mono">The recorded run didn’t load. You can still run a short live demo.</p>}
+                  <button className={replay ? 'ghost' : 'primary'} onClick={async () => start((await loadPersona()).posts, 'synthetic', CLOUD_LIVE_LIMIT)}>{replay ? 'Or run' : 'Run'} {CLOUD_LIVE_LIMIT} posts live through the cloud (free tier, rate-limited)</button>
+                  <p className="small muted">Reads {CLOUD_LIVE_LIMIT} of {replay?.postsTotal ?? 200} posts, so expect a partial dossier. The full on-device run reaches ~{fullRunCrowd}.</p>
                 </>
               )}
             </div>
@@ -236,15 +287,24 @@ export default function App() {
                   const f = e.target.files?.[0]; if (!f) return;
                   try {
                     const r = await importFile(f);
-                    setImportNote(`${r.format}: read ${r.posts.length} posts${r.skippedFiles.length ? ` · never opened: ${r.skippedFiles.join(', ')}` : ''}`);
-                    start(r.posts, 'own');
+                    setImportNote(`${r.format}: read ${plural(r.posts.length, 'post')}${r.skippedFiles.length ? ` · never opened: ${r.skippedFiles.join(', ')}` : ''}`);
+                    e.target.value = '';
+                    scanOwn(r.posts);
                   } catch (err) { setError(`Couldn’t read that file: ${(err as Error).message}`); }
                 }} />
                 Choose a file
               </label>
               {importNote && <p className="small mono import-note">{importNote}</p>}
+              {ownBlocked && (
+                <div className="own-blocked">
+                  <p className="small mono warn-text">Scanning your own posts needs Gemini Nano. Nothing was sent.</p>
+                  {ownBlocked.demo && (replay
+                    ? <button className="primary" onClick={watchReplay}>This is the demo export — watch its recorded on-device run</button>
+                    : <p className="small muted">This is the demo export. Use “Try it with a synthetic person” to see it scanned.</p>)}
+                </div>
+              )}
               <textarea rows={3} value={paste} onChange={(e) => setPaste(e.target.value)} placeholder="…or paste posts here, one per paragraph" />
-              <button disabled={!paste.trim()} onClick={() => start(fromPaste(paste), 'own')}>Scan pasted posts</button>
+              <button disabled={!paste.trim()} onClick={() => { setImportNote(`Pasted text: ${plural(fromPaste(paste).length, 'post')}`); scanOwn(fromPaste(paste)); }}>Scan pasted posts</button>
             </div>
             <div className="card">
               <h3>On-device model</h3>
@@ -265,10 +325,12 @@ export default function App() {
             <span>{progress.done} / {progress.considered} posts read</span>
             <span>{progress.done < progress.fastPass ? `fast pass · ${progress.fastPass} posts with life-detail cues first` : `deep pass · the other ${Math.max(0, progress.considered - progress.fastPass)}`}</span>
             {!!progress.empty && <span>{progress.empty} empty or link-only</span>}
-            {!!progress.limited && <span>{progress.limited} not read (demo limit)</span>}
+            {!!progress.limited && <span>{progress.limited} not read (demo limit · sample spread across the timeline)</span>}
             <span><SourceBadge source="on_device" /> {progress.onDevice}</span>
             <span><SourceBadge source="in_cloud" /> {progress.inCloud}</span>
-            <span><b>{cloudCount.postBytesOut}</b> bytes of your posts sent</span>
+            {data === 'synthetic'
+              ? <span><b>{cloudCount.demoPostBytesOut}</b> bytes of demo posts sent · <b>{cloudCount.ownPostBytesOut}</b> of yours</span>
+              : <span><b>{cloudCount.ownPostBytesOut}</b> bytes of your posts sent</span>}
           </div>
           <div className="bar"><div style={{ width: `${(progress.done / Math.max(1, progress.considered)) * 100}%` }} /></div>
           <div className="row scan-actions">
@@ -281,7 +343,7 @@ export default function App() {
           {progress.cooling && <p className="small mono warn-text">{progress.inCloud > progress.onDevice
             ? 'The cloud is rate-limiting free requests, so we’re pausing 20 s. Skipped posts get retried at the end.'
             : 'Gemini Nano is slowing down, so we’re pausing 20 s to let it recover. Skipped posts get retried at the end.'}</p>}
-          {!progress.cooling && progress.retried ? <p className="small mono muted">Retrying {progress.retried} posts that timed out.</p> : null}
+          {!progress.cooling && progress.retried ? <p className="small mono muted">Retrying {plural(progress.retried, 'post')} that timed out.</p> : null}
           {progress.current && <div className="current mono">“{progress.current.text.slice(0, 120)}”</div>}
           <div className="live">
             <Meter e={estimate(dossier.region, dossier.attributes)} label="Crowd so far" />
@@ -300,7 +362,7 @@ export default function App() {
         <main className="result">
           <section className="r-hero">
             <div>
-              <div className="eyebrow mono">{persona && data === 'synthetic' ? `u/${persona.handle} · SYNTHETIC` : 'your history'} · {posts.length} posts · {facts.length} facts found · {dossier.attributes.length} counted · {dossier.region.label}</div>
+              <div className="eyebrow mono">{persona && data === 'synthetic' ? `u/${persona.handle} · SYNTHETIC` : 'your history'} · {plural(posts.length, 'post')} · {plural(facts.length, 'fact')} found · {dossier.attributes.length} counted · {dossier.region.label}</div>
               <Meter e={now} />
               <p className="small muted">OneOf can miss details an attacker would still find (on held-out data the on-device model caught about 4 in 10 labelled attributes), so treat this as an upper bound: your real crowd is probably smaller.</p>
               <div className="row">
@@ -325,8 +387,8 @@ export default function App() {
               <h3>The dossier an attacker would build</h3>
               <p className="small muted">Built on this device from your own words. Never a name, never a verdict, just the evidence.</p>
               <DossierList attrs={dossier.attributes} posts={postMap} />
-              {facts.length > dossier.attributes.length && <p className="small muted">{facts.length} details were found; {dossier.attributes.length} have a bundled or cited base rate and are counted. The rest (weekdays, hobbies, group chats) don’t narrow the crowd, so they don’t change the number.</p>}
-              {dossier.localOnly.length > 0 && <p className="small">{dossier.localOnly.length} sensitive facts (health, religion) stay on this device and aren’t counted.</p>}
+              {facts.length > dossier.attributes.length && <p className="small muted">{plural(facts.length, 'detail')} were found; {dossier.attributes.length} {dossier.attributes.length === 1 ? 'has' : 'have'} a bundled or cited base rate and {dossier.attributes.length === 1 ? 'is' : 'are'} counted. The rest (weekdays, hobbies, group chats) don’t narrow the crowd, so they don’t change the number.</p>}
+              {dossier.localOnly.length > 0 && <p className="small">{plural(dossier.localOnly.length, 'sensitive fact')} (health, religion) {dossier.localOnly.length === 1 ? 'stays' : 'stay'} on this device and {dossier.localOnly.length === 1 ? 'isn’t' : 'aren’t'} counted.</p>}
               {data === 'own' && pendingLookups && lookupState !== 'declined' && (
                 <div className="consent">
                   <h4>Sharpen the estimate?</h4>
@@ -354,7 +416,7 @@ export default function App() {
               <h3>Rejoin the crowd</h3>
               {fix.length ? (
                 <>
-                  <p>Edit or delete <b>{new Set(fix.flatMap((a) => a.facts.map((f) => f.postId))).size} posts</b> and you’re back to one of ~<b>{humanCount(fixed.p50)}</b>.</p>
+                  <p>Edit or delete <b>{plural(new Set(fix.flatMap((a) => a.facts.map((f) => f.postId))).size, 'post')}</b> and you’re back to one of ~<b>{humanCount(fixed.p50)}</b>.</p>
                   <ul className="fix">
                     {fix.map((a) => a.facts.map((f) => {
                       const p = postMap.get(f.postId);

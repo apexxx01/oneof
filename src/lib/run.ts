@@ -31,6 +31,31 @@ export interface ScanProgress {
 }
 
 /**
+ * Which posts a scan reads, in what order. Empty and link-only posts are dropped; posts with a
+ * life-detail cue go first. With a limit (the live cloud demo), the sample is spread evenly across
+ * the whole timeline: the history is cut into `maxPosts` equal slices by date and each slice gives
+ * one post, a cue post when it has one. Reading only the first N posts would show one year of a
+ * six-year history and misrepresent how a dossier builds up.
+ */
+export function planScan(posts: Post[], maxPosts?: number): { considered: Post[]; fastPass: number; scannable: number } {
+  const verdicts = posts.map((p) => ({ p, cue: prefilter(p.text) }));
+  const scannable = verdicts.filter(({ cue }) => cue.reason !== 'too_short' && cue.reason !== 'link_only').map(({ p, cue }) => ({ p, cue: cue.keep }));
+  let picked = scannable;
+  if (maxPosts !== undefined && maxPosts < scannable.length) {
+    const byDate = scannable.map((x, i) => ({ ...x, i })).sort((a, b) => (a.p.date < b.p.date ? -1 : a.p.date > b.p.date ? 1 : a.i - b.i));
+    const n = Math.max(0, Math.floor(maxPosts));
+    picked = [];
+    for (let k = 0; k < n; k++) {
+      const slice = byDate.slice(Math.floor((k * byDate.length) / n), Math.floor(((k + 1) * byDate.length) / n));
+      if (slice.length) picked.push(slice.find((x) => x.cue) ?? slice[Math.floor(slice.length / 2)]);
+    }
+  }
+  const fast = picked.filter((x) => x.cue).map((x) => x.p);
+  const deep = picked.filter((x) => !x.cue).map((x) => x.p);
+  return { considered: [...fast, ...deep], fastPass: fast.length, scannable: scannable.length };
+}
+
+/**
  * Scan posts one at a time (batch 1 measured best in spike S1).
  * The prefilter only orders the work: on held-out SynthPAI a keyword gate kept just 51% of
  * revealing comments, so it no longer excludes anything except empty and link-only posts.
@@ -43,13 +68,8 @@ export async function scan(
   signal?: AbortSignal,
   opts: { coolMs?: number; maxPosts?: number } = {},
 ): Promise<ScanProgress> {
-  const verdicts = posts.map((p) => ({ p, v: prefilter(p.text) }));
-  const scannable = verdicts.filter(({ v }) => v.reason !== 'too_short' && v.reason !== 'link_only');
-  const fast = scannable.filter(({ v }) => v.keep).map(({ p }) => p);
-  const deep = scannable.filter(({ v }) => !v.keep).map(({ p }) => p);
-  const all = [...fast, ...deep];
-  const considered = all.slice(0, opts.maxPosts ?? Infinity);
-  const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass: Math.min(fast.length, considered.length), empty: posts.length - all.length, limited: all.length - considered.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
+  const { considered, fastPass, scannable } = planScan(posts, opts.maxPosts);
+  const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass, empty: posts.length - scannable, limited: scannable - considered.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
   onUpdate({ ...st });
   // Gemini Nano slows down or stalls under long sustained load (seen live after ~100 prompts).
   // Two failures in a row trigger a cool-down; failed posts get one retry at the end.
@@ -164,11 +184,11 @@ export function plannedLookups(facts: Fact[]): PlannedLookup[] {
   return out;
 }
 
-export async function refineRates(plan: PlannedLookup[], country: string, onUpdate: (rates: Map<string, BaseRate>) => void) {
+export async function refineRates(plan: PlannedLookup[], country: string, onUpdate: (rates: Map<string, BaseRate>) => void, data: DataKind = 'own') {
   const cache = loadRateCache();
   for (const { fact } of plan) {
     if (!navigator.onLine) break;
-    const r = await lookupBaseRate(fact, country);
+    const r = await lookupBaseRate(fact, country, data);
     if (r) {
       cache.set(rateKey(fact), r);
       saveRateCache(cache);

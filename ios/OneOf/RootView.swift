@@ -29,6 +29,9 @@ struct RootView: View {
     // The app switcher snapshot never shows pasted posts or drafts.
     .overlay { if scenePhase != .active { Theme.bg.ignoresSafeArea().overlay(Text("one/of").font(Theme.mono(15, .bold)).foregroundStyle(Theme.signal)) } }
     .onChange(of: scenePhase) { _, p in model.setActive(p == .active) }
+    .onChange(of: IntentInbox.shared.draft) { _, d in
+      if d != nil, path.last != .draft { path.append(.draft) }
+    }
     .task {
       // Apple Intelligence may still be downloading its model: keep checking until it's ready.
       while !Task.isCancelled {
@@ -92,6 +95,12 @@ struct HomeView: View {
               }
               Text("About 2–3 minutes on this iPhone, nothing sent anywhere.").font(.caption).foregroundStyle(Theme.muted)
             } else {
+              Button {
+                model.playRecordedRun()
+                path.append(.scan)
+              } label: { Text("Watch a recorded on-device run").frame(maxWidth: .infinity) }
+                .buttonStyle(.borderedProminent)
+                .disabled(RecordedRun.load() == nil)
               Button {
                 model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)", limit: 25)
                 path.append(.scan)

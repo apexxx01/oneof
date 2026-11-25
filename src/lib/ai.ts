@@ -154,6 +154,9 @@ let promptOverride: string | null = null;
 export function setPromptOverride(p: string | null) { promptOverride = p && p.trim() ? p : null; }
 const hash = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); };
 
+/** Ledger text for a call the user stopped mid-flight. */
+export const STOPPED_BY_YOU = 'Stopped by you';
+
 /** Long posts are cut to stay well inside Gemini Nano's context (system prompt + example are re-sent per call). */
 export const MAX_POST_CHARS = 2000;
 
@@ -162,16 +165,21 @@ export async function extractFromPost(post: Post, data: DataKind, task: 'extract
   const base = route(task, data);
   const r = forceMode && data === 'synthetic' ? { mode: forceMode, reason: `Eval baseline on synthetic data: ${forceMode}` } : base;
   if (r.mode === 'ONLY_ON_DEVICE' && (await onDeviceAvailability()) !== 'available') {
-    record({ task, mode: r.mode, reason: r.reason, source: 'blocked', ms: 0, sentToCloud: '' });
+    record({ task, mode: r.mode, reason: r.reason, source: 'blocked', ms: 0, sentToCloud: '', data });
     throw new BlockedError();
   }
   const t0 = performance.now();
   const prompt = batchPrompt([post.text.length > MAX_POST_CHARS ? post.text.slice(0, MAX_POST_CHARS) : post.text]);
+  // Set once a request has actually been handed to the SDK; a stop before that sent nothing.
+  let dispatched = false;
   try {
-    const { value: res, model } = await hedged(r.mode, (tier) => extractModel(r.mode, tier), (m) => m.generateContent(prompt, { signal }), signal);
+    const { value: res, model } = await hedged(r.mode, (tier) => extractModel(r.mode, tier), (m) => {
+      if (!signal?.aborted) dispatched = true;
+      return m.generateContent(prompt, { signal });
+    }, signal);
     const ms = performance.now() - t0;
     const source = res.response.inferenceSource === 'in_cloud' ? 'in_cloud' : 'on_device';
-    record({ task, mode: r.mode, reason: r.reason, source, ms, sentToCloud: source === 'in_cloud' ? prompt : '', model: source === 'in_cloud' ? model : undefined });
+    record({ task, mode: r.mode, reason: r.reason, source, ms, sentToCloud: source === 'in_cloud' ? prompt : '', model: source === 'in_cloud' ? model : undefined, data });
     const parsed = FactBatchZ.safeParse(JSON.parse(res.response.text()));
     if (!parsed.success) return { facts: [], rejected: 0, source, ms, raw: [] };
     let rejected = 0;
@@ -190,9 +198,15 @@ export async function extractFromPost(post: Post, data: DataKind, task: 'extract
     return { facts, rejected, source, ms, raw };
   } catch (e) {
     const ms = performance.now() - t0;
-    // A failed cloud call still sent the prompt; the ledger must say so.
-    const attempted = r.mode === 'ONLY_IN_CLOUD' || (r.mode === 'PREFER_ON_DEVICE' && (await onDeviceAvailability()) !== 'available');
-    record({ task, mode: r.mode, reason: r.reason, source: 'error', ms, sentToCloud: attempted ? prompt : '', error: String((e as Error).message ?? e).slice(0, 200) });
+    // A failed or stopped cloud call still sent the prompt once it was dispatched; the ledger must say so.
+    const cloudBound = r.mode === 'ONLY_IN_CLOUD' || (r.mode === 'PREFER_ON_DEVICE' && (await onDeviceAvailability()) !== 'available');
+    const sentToCloud = cloudBound && dispatched ? prompt : '';
+    if (signal?.aborted) {
+      // The user pressed Stop: a choice, not a failure.
+      record({ task, mode: r.mode, reason: r.reason, source: 'stopped', ms, sentToCloud, error: STOPPED_BY_YOU, data });
+    } else {
+      record({ task, mode: r.mode, reason: r.reason, source: 'error', ms, sentToCloud, error: String((e as Error).message ?? e).slice(0, 200), data });
+    }
     throw e;
   }
 }
@@ -208,7 +222,7 @@ let groundingOffUntil = 0;
  * One cloud call per attribute, and only for attributes cloudSafeAttribute() allows. No decoys:
  * a fixed decoy list published in this repo would be trivially filtered, so it added cost, not privacy.
  */
-export async function lookupBaseRate(f: Fact, country: string): Promise<BaseRate | undefined> {
+export async function lookupBaseRate(f: Fact, country: string, data: DataKind = 'own'): Promise<BaseRate | undefined> {
   const safe = cloudSafeAttribute(f);
   if (!safe.ok) return undefined;
   const r = route('baserate', 'own');
@@ -238,10 +252,10 @@ export async function lookupBaseRate(f: Fact, country: string): Promise<BaseRate
           res = (await hedged(r.mode, plainAt, (m) => m.generateContent(payload))).value;
         } else throw e;
       }
-      record({ task: 'baserate', mode: r.mode, reason: r.reason, source: 'in_cloud', ms: performance.now() - t0, sentToCloud: payload, decoy });
+      record({ task: 'baserate', mode: r.mode, reason: r.reason, source: 'in_cloud', ms: performance.now() - t0, sentToCloud: payload, decoy, data });
       return res;
     } catch (e) {
-      record({ task: 'baserate', mode: r.mode, reason: r.reason, source: 'error', ms: performance.now() - t0, sentToCloud: payload, decoy, error: String((e as Error).message).slice(0, 200) });
+      record({ task: 'baserate', mode: r.mode, reason: r.reason, source: 'error', ms: performance.now() - t0, sentToCloud: payload, decoy, data, error: String((e as Error).message).slice(0, 200) });
       return undefined;
     }
   };
@@ -299,14 +313,14 @@ export async function blurDraft(draft: string, data: DataKind): Promise<{ rewrit
   try {
     const { value: res } = await hedged(r.mode, blurModel, (m) => m.generateContent(draft));
     const source = res.response.inferenceSource === 'in_cloud' ? 'in_cloud' : 'on_device';
-    record({ task: 'blur', mode: r.mode, reason: r.reason, source, ms: performance.now() - t0, sentToCloud: source === 'in_cloud' ? draft : '' });
+    record({ task: 'blur', mode: r.mode, reason: r.reason, source, ms: performance.now() - t0, sentToCloud: source === 'in_cloud' ? draft : '', data });
     const j = JSON.parse(res.response.text()) as { rewrite?: unknown; removed?: unknown };
     if (typeof j.rewrite !== 'string' || !j.rewrite.trim()) throw new Error('The model returned no rewrite. Try again.');
     const removed = Array.isArray(j.removed) ? j.removed.filter((x): x is string => typeof x === 'string') : [];
     return { rewrite: j.rewrite, removed, source };
   } catch (e) {
     if (e instanceof SyntaxError) e = new Error('The model returned malformed output. Try again.');
-    record({ task: 'blur', mode: r.mode, reason: r.reason, source: 'error', ms: performance.now() - t0, sentToCloud: '', error: String((e as Error).message).slice(0, 200) });
+    record({ task: 'blur', mode: r.mode, reason: r.reason, source: 'error', ms: performance.now() - t0, sentToCloud: '', error: String((e as Error).message).slice(0, 200), data });
     throw e;
   }
 }

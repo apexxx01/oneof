@@ -73,15 +73,19 @@ export function estimate(region: Region, attrs: Attribute[], seed = 7): CrowdEst
   return { p10, p50, p90, band: bandFor(p50), bits: Math.max(0, Math.log2((region.population * (region.adultShare ?? 1)) / p50)) };
 }
 
-/** How many people, rounded for humans: 1,752,753 → "1.75M", 23.4 → "~20". */
+/**
+ * How many people, rounded for humans: 1,752,753 → "1.75M", 1,000,000 → "1M", 23.4 → "25".
+ * Trailing zeros are dropped, so axis ticks and the meter read the same ("1M", not "1.00M").
+ */
 export function humanCount(n: number): string {
+  const trim = (x: number, digits: number) => String(Number(x.toFixed(digits)));
   if (n < 2) return '1';
   if (n < 10) return String(Math.round(n));
   if (n < 100) return String(Math.round(n / 5) * 5);
   if (n < 1000) return String(Math.round(n / 10) * 10);
-  if (n < 1e6) return `${(n / 1000).toFixed(n < 1e4 ? 1 : 0)}k`;
-  if (n < 1e9) return `${(n / 1e6).toFixed(n < 1e7 ? 2 : 1)}M`;
-  return `${(n / 1e9).toFixed(2)}B`;
+  if (n < 1e6) return `${trim(n / 1000, n < 1e4 ? 1 : 0)}k`;
+  if (n < 1e9) return `${trim(n / 1e6, n < 1e7 ? 2 : 1)}M`;
+  return `${trim(n / 1e9, 2)}B`;
 }
 
 export function rangeLabel(e: CrowdEstimate): string {

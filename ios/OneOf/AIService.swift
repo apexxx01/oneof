@@ -72,7 +72,7 @@ final class AIService {
     let prompt = extractPromptApple(post.text)
     let t0 = Date()
     do {
-      let (text, model) = try await respond(mode: r.mode, instructions: EXTRACT_SYSTEM_APPLE, prompt: prompt, json: true)
+      let (raws, model, text) = try await respondFacts(mode: r.mode, prompt: prompt)
       let ms = Date().timeIntervalSince(t0) * 1000
       let onDevice = model == Self.onDeviceName
       // Enforced, not just routed: an own-data answer that didn't come from the on-device model is discarded.
@@ -82,7 +82,9 @@ final class AIService {
       }
       record(LedgerEntry(task: task, mode: r.mode, reason: r.reason, source: onDevice ? .on_device : .in_cloud, ms: ms,
                          sentToCloud: onDevice ? "" : prompt, model: onDevice ? nil : model, data: data))
-      return ExtractResult(outcome: processReply(text, post: post, source: onDevice ? .on_device : .in_cloud), source: onDevice ? .on_device : .in_cloud, ms: ms, reply: text)
+      let outcome = raws.map { processFacts($0, post: post, source: onDevice ? .on_device : .in_cloud) }
+        ?? processReply(text, post: post, source: onDevice ? .on_device : .in_cloud)
+      return ExtractResult(outcome: outcome, source: onDevice ? .on_device : .in_cloud, ms: ms, reply: text)
     } catch let e as AIError where e == .blocked {
       throw e
     } catch let error where error is CancellationError || Task.isCancelled {
@@ -161,21 +163,49 @@ final class AIService {
 
   // MARK: - Plumbing
 
+  /// Typed generation first (@Generable). If the model can't produce the schema, one retry as free
+  /// text through the tolerant parser. Returns (facts if typed, model name, raw text if text).
+  private func respondFacts(mode: RouteMode, prompt: String) async throws -> ([RawFact]?, String, String) {
+    let session = makeSession(mode: mode, instructions: EXTRACT_SYSTEM_APPLE)
+    let options = Self.options(json: true)
+    let budget = mode == .onlyInCloud ? Self.cloudChain[0].timeout : Self.onDeviceBudget
+    do {
+      return try await withTimeout(budget) {
+        let res = try await session.respond(to: prompt, generating: GFactBatch.self, includeSchemaInPrompt: true, options: options)
+        return (res.content.rawFacts, res.rawResponse.modelVersion, "")
+      }
+    } catch let e as AIError {
+      throw e
+    } catch let error where error is CancellationError || Task.isCancelled {
+      throw CancellationError()
+    } catch {
+      let (text, model) = try await respond(mode: mode, instructions: EXTRACT_SYSTEM_APPLE, prompt: prompt, json: true)
+      return (nil, model, text)
+    }
+  }
+
+  private func makeSession(mode: RouteMode, instructions: String, transform: Bool = false) -> GenerativeModelSession {
+    let system = transform ? FirebaseAI.SystemLanguageModel(useCase: .general, guardrails: .permissiveContentTransformations) : FirebaseAI.SystemLanguageModel.default
+    let cloud = ai.geminiModel(name: Self.cloudChain[0].model)
+    switch mode {
+    case .onlyOnDevice: return ai.generativeModelSession(model: system, instructions: instructions)
+    case .preferOnDevice: return ai.generativeModelSession(model: HybridModel(primary: system, secondary: cloud), instructions: instructions)
+    case .onlyInCloud: return ai.generativeModelSession(model: cloud, instructions: instructions)
+    }
+  }
+
+  private static func options(json: Bool) -> ResponseGenerationOptions {
+    ResponseGenerationOptions.hybrid(
+      gemini: GenerationConfig(temperature: 0, responseMIMEType: json ? "application/json" : nil),
+      foundationModels: FirebaseAI.GenerationOptions(sampling: .greedy))
+  }
+
   /// One fresh session per call: no history leaks between posts, and the on-device context
   /// (about 4k tokens) never fills up.
   private func respond(mode: RouteMode, instructions: String, prompt: String, json: Bool, transform: Bool = false) async throws -> (String, String) {
     // Rewriting the user's own text is what the permissive-transformations guardrail exists for.
-    let system = transform ? FirebaseAI.SystemLanguageModel(useCase: .general, guardrails: .permissiveContentTransformations) : FirebaseAI.SystemLanguageModel.default
-    let cloud = ai.geminiModel(name: Self.cloudChain[0].model)
-    let session: GenerativeModelSession
-    switch mode {
-    case .onlyOnDevice: session = ai.generativeModelSession(model: system, instructions: instructions)
-    case .preferOnDevice: session = ai.generativeModelSession(model: HybridModel(primary: system, secondary: cloud), instructions: instructions)
-    case .onlyInCloud: session = ai.generativeModelSession(model: cloud, instructions: instructions)
-    }
-    let options = ResponseGenerationOptions.hybrid(
-      gemini: GenerationConfig(temperature: 0, responseMIMEType: json ? "application/json" : nil),
-      foundationModels: FirebaseAI.GenerationOptions(sampling: .greedy))
+    let session = makeSession(mode: mode, instructions: instructions, transform: transform)
+    let options = Self.options(json: json)
     let budget = mode == .onlyInCloud ? Self.cloudChain[0].timeout : Self.onDeviceBudget
     return try await withTimeout(budget) {
       let res = try await session.respond(to: prompt, options: options)
