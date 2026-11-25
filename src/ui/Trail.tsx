@@ -53,7 +53,7 @@ export function Trail({ points, left, threshold = 100, span }: { points: TrailPo
           </g>
         ))}
         <line x1={P.l} x2={W - P.r} y1={y(threshold)} y2={y(threshold)} className="threshold" />
-        <text x={W - P.r} y={y(threshold) - 6} className="axis warn" textAnchor="end">a room ({threshold})</text>
+        <text x={P.l + 6} y={y(threshold) - 6} className="axis warn" textAnchor="start">a room ({threshold})</text>
         <polygon points={band} className="trail-band" />
         <path d={d50} className="trail-line" />
         {years.map((yr) => (
@@ -68,7 +68,7 @@ export function Trail({ points, left, threshold = 100, span }: { points: TrailPo
           </g>
         )}
         {points.map((p, i) => (
-          <g key={i} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} onClick={() => setHover(hover === i ? null : i)} style={{ cursor: 'pointer' }}>
+          <g key={i} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} onClick={() => setHover(i)} style={{ cursor: 'pointer' }}>
             {/* Larger invisible target for fingers. */}
             <circle cx={x(p.date)} cy={y(p.estimate.p50)} r={14} fill="transparent" />
             <circle cx={x(p.date)} cy={y(p.estimate.p50)} r={hover === i ? 6 : 4} className="trail-pt" />

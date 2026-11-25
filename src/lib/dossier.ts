@@ -129,7 +129,9 @@ export function crumbTrail(d: Dossier, seed = 7): TrailPoint[] {
     if (e.attr) on.push(e.attr);
     else regionOn = true;
     const region = regionOn ? d.region : DEFAULT_REGION;
-    points.push({ date: e.date, estimate: estimate(region, [...on], seed), added: [e.label] });
+    // Same order as the dossier so the last crumb matches the headline number exactly.
+    const sorted = [...on].sort((x, y) => x.rate.high - y.rate.high);
+    points.push({ date: e.date, estimate: estimate(region, sorted, seed), added: [e.label] });
   }
   return points;
 }

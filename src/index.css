@@ -160,3 +160,9 @@ footer { margin-top: 40px; }
 
 .chip.dim { opacity: .45; }
 .ledger-list .replay-tag { color: var(--amber); }
+
+.nowrap { white-space: nowrap; }
+.not-checked p { margin: 6px 0; }
+
+.brand { cursor: pointer; }
+.scan-actions { margin: 12px 0; }

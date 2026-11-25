@@ -37,13 +37,13 @@ export async function scan(
   data: DataKind,
   onUpdate: (p: ScanProgress) => void,
   signal?: AbortSignal,
-  opts: { coolMs?: number } = {},
+  opts: { coolMs?: number; maxPosts?: number } = {},
 ): Promise<ScanProgress> {
   const verdicts = posts.map((p) => ({ p, v: prefilter(p.text) }));
   const scannable = verdicts.filter(({ v }) => v.reason !== 'too_short' && v.reason !== 'link_only');
   const fast = scannable.filter(({ v }) => v.keep).map(({ p }) => p);
   const deep = scannable.filter(({ v }) => !v.keep).map(({ p }) => p);
-  const considered = [...fast, ...deep];
+  const considered = [...fast, ...deep].slice(0, opts.maxPosts ?? Infinity);
   const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass: fast.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
   onUpdate({ ...st });
   // Gemini Nano slows down or stalls under long sustained load (seen live after ~100 prompts).

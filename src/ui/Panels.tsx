@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { liftFor } from '../data/baserates';
+import { liftFor, PACK } from '../data/baserates';
 import { estimate, humanCount } from '../lib/estimate';
 import { buildDossier, type Dossier } from '../lib/dossier';
 import { BlockedError, blurDraft, extractFromPost } from '../lib/ai';
@@ -9,6 +9,9 @@ import type { Attribute, BaseRate, CrowdEstimate, Fact, Post } from '../lib/type
 import { GradeBadge, Meter, Pct, SourceBadge } from './bits';
 
 /** The formula, every factor with its source. Nothing hidden. */
+/** Human label for a base-rate key, for the overlap note. */
+function labelOf(key?: string) { return PACK.find((p) => p.key === key)?.label ?? key?.split(':')[1]?.replace(/_/g, ' ') ?? 'another fact'; }
+
 export function Formula({ d, e }: { d: Dossier; e: CrowdEstimate }) {
   const adults = d.region.population * (d.region.adultShare ?? 1);
   const seen: string[] = [];
@@ -26,7 +29,7 @@ export function Formula({ d, e }: { d: Dossier; e: CrowdEstimate }) {
         return (
           <div className="f-row" key={a.rate.key}>
             <span>× {a.rate.label}</span>
-            <span className="mono"><Pct x={a.rate.low} /> – <Pct x={a.rate.high} />{lift.lift > 1 && <span className="lift"> ×{lift.lift.toFixed(1)} overlap</span>}</span>
+            <span className="mono"><Pct x={a.rate.low} /> – <Pct x={a.rate.high} />{lift.lift > 1 && <span className="lift" title={`Overlap with ${labelOf(lift.with)}: these often go together, so they narrow the crowd less than independent facts would`}> ×{lift.lift.toFixed(1)} overlap with {labelOf(lift.with)}</span>}</span>
             <GradeBadge grade={a.rate.grade} />
             <span className="f-src">
               {a.rate.url ? <a href={a.rate.url} target="_blank" rel="noreferrer">{a.rate.source}</a> : a.rate.source}
@@ -161,8 +164,8 @@ export function Draft({ history, rates, before, placeholder, nano, recorded }: {
     <div className="draft">
       <div className="draft-edit">
         <textarea value={text} onChange={(e) => { setText(e.target.value); setBlur(null); }} placeholder="Write your next post here. OneOf checks it on this device before you share it." rows={4} />
-        {placeholder && !text && <button className="ghost small" onClick={() => setText(recorded?.text ?? placeholder)}>Try a sample draft: “{(recorded?.text ?? placeholder).slice(0, 48)}…”</button>}
-        {!nano && !playingRecording && <p className="small muted">Blur and live draft checks need Gemini Nano (desktop Chrome). {recorded ? 'The sample draft above plays a recorded on-device result.' : ''}</p>}
+        {placeholder && !playingRecording && text.trim() !== (recorded?.text ?? placeholder).trim() && <button className="ghost small" onClick={() => setText(recorded?.text ?? placeholder)}>{text ? 'Use the sample draft instead' : `Try a sample draft: “${(recorded?.text ?? placeholder).slice(0, 48)}…”`}</button>}
+        {!nano && <p className="small muted">{playingRecording ? 'Blur needs Gemini Nano (desktop Chrome): drafts never leave this device.' : 'Live draft checks and Blur need Gemini Nano (desktop Chrome): drafts never leave this device.'}{recorded && !playingRecording ? ' The sample draft plays a recorded on-device result.' : ''}</p>}
         <div className="draft-status mono">
           {playingRecording
             ? `REPLAY · recorded on Gemini Nano in Chrome ${chromeVersion(recorded!.userAgent)} on ${recorded!.recordedAt.slice(0, 10)} · ${draftFacts.length} new fact${draftFacts.length === 1 ? '' : 's'}`
@@ -194,7 +197,9 @@ export function Draft({ history, rates, before, placeholder, nano, recorded }: {
       <div className="draft-meter">
         <Meter e={before} compact label="Before this draft" />
         <div className="arrow">→</div>
-        <Meter e={draftFacts.length ? after : before} compact label="If you post it" />
+        {!nano && !playingRecording && text.trim()
+          ? <div className="not-checked"><div className="eyebrow mono">If you post it</div><p className="mono">not checked</p><p className="small muted">This draft wasn’t read: no Gemini Nano in this browser, and drafts never leave the device.</p></div>
+          : <Meter e={draftFacts.length ? after : before} compact label="If you post it" />}
       </div>
     </div>
   );

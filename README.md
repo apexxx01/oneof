@@ -151,6 +151,8 @@ npm run build                # production build in dist/
 - No `.env.local` is needed to try it: the public Firebase web config is built in, and the recorded replay works offline. Copy `.env.example` to `.env.local` only to point at your own Firebase project.
 - App Check: in dev the console prints a debug token; register it under App Check → Manage debug tokens (never commit it). Set `VITE_APPCHECK=off` to skip App Check for a local run. Production builds read `VITE_RECAPTCHA_ENTERPRISE_SITE_KEY` or `VITE_APPCHECK_DEBUG_TOKEN` from repository variables.
 - `/?replay` offers the recorded run even in a browser that has Nano.
+- A synthetic Reddit export to try the importer: [`quietnight_rn-reddit-export.zip`](https://apexxx01.github.io/oneof/personas/quietnight_rn-reddit-export.zip) (it includes decoy `ip_logs.csv` and `messages.csv` files that OneOf never opens).
+- Cloud model chain: `gemini-3.5-flash-lite` first; on a timeout or quota error, `gemini-3.5-flash`.
 - Click "Download Gemini Nano (one time)" on the home page. The download needs a user gesture.
 - The spike benchmark page is at `/?spike`; the held-out SynthPAI evaluation is at `/?eval`.
 - The synthetic persona "quietnight_rn" runs on the home page. It is labelled SYNTHETIC on screen.
