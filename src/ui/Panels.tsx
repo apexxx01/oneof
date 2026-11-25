@@ -42,7 +42,7 @@ export function Formula({ d, e }: { d: Dossier; e: CrowdEstimate }) {
         <span>= people who match all of this</span>
         <span className="mono">{humanCount(e.p10)} – {humanCount(e.p90)}</span>
         <span />
-        <span className="f-src">P10–P90 of 4,000 draws. Weak evidence widens the range. Known overlaps (e.g. 88% of nurses are women) are corrected; unknown ones get a deliberately cautious allowance, which is an assumption, not a measurement.</span>
+        <span className="f-src">P10–P90 of 4,000 draws. Weak evidence widens the range. Known overlaps (e.g. 88% of nurses are women) are corrected; unknown ones get a deliberately cautious allowance, which is an assumption, not a measurement. Only bundled tables and cloud lookups that return a source are counted. OneOf runs on Firebase’s free plan, where Google Search grounding isn’t available, so live lookups come back unsourced and are shown but never counted.</span>
       </div>
     </div>
   );

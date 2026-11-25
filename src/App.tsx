@@ -218,7 +218,7 @@ export default function App() {
                 <>
                   <button className="primary" onClick={watchReplay}>Watch a recorded on-device run</button>
                   <p className="small muted">{avail === 'available' ? 'You’ll see' : 'Gemini Nano isn’t ready in this browser, so you’ll see'} a real run recorded in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)}, played {REPLAY_SPEED}× faster. Every fact and timing is from that run.</p>
-                  <button className="ghost" onClick={async () => start((await loadPersona()).posts, 'synthetic', CLOUD_LIVE_LIMIT)}>Or run {CLOUD_LIVE_LIMIT} posts live through the cloud</button>
+                  <button className="ghost" onClick={async () => start((await loadPersona()).posts, 'synthetic', CLOUD_LIVE_LIMIT)}>Or run {CLOUD_LIVE_LIMIT} posts live through the cloud (free tier, rate-limited)</button>
                 </>
               ) : (
                 <>
@@ -367,7 +367,7 @@ export default function App() {
               <Draft history={facts} rates={rates} before={now} placeholder={persona?.draft} nano={avail === 'available'} recorded={data === 'synthetic' ? replay?.draft : undefined} />
             </div>
           </section>
-          <footer className="small muted">OneOf never outputs a name or an identity guess, and never says “safe”. Ranges are estimates; tap “Show the math” for every source. · <a href="https://github.com/apexxx01/oneof" target="_blank" rel="noreferrer">Source on GitHub</a></footer>
+          <footer className="small muted">OneOf never outputs a name or an identity guess, and never says “safe”. Ranges are estimates; tap “Show the math” for every source. · Built entirely on Firebase’s free plan: reading your history happens on your device, so it costs $0 and has no limit. · <a href="https://github.com/apexxx01/oneof" target="_blank" rel="noreferrer">Source on GitHub</a></footer>
         </main>
       )}
 
