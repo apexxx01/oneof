@@ -14,3 +14,12 @@ jobs:
       - run: npx tsc -b
       - run: npx vitest run
       - run: npm run build
+      # The golden fixtures must be what the current TypeScript core produces.
+      - run: npx tsx scripts/golden-ios.ts && git diff --exit-code ios/OneOfCore/Tests/OneOfCoreTests/Resources/golden.json
+  swift-core:
+    # iOS shared core: must agree with the TypeScript core on every golden case.
+    runs-on: ubuntu-latest
+    container: swift:6.2
+    steps:
+      - uses: actions/checkout@v4
+      - run: cd ios/OneOfCore && swift test
