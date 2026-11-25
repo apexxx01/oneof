@@ -7,3 +7,5 @@ dist
 .DS_Store
 s1-results-*.json
 receipts/*.tmp
+ios/OneOfCore/.build
+ios/OneOfCore/.swiftpm

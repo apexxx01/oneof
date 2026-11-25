@@ -1,0 +1,7 @@
+Secrets.xcconfig
+OneOf/GoogleService-Info.plist
+xcuserdata/
+*.xcuserstate
+.build/
+DerivedData/
+.swiftpm/

@@ -1,0 +1,7689 @@
+{
+  "mulberry32": [
+    {
+      "seed": 7,
+      "first10": [
+        0.011704753153026104,
+        0.06195825757458806,
+        0.97690763277933,
+        0.6990287057124078,
+        0.5214452685322613,
+        0.4055216880515218,
+        0.4662326325196773,
+        0.23992518591694534,
+        0.5533256039489061,
+        0.729822089895606
+      ]
+    },
+    {
+      "seed": 123456789,
+      "first10": [
+        0.2577907438389957,
+        0.9707721115555614,
+        0.7853280142880976,
+        0.20616457983851433,
+        0.30307188746519387,
+        0.7470660470426083,
+        0.7787336520850658,
+        0.2845096290111542,
+        0.016536934999749064,
+        0.1614646923262626
+      ]
+    },
+    {
+      "seed": 0,
+      "first10": [
+        0.26642920868471265,
+        0.0003297457005828619,
+        0.2232720274478197,
+        0.1462021479383111,
+        0.46732782293111086,
+        0.5450490827206522,
+        0.6152513844426721,
+        0.6489853798411787,
+        0.45600721263326705,
+        0.581218967679888
+      ]
+    }
+  ],
+  "verify": [
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "near me",
+        "quote": "new bakery opened near me",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "new bakery opened near me and my diet has officially ended"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "unknown",
+        "quote": "cleaned my inbox",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "finally cleaned my inbox. 4000 unread to zero."
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "board games",
+        "quote": "board games exist",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "the power went out and I remembered that board games exist"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "watching football highlights",
+        "quote": "watching football highlights at 2am",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "watching football highlights at 2am is self care, right"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "parent of five children",
+        "quote": "having five kids",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "imagine having five kids. some days I am already a ghost"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "glove box",
+        "quote": "they are in the glove box",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "the doctor on duty tonight asked me where the gloves are. they are in the glove box"
+      },
+      "ok": false,
+      "why": "not a place name"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "relationship",
+        "value": "self",
+        "quote": "when you reach your destination",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "why do all the good songs come on when you reach your destination"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "vehicle",
+        "value": "red car",
+        "quote": "my red car",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my red Subaru has survived more potholes"
+      },
+      "ok": false,
+      "why": "quote not in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "registered nurse",
+        "quote": "as a registered nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as a registered nurse I promise you nobody reads the discharge paperwork"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "Columbus",
+        "quote": "here in Columbus",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "it has rained for nine days straight here in Columbus"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "single mother",
+        "quote": "single mom",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "being a single mom on night shifts means coffee is a food group"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "night shift",
+        "quote": "after a night shift",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "after a night shift the sunrise feels like a personal insult"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "grind",
+        "quote": "back to the grind",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "back to the grind"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "person",
+        "quote": "as a person",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as a person who hates mornings"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "software developer",
+        "quote": "debugging my code all day",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "debugging my code all day, send help"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "chili enthusiast",
+        "quote": "good chili recipe",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "anyone have a good chili recipe"
+      },
+      "ok": false,
+      "why": "implied hobby or age"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "age",
+        "value": "30s",
+        "quote": "back in my day",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "back in my day we walked"
+      },
+      "ok": false,
+      "why": "implied hobby or age"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "age",
+        "value": "34",
+        "quote": "I turned 34",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I turned 34 today"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "single mom",
+        "quote": "being a single mom",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "being a single mom on night shifts"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "member of group",
+        "quote": "the group chat",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "the group chat has been silent"
+      },
+      "ok": false,
+      "why": "implied family, no role"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "Seattle",
+        "quote": "my sister in Seattle says it is cold there",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister in Seattle says it is cold there"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "Columbus",
+        "quote": "it has rained for nine days straight here in Columbus",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "it has rained for nine days straight here in Columbus"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "relationship",
+        "value": "married",
+        "quote": "my husband",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my husband works nights too"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "registered nurse",
+        "quote": "as a registered nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as a registered nurse at St. Luke’s in Boise I work nights"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "night shift",
+        "quote": "work nights",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as a registered nurse at St. Luke’s in Boise I work nights"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "Boise",
+        "quote": "in Boise",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as a registered nurse at St. Luke’s in Boise I work nights"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "registered nurse",
+        "quote": "as a registered nurse",
+        "about_self": false,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as a registered nurse I promise"
+      },
+      "ok": false,
+      "why": "not about the author"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "other",
+        "value": "coffee mug",
+        "quote": "my mug",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my mug is cold"
+      },
+      "ok": false,
+      "why": "uncategorized"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "unknown",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "unspecified",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "not specified",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "n/a",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "none",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "near me",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "somewhere",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "location",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "self",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "myself",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "me",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "Unknown",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "NEAR ME",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "the location",
+        "quote": "today",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "today was fine"
+      },
+      "ok": false,
+      "why": "placeholder value"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "medicine",
+        "quote": "medicine",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love medicine"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "mean",
+        "quote": "mean",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "that is mean"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "teacher",
+        "quote": "I teach kids",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I teach"
+      },
+      "ok": false,
+      "why": "quote not in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "relationship",
+        "value": "parent",
+        "quote": "kid's school",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my kid’s school is great"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "relationship",
+        "value": "married",
+        "quote": "said “hi”",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "she said \"hi\" to me"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "relationship",
+        "value": "married",
+        "quote": "‘hi’",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "she said 'hi' to me"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "Seattle",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "Mercy Hospital",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "employer_type",
+        "value": "hospital",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "education",
+        "value": "BSN",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "vehicle",
+        "value": "Subaru",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "chess",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "age",
+        "value": "34",
+        "quote": "my sister lives in Seattle",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister lives in Seattle"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "sister",
+        "quote": "my sister",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "relationship",
+        "value": "married",
+        "quote": "my husband",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my husband works nights"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "health",
+        "value": "asthma",
+        "quote": "my sister has asthma",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister has asthma"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my sister is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sister is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my brother is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my brother is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my cousin is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my cousin is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my friend is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my friend is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my best friend is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my best friend is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my bff is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my bff is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my mom is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my mom is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my mum is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my mum is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my mother is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my mother is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my dad is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my dad is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my father is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my father is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my aunt is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my aunt is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my uncle is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my uncle is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my grandma is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my grandma is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my grandpa is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my grandpa is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my grandmother is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my grandmother is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my grandfather is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my grandfather is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my neighbor is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my neighbor is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my neighbour is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my neighbour is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my coworker is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my coworker is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my co-worker is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my co-worker is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my colleague is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my colleague is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my boss is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my boss is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my roommate is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my roommate is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my son is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my son is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my daughter is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my daughter is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my kid is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my kid is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my niece is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my niece is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my nephew is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my nephew is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my in-law is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my in-law is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my in-laws is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my in-laws is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "nurse",
+        "quote": "my sisters is a nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my sisters is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "imagine I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "if i had I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "if i were I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "if i was I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "if i lived I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "i wish i I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "someday I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "hypothetically I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I had a cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "pretend I had a cat"
+      },
+      "ok": false,
+      "why": "hypothetical"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "I have two cats",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I have two cats. imagine that"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "board games",
+        "quote": "board games",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love board games lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "football",
+        "quote": "football",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love football lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "soccer",
+        "quote": "soccer",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love soccer lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "basketball",
+        "quote": "basketball",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love basketball lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "music",
+        "quote": "music",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love music lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "movies",
+        "quote": "movies",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love movies lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "tv",
+        "quote": "tv",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love tv lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "netflix",
+        "quote": "netflix",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love netflix lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "reading",
+        "quote": "reading",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love reading lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "books",
+        "quote": "books",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love books lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "gaming",
+        "quote": "gaming",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love gaming lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "video games",
+        "quote": "video games",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love video games lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "coffee",
+        "quote": "coffee",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love coffee lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "tea",
+        "quote": "tea",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love tea lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "sleep",
+        "quote": "sleep",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love sleep lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "food",
+        "quote": "food",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love food lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "baking",
+        "quote": "baking",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love baking lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "walking",
+        "quote": "walking",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love walking lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "shopping",
+        "quote": "shopping",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love shopping lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "travel",
+        "quote": "travel",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love travel lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "cooking",
+        "quote": "cooking",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I love cooking lately"
+      },
+      "ok": false,
+      "why": "generic interest"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "half marathon",
+        "quote": "half marathon",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I trained for a half marathon"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "job",
+        "quote": "job",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as job I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "a job",
+        "quote": "a job",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as a job I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "work",
+        "quote": "work",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as work I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "worker",
+        "quote": "worker",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as worker I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "grind",
+        "quote": "grind",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as grind I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "person",
+        "quote": "person",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as person I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "people",
+        "quote": "people",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as people I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "professional",
+        "quote": "professional",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as professional I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "expert",
+        "quote": "expert",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as expert I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "individual",
+        "quote": "individual",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as individual I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "employee",
+        "quote": "employee",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as employee I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "staff",
+        "quote": "staff",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as staff I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "someone",
+        "quote": "someone",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as someone I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "flexible hours",
+        "quote": "flexible hours",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as flexible hours I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "intellectual pursuits",
+        "quote": "intellectual pursuits",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as intellectual pursuits I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "career",
+        "quote": "career",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as career I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "employer_type",
+        "value": "person",
+        "quote": "person",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as person I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": " person ",
+        "quote": " person ",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as a person I suffer"
+      },
+      "ok": false,
+      "why": "vague job"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "social worker",
+        "quote": "social worker",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I am a social worker"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "chili enthusiast",
+        "quote": "chili",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "chili time"
+      },
+      "ok": false,
+      "why": "implied hobby or age"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "rare_hobby",
+        "value": "chili enthusiast",
+        "quote": "chili",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "chili time"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "age",
+        "value": "30s",
+        "quote": "30s",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I am in my 30s"
+      },
+      "ok": false,
+      "why": "implied hobby or age"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "age",
+        "value": "34",
+        "quote": "turned 34",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "turned 34 today"
+      },
+      "ok": false,
+      "why": "implied hobby or age"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "member of group",
+        "quote": "group",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "group chat"
+      },
+      "ok": false,
+      "why": "implied family, no role"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "divorced",
+        "quote": "divorced",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I am divorced"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "twins",
+        "quote": "twins",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my twins"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "member of group",
+        "quote": "group",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "group chat"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "pet owner",
+        "quote": "owner",
+        "about_self": true,
+        "certainty": "implied"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "the owner"
+      },
+      "ok": false,
+      "why": "implied family, no role"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "columbus",
+        "quote": "columbus",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I live in columbus"
+      },
+      "ok": false,
+      "why": "not a place name"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "Columbus",
+        "quote": "Columbus",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I live in Columbus"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "night shift",
+        "quote": "night shift",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I work the night shift"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "NIGHT shift",
+        "quote": "NIGHT shift",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I work the NIGHT shift"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "remote",
+        "quote": "remote",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I work remote"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "the office",
+        "quote": "the office",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I miss the office"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "hospital",
+        "quote": "hospital",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "stuck at the hospital"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "day shift",
+        "quote": "day shift",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "on a day shift"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "Boise",
+        "quote": "here in Columbus",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I live here in Columbus"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "home_location",
+        "value": "Columbus",
+        "quote": "here in Columbus",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I live here in Columbus"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "Mercy Hospital",
+        "quote": "work at St Luke",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I work at St Luke in Boise"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "Mercy Hospital",
+        "quote": "work at Mercy Hospital",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I work at Mercy Hospital"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "vehicle",
+        "value": "Ford pickup",
+        "quote": "my red Subaru",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my red Subaru has potholes"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "vehicle",
+        "value": "red Subaru",
+        "quote": "my red Subaru",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my red Subaru has potholes"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "parrot",
+        "quote": "my cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my cat is asleep"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "cat",
+        "quote": "my cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my cat is asleep"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "language",
+        "value": "Tagalog",
+        "quote": "I speak Spanish",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I speak Spanish"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "language",
+        "value": "Spanish",
+        "quote": "I speak Spanish",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I speak Spanish"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "education",
+        "value": "MBA",
+        "quote": "my BSN",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my BSN is done"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "education",
+        "value": "BSN",
+        "quote": "my BSN",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my BSN is done"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "employer_type",
+        "value": "bank",
+        "quote": "hospital work",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "hospital work all week"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "employer_type",
+        "value": "hospital system",
+        "quote": "hospital work",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "hospital work all week"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "education",
+        "value": "RN",
+        "quote": "RN",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I am an RN"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "work_location",
+        "value": "night shift",
+        "quote": "work nights",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I work nights"
+      },
+      "ok": false,
+      "why": "value not grounded in post"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "family",
+        "value": "parent of twins",
+        "quote": "my twins just started kindergarten",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my twins just started kindergarten"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "pet",
+        "value": "one-eyed cat",
+        "quote": "my one-eyed cat",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my one-eyed cat"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "vehicle",
+        "value": "Subaru",
+        "quote": "Subaru",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "my Subaru outback"
+      },
+      "ok": true,
+      "why": null
+    }
+  ],
+  "attribute": [
+    {
+      "fact": {
+        "cat": "home_location",
+        "value": "nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "work_location",
+        "value": "nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "health",
+        "value": "nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "religion_community",
+        "value": "nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "dated_event",
+        "value": "nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "other",
+        "value": "nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "health",
+        "value": "asthma"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "work_location",
+        "value": "night shift"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "dated_event",
+        "value": "moved in march"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "religion_community",
+        "value": "Catholic"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "registered nurse"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: registered nurse"
+      }
+    },
+    {
+      "fact": {
+        "cat": "family",
+        "value": "parent of twins"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "family: parent of twins"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "ICU nurse"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: icu nurse"
+      }
+    },
+    {
+      "fact": {
+        "cat": "pet",
+        "value": "my one-eyed cat"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "pet: one-eyed cat"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "RN"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: rn"
+      }
+    },
+    {
+      "fact": {
+        "cat": "education",
+        "value": "BSN"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "education: bsn"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "ER/ICU & OR nurse"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: er/icu & or nurse"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurse  practitioner"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: nurse practitioner"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurse "
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: nurse"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "x"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: x"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "ICU"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: icu"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurse-midwife"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: nurse-midwife"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "ICU-nurse"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: icu-nurse"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "mcDonald cook"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: mcdonald cook"
+      }
+    },
+    {
+      "fact": {
+        "cat": "family",
+        "value": "single mom"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "family: single mom"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "a nurse"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: a nurse"
+      }
+    },
+    {
+      "fact": {
+        "cat": "family",
+        "value": "my sister"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "family: sister"
+      }
+    },
+    {
+      "fact": {
+        "cat": "vehicle",
+        "value": "subaru/outback & forester"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "vehicle: subaru/outback & forester"
+      }
+    },
+    {
+      "fact": {
+        "cat": "rare_hobby",
+        "value": "half-marathon"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "rare hobby: half-marathon"
+      }
+    },
+    {
+      "fact": {
+        "cat": "rare_hobby",
+        "value": "one two three four"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "rare hobby: one two three four"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "our nurse"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: nurse"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "their nurse"
+      },
+      "result": {
+        "ok": true,
+        "attribute": "occupation: nurse"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "my our his her their"
+      },
+      "result": {
+        "ok": false,
+        "why": "empty"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "HER"
+      },
+      "result": {
+        "ok": false,
+        "why": "empty"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "my"
+      },
+      "result": {
+        "ok": false,
+        "why": "empty"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "  "
+      },
+      "result": {
+        "ok": false,
+        "why": "empty"
+      }
+    },
+    {
+      "fact": {
+        "cat": "vehicle",
+        "value": "2014 subaru"
+      },
+      "result": {
+        "ok": false,
+        "why": "contains a number"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "1st year"
+      },
+      "result": {
+        "ok": false,
+        "why": "contains a number"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "ICU nurse with 12 years"
+      },
+      "result": {
+        "ok": false,
+        "why": "contains a number"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurse's aide"
+      },
+      "result": {
+        "ok": false,
+        "why": "possessive name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurse’s aide"
+      },
+      "result": {
+        "ok": false,
+        "why": "possessive name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "chef's"
+      },
+      "result": {
+        "ok": false,
+        "why": "possessive name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "chef’s"
+      },
+      "result": {
+        "ok": false,
+        "why": "possessive name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "rn's"
+      },
+      "result": {
+        "ok": false,
+        "why": "possessive name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "employer_type",
+        "value": "St. Luke’s Boise"
+      },
+      "result": {
+        "ok": false,
+        "why": "possessive name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "rare_hobby",
+        "value": "restoring old wooden sailboats on weekends"
+      },
+      "result": {
+        "ok": false,
+        "why": "too specific"
+      }
+    },
+    {
+      "fact": {
+        "cat": "rare_hobby",
+        "value": "a b c d e"
+      },
+      "result": {
+        "ok": false,
+        "why": "too specific"
+      }
+    },
+    {
+      "fact": {
+        "cat": "vehicle",
+        "value": "Subaru"
+      },
+      "result": {
+        "ok": false,
+        "why": "looks like a name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "employer_type",
+        "value": "Mercy hospital"
+      },
+      "result": {
+        "ok": false,
+        "why": "looks like a name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "employer_type",
+        "value": "St. Luke Boise"
+      },
+      "result": {
+        "ok": false,
+        "why": "looks like a name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "Registered Nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "looks like a name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "Ok"
+      },
+      "result": {
+        "ok": false,
+        "why": "looks like a name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "McDonald cook"
+      },
+      "result": {
+        "ok": false,
+        "why": "looks like a name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "Our Nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "looks like a name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurse, rn"
+      },
+      "result": {
+        "ok": false,
+        "why": "unusual characters"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurse."
+      },
+      "result": {
+        "ok": false,
+        "why": "unusual characters"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "_nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "unusual characters"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurses’"
+      },
+      "result": {
+        "ok": false,
+        "why": "unusual characters"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "café owner"
+      },
+      "result": {
+        "ok": false,
+        "why": "unusual characters"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "nurse_aide"
+      },
+      "result": {
+        "ok": false,
+        "why": "unusual characters"
+      }
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "-nurse"
+      },
+      "result": {
+        "ok": false,
+        "why": "unusual characters"
+      }
+    },
+    {
+      "fact": {
+        "cat": "employer_type",
+        "value": "St. Luke’s Boise"
+      },
+      "result": {
+        "ok": false,
+        "why": "possessive name"
+      }
+    },
+    {
+      "fact": {
+        "cat": "vehicle",
+        "value": "2014 subaru"
+      },
+      "result": {
+        "ok": false,
+        "why": "contains a number"
+      }
+    },
+    {
+      "fact": {
+        "cat": "home_location",
+        "value": "boise"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    },
+    {
+      "fact": {
+        "cat": "health",
+        "value": "asthma"
+      },
+      "result": {
+        "ok": false,
+        "why": "places, health and dated events never leave the device"
+      }
+    }
+  ],
+  "matchPack": [
+    {
+      "cat": "occupation",
+      "value": "registered nurse",
+      "quote": "as a registered nurse",
+      "key": "occupation:nurse"
+    },
+    {
+      "cat": "occupation",
+      "value": "ICU nurse",
+      "quote": "ICU nurse",
+      "key": "occupation:icu_nurse"
+    },
+    {
+      "cat": "occupation",
+      "value": "critical care nurse",
+      "quote": "critical care nurse",
+      "key": "occupation:icu_nurse"
+    },
+    {
+      "cat": "occupation",
+      "value": "software engineer",
+      "quote": "software engineer",
+      "key": "occupation:software_engineer"
+    },
+    {
+      "cat": "occupation",
+      "value": "teacher",
+      "quote": "teacher",
+      "key": "occupation:teacher"
+    },
+    {
+      "cat": "occupation",
+      "value": "teaching assistant",
+      "quote": "I teach",
+      "key": "occupation:teacher"
+    },
+    {
+      "cat": "gender",
+      "value": "female",
+      "quote": "female",
+      "key": "gender:female"
+    },
+    {
+      "cat": "gender",
+      "value": "woman",
+      "quote": "woman",
+      "key": "gender:female"
+    },
+    {
+      "cat": "family",
+      "value": "single mom",
+      "quote": "single mom",
+      "key": "family:single_mother"
+    },
+    {
+      "cat": "family",
+      "value": "parent of twins",
+      "quote": "twins",
+      "key": "family:twins"
+    },
+    {
+      "cat": "family",
+      "value": "kindergartner",
+      "quote": "kindergarten",
+      "key": "family:kindergartner"
+    },
+    {
+      "cat": "relationship",
+      "value": "divorced",
+      "quote": "divorced",
+      "key": "relationship:divorced"
+    },
+    {
+      "cat": "age",
+      "value": "34",
+      "quote": "turned 34",
+      "key": "age:single_year"
+    },
+    {
+      "cat": "rare_hobby",
+      "value": "half marathon",
+      "quote": "half marathon",
+      "key": "hobby:half_marathon"
+    },
+    {
+      "cat": "vehicle",
+      "value": "Subaru",
+      "quote": "my subaru",
+      "key": "vehicle:subaru"
+    },
+    {
+      "cat": "education",
+      "value": "BSN",
+      "quote": "BSN",
+      "key": "education:bsn"
+    },
+    {
+      "cat": "work_location",
+      "value": "night shift",
+      "quote": "night shift",
+      "key": "work:night_shift"
+    },
+    {
+      "cat": "dated_event",
+      "value": "moved here",
+      "quote": "moved here",
+      "key": "event:moved_year"
+    },
+    {
+      "cat": "pet",
+      "value": "cat",
+      "quote": "my cat",
+      "key": "pet:cat"
+    },
+    {
+      "cat": "pet",
+      "value": "one-eyed cat",
+      "quote": "one-eyed cat",
+      "key": "pet:one_eyed_cat"
+    },
+    {
+      "cat": "dated_event",
+      "value": "medical volunteer",
+      "quote": "medical tent",
+      "key": "event:race_medical_volunteer"
+    },
+    {
+      "cat": "employer_type",
+      "value": "nurse",
+      "quote": "nurse",
+      "key": "occupation:nurse"
+    },
+    {
+      "cat": "education",
+      "value": "nurse",
+      "quote": "nurse",
+      "key": "occupation:nurse"
+    },
+    {
+      "cat": "occupation",
+      "value": "plumber",
+      "quote": "plumber",
+      "key": null
+    },
+    {
+      "cat": "pet",
+      "value": "dog",
+      "quote": "my dog",
+      "key": null
+    },
+    {
+      "cat": "gender",
+      "value": "man",
+      "quote": "man",
+      "key": null
+    },
+    {
+      "cat": "health",
+      "value": "asthma",
+      "quote": "asthma",
+      "key": null
+    },
+    {
+      "cat": "home_location",
+      "value": "Columbus",
+      "quote": "here in Columbus",
+      "key": null
+    },
+    {
+      "cat": "rare_hobby",
+      "value": "chess",
+      "quote": "chess",
+      "key": null
+    },
+    {
+      "cat": "vehicle",
+      "value": "Honda Civic",
+      "quote": "civic",
+      "key": null
+    },
+    {
+      "cat": "relationship",
+      "value": "married",
+      "quote": "married",
+      "key": null
+    },
+    {
+      "cat": "family",
+      "value": "parent",
+      "quote": "parent",
+      "key": null
+    },
+    {
+      "cat": "age",
+      "value": "twins",
+      "quote": "twins",
+      "key": null
+    },
+    {
+      "cat": "age",
+      "value": "34",
+      "quote": "I am 34",
+      "key": null
+    },
+    {
+      "cat": "vehicle",
+      "value": "pickup",
+      "quote": "my pickup",
+      "key": null
+    },
+    {
+      "cat": "family",
+      "value": "teacher",
+      "quote": "teacher",
+      "key": null
+    },
+    {
+      "cat": "health",
+      "value": "nurse",
+      "quote": "nurse",
+      "key": null
+    },
+    {
+      "cat": "pet",
+      "value": "cat",
+      "quote": "cat",
+      "key": "pet:cat"
+    },
+    {
+      "cat": "pet",
+      "value": "cats",
+      "quote": "two cats",
+      "key": "pet:cat"
+    },
+    {
+      "cat": "occupation",
+      "value": "",
+      "quote": "as a nurse",
+      "key": "occupation:nurse"
+    },
+    {
+      "cat": "gender",
+      "value": "female",
+      "quote": "she",
+      "key": "gender:female"
+    },
+    {
+      "cat": "family",
+      "value": "mum",
+      "quote": "mum",
+      "key": "gender:female"
+    },
+    {
+      "cat": "education",
+      "value": "MBA",
+      "quote": "MBA",
+      "key": null
+    },
+    {
+      "cat": "dated_event",
+      "value": "moved",
+      "quote": "moved",
+      "key": null
+    }
+  ],
+  "matchRegion": [
+    {
+      "text": "Columbus",
+      "key": "us:oh:franklin"
+    },
+    {
+      "text": "clintonville",
+      "key": "us:oh:franklin"
+    },
+    {
+      "text": "German Village",
+      "key": "us:oh:franklin"
+    },
+    {
+      "text": "Short North",
+      "key": "us:oh:franklin"
+    },
+    {
+      "text": "Olentangy",
+      "key": "us:oh:franklin"
+    },
+    {
+      "text": "Franklin County",
+      "key": "us:oh:franklin"
+    },
+    {
+      "text": "Columbus, Ohio",
+      "key": "us:oh:franklin"
+    },
+    {
+      "text": "Ohio",
+      "key": "us:oh"
+    },
+    {
+      "text": "Cleveland",
+      "key": "us:oh"
+    },
+    {
+      "text": "Dayton",
+      "key": "us:oh"
+    },
+    {
+      "text": "buckeye state",
+      "key": "us:oh"
+    },
+    {
+      "text": "USA",
+      "key": "us"
+    },
+    {
+      "text": "United States",
+      "key": "us"
+    },
+    {
+      "text": "America",
+      "key": "us"
+    },
+    {
+      "text": "American",
+      "key": "us"
+    },
+    {
+      "text": "Bengaluru",
+      "key": "in:ka:bengaluru"
+    },
+    {
+      "text": "Bangalore",
+      "key": "in:ka:bengaluru"
+    },
+    {
+      "text": "Koramangala",
+      "key": "in:ka:bengaluru"
+    },
+    {
+      "text": "Indiranagar",
+      "key": "in:ka:bengaluru"
+    },
+    {
+      "text": "Whitefield",
+      "key": "in:ka:bengaluru"
+    },
+    {
+      "text": "HSR layout",
+      "key": "in:ka:bengaluru"
+    },
+    {
+      "text": "Seattle",
+      "key": null
+    },
+    {
+      "text": "Boise",
+      "key": null
+    },
+    {
+      "text": "California",
+      "key": null
+    },
+    {
+      "text": "",
+      "key": null
+    }
+  ],
+  "liftFor": [
+    {
+      "key": "occupation:nurse",
+      "present": [
+        "gender:female"
+      ],
+      "lift": 1.7215686274509803,
+      "with": "gender:female"
+    },
+    {
+      "key": "gender:female",
+      "present": [
+        "occupation:nurse"
+      ],
+      "lift": 1.7215686274509803,
+      "with": "occupation:nurse"
+    },
+    {
+      "key": "occupation:icu_nurse",
+      "present": [
+        "gender:female"
+      ],
+      "lift": 1.7215686274509803,
+      "with": "gender:female"
+    },
+    {
+      "key": "gender:female",
+      "present": [
+        "occupation:icu_nurse"
+      ],
+      "lift": 1.7215686274509803,
+      "with": "occupation:icu_nurse"
+    },
+    {
+      "key": "family:single_mother",
+      "present": [
+        "gender:female"
+      ],
+      "lift": 1.9607843137254901,
+      "with": "gender:female"
+    },
+    {
+      "key": "gender:female",
+      "present": [
+        "family:single_mother"
+      ],
+      "lift": 1.9607843137254901,
+      "with": "family:single_mother"
+    },
+    {
+      "key": "family:single_mother",
+      "present": [
+        "relationship:divorced"
+      ],
+      "lift": 3.3,
+      "with": "relationship:divorced"
+    },
+    {
+      "key": "relationship:divorced",
+      "present": [
+        "family:single_mother"
+      ],
+      "lift": 3.3,
+      "with": "family:single_mother"
+    },
+    {
+      "key": "occupation:nurse",
+      "present": [
+        "work:night_shift"
+      ],
+      "lift": 5,
+      "with": "work:night_shift"
+    },
+    {
+      "key": "work:night_shift",
+      "present": [
+        "occupation:nurse"
+      ],
+      "lift": 5,
+      "with": "occupation:nurse"
+    },
+    {
+      "key": "occupation:icu_nurse",
+      "present": [
+        "work:night_shift"
+      ],
+      "lift": 5,
+      "with": "work:night_shift"
+    },
+    {
+      "key": "work:night_shift",
+      "present": [
+        "occupation:icu_nurse"
+      ],
+      "lift": 5,
+      "with": "occupation:icu_nurse"
+    },
+    {
+      "key": "family:single_mother",
+      "present": [
+        "family:kindergartner"
+      ],
+      "lift": 2.5,
+      "with": "family:kindergartner"
+    },
+    {
+      "key": "family:kindergartner",
+      "present": [
+        "family:single_mother"
+      ],
+      "lift": 2.5,
+      "with": "family:single_mother"
+    },
+    {
+      "key": "family:single_mother",
+      "present": [
+        "family:twins"
+      ],
+      "lift": 2.5,
+      "with": "family:twins"
+    },
+    {
+      "key": "family:twins",
+      "present": [
+        "family:single_mother"
+      ],
+      "lift": 2.5,
+      "with": "family:single_mother"
+    },
+    {
+      "key": "family:twins",
+      "present": [
+        "family:kindergartner"
+      ],
+      "lift": 6,
+      "with": "family:kindergartner"
+    },
+    {
+      "key": "family:kindergartner",
+      "present": [
+        "family:twins"
+      ],
+      "lift": 6,
+      "with": "family:twins"
+    },
+    {
+      "key": "occupation:nurse",
+      "present": [],
+      "lift": 1,
+      "with": null
+    },
+    {
+      "key": "occupation:nurse",
+      "present": [
+        "occupation:icu_nurse"
+      ],
+      "lift": 1,
+      "with": null
+    },
+    {
+      "key": "occupation:nurse",
+      "present": [
+        "gender:female",
+        "work:night_shift"
+      ],
+      "lift": 5,
+      "with": "work:night_shift"
+    },
+    {
+      "key": "occupation:nurse",
+      "present": [
+        "work:night_shift",
+        "gender:female"
+      ],
+      "lift": 5,
+      "with": "work:night_shift"
+    },
+    {
+      "key": "pet:cat",
+      "present": [
+        "occupation:nurse"
+      ],
+      "lift": 1,
+      "with": null
+    },
+    {
+      "key": "family:twins",
+      "present": [
+        "family:kindergartner",
+        "family:single_mother"
+      ],
+      "lift": 6,
+      "with": "family:kindergartner"
+    },
+    {
+      "key": "family:single_mother",
+      "present": [
+        "relationship:divorced",
+        "family:twins"
+      ],
+      "lift": 3.3,
+      "with": "relationship:divorced"
+    }
+  ],
+  "rateKey": [
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "Registered Nurse"
+      },
+      "key": "occupation:registered nurse"
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": "registered   nurse"
+      },
+      "key": "occupation:registered nurse"
+    },
+    {
+      "fact": {
+        "cat": "employer_type",
+        "value": "St. Luke’s Boise"
+      },
+      "key": "employer_type:st luke s boise"
+    },
+    {
+      "fact": {
+        "cat": "home_location",
+        "value": "Columbus, OH"
+      },
+      "key": "home_location:columbus oh"
+    },
+    {
+      "fact": {
+        "cat": "pet",
+        "value": "  one-eyed   CAT!! "
+      },
+      "key": "pet:one eyed cat"
+    },
+    {
+      "fact": {
+        "cat": "vehicle",
+        "value": "2014 Subaru/Outback"
+      },
+      "key": "vehicle:2014 subaru outback"
+    },
+    {
+      "fact": {
+        "cat": "family",
+        "value": "single MOM"
+      },
+      "key": "family:single mom"
+    },
+    {
+      "fact": {
+        "cat": "rare_hobby",
+        "value": "Half-Marathon"
+      },
+      "key": "rare_hobby:half marathon"
+    },
+    {
+      "fact": {
+        "cat": "occupation",
+        "value": ""
+      },
+      "key": "occupation:"
+    },
+    {
+      "fact": {
+        "cat": "health",
+        "value": "ASTHMA"
+      },
+      "key": "health:asthma"
+    }
+  ],
+  "humanCount": [
+    {
+      "n": 0.5,
+      "s": "1"
+    },
+    {
+      "n": 1,
+      "s": "1"
+    },
+    {
+      "n": 1.5,
+      "s": "1"
+    },
+    {
+      "n": 2,
+      "s": "2"
+    },
+    {
+      "n": 3,
+      "s": "3"
+    },
+    {
+      "n": 9,
+      "s": "9"
+    },
+    {
+      "n": 9.6,
+      "s": "10"
+    },
+    {
+      "n": 10,
+      "s": "10"
+    },
+    {
+      "n": 23.4,
+      "s": "25"
+    },
+    {
+      "n": 99,
+      "s": "100"
+    },
+    {
+      "n": 100,
+      "s": "100"
+    },
+    {
+      "n": 555,
+      "s": "560"
+    },
+    {
+      "n": 999,
+      "s": "1000"
+    },
+    {
+      "n": 1000,
+      "s": "1.0k"
+    },
+    {
+      "n": 1500,
+      "s": "1.5k"
+    },
+    {
+      "n": 9999,
+      "s": "10.0k"
+    },
+    {
+      "n": 10000,
+      "s": "10k"
+    },
+    {
+      "n": 12345,
+      "s": "12k"
+    },
+    {
+      "n": 99999,
+      "s": "100k"
+    },
+    {
+      "n": 100000,
+      "s": "100k"
+    },
+    {
+      "n": 999999,
+      "s": "1000k"
+    },
+    {
+      "n": 1000000,
+      "s": "1.00M"
+    },
+    {
+      "n": 1752753,
+      "s": "1.75M"
+    },
+    {
+      "n": 9999999,
+      "s": "10.00M"
+    },
+    {
+      "n": 10000000,
+      "s": "10.0M"
+    },
+    {
+      "n": 123456789,
+      "s": "123.5M"
+    },
+    {
+      "n": 999999999,
+      "s": "1000.0M"
+    },
+    {
+      "n": 1000000000,
+      "s": "1.00B"
+    },
+    {
+      "n": 2500000000,
+      "s": "2.50B"
+    },
+    {
+      "n": 5000000000,
+      "s": "5.00B"
+    }
+  ],
+  "estimate": [
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [],
+      "seed": 7,
+      "result": {
+        "p10": 239336894.49039105,
+        "p50": 258608485.506547,
+        "p90": 278412587.0817476,
+        "band": "crowd",
+        "bits": 0
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [],
+      "seed": 42,
+      "result": {
+        "p10": 239657715.64465857,
+        "p50": 258630685.06670165,
+        "p90": 279095944.8027951,
+        "band": "crowd",
+        "bits": 0
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 2966377.3676561923,
+        "p50": 3402616.0323837996,
+        "p90": 3872150.0549121983,
+        "band": "crowd",
+        "bits": 6.247545982331358
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 2978618.871703786,
+        "p50": 3399218.653337261,
+        "p90": 3885977.7651482252,
+        "band": "crowd",
+        "bits": 6.248987176519846
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "gender:female",
+            "label": "women",
+            "cat": "gender",
+            "low": 0.505,
+            "high": 0.515,
+            "grade": "A",
+            "source": "Census QuickFacts, Franklin County: 51.3% female",
+            "url": "https://www.census.gov/quickfacts/franklincountyohio",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 2872816.405726678,
+        "p50": 3323460.0724221026,
+        "p90": 3825698.922180384,
+        "band": "crowd",
+        "bits": 6.281504320481318
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "gender:female",
+            "label": "women",
+            "cat": "gender",
+            "low": 0.505,
+            "high": 0.515,
+            "grade": "A",
+            "source": "Census QuickFacts, Franklin County: 51.3% female",
+            "url": "https://www.census.gov/quickfacts/franklincountyohio",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 2876028.437155675,
+        "p50": 3338513.5181667926,
+        "p90": 3835565.0495031406,
+        "band": "crowd",
+        "bits": 6.2749844602054
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "gender:female",
+            "label": "women",
+            "cat": "gender",
+            "low": 0.505,
+            "high": 0.515,
+            "grade": "A",
+            "source": "Census QuickFacts, Franklin County: 51.3% female",
+            "url": "https://www.census.gov/quickfacts/franklincountyohio",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "work:night_shift",
+            "label": "night-shift workers",
+            "cat": "work_location",
+            "low": 0.04,
+            "high": 0.07,
+            "grade": "C",
+            "source": "Rough: BLS shift-work surveys put regular night shifts at a few % of workers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 272620.7869265364,
+        "p50": 1204351.6628607754,
+        "p90": 3956480.665705033,
+        "band": "crowd",
+        "bits": 7.745933630957003
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "gender:female",
+            "label": "women",
+            "cat": "gender",
+            "low": 0.505,
+            "high": 0.515,
+            "grade": "A",
+            "source": "Census QuickFacts, Franklin County: 51.3% female",
+            "url": "https://www.census.gov/quickfacts/franklincountyohio",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "work:night_shift",
+            "label": "night-shift workers",
+            "cat": "work_location",
+            "low": 0.04,
+            "high": 0.07,
+            "grade": "C",
+            "source": "Rough: BLS shift-work surveys put regular night shifts at a few % of workers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 289225.80201218516,
+        "p50": 1294731.405363957,
+        "p90": 3946043.4048691313,
+        "band": "crowd",
+        "bits": 7.641537503185811
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "family:single_mother",
+            "label": "single mothers with kids at home",
+            "cat": "family",
+            "low": 0.027690874524714828,
+            "high": 0.030605703422053234,
+            "grade": "A",
+            "source": "Census Families & Living Arrangements: 7.67M one-parent families with mother (2025)",
+            "url": "https://fred.stlouisfed.org/series/OPFWCUMO",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "relationship:divorced",
+            "label": "divorced or separated",
+            "cat": "relationship",
+            "low": 0.07,
+            "high": 0.11,
+            "grade": "C",
+            "source": "Rough: ACS shows roughly 1 in 10 adults currently divorced or separated",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 630917.6475003804,
+        "p50": 2734125.4883088786,
+        "p90": 7729842.11174554,
+        "band": "crowd",
+        "bits": 6.563110882229736
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "family:single_mother",
+            "label": "single mothers with kids at home",
+            "cat": "family",
+            "low": 0.027690874524714828,
+            "high": 0.030605703422053234,
+            "grade": "A",
+            "source": "Census Families & Living Arrangements: 7.67M one-parent families with mother (2025)",
+            "url": "https://fred.stlouisfed.org/series/OPFWCUMO",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "relationship:divorced",
+            "label": "divorced or separated",
+            "cat": "relationship",
+            "low": 0.07,
+            "high": 0.11,
+            "grade": "C",
+            "source": "Rough: ACS shows roughly 1 in 10 adults currently divorced or separated",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 648387.6127166422,
+        "p50": 2795719.4617499933,
+        "p90": 7747658.348858042,
+        "band": "crowd",
+        "bits": 6.530970742323905
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "family:single_mother",
+            "label": "single mothers with kids at home",
+            "cat": "family",
+            "low": 0.027690874524714828,
+            "high": 0.030605703422053234,
+            "grade": "A",
+            "source": "Census Families & Living Arrangements: 7.67M one-parent families with mother (2025)",
+            "url": "https://fred.stlouisfed.org/series/OPFWCUMO",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:twins",
+            "label": "parents of twins under 18",
+            "cat": "family",
+            "low": 0.0038,
+            "high": 0.0075,
+            "grade": "B",
+            "source": "CDC NCHS: twin birth rate 30.1 per 1,000 births (2024) → ~55k twin sets/yr × 18 yrs × 1–2 parents each ÷ US adults",
+            "url": "https://www.cdc.gov/nchs/data/hestat/hestat117.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:kindergartner",
+            "label": "parents of a kindergartner this year",
+            "cat": "family",
+            "low": 0.014,
+            "high": 0.028,
+            "grade": "C",
+            "source": "Rough: NCES ~3.7M kindergarten enrollments × 1–2 parents each ÷ US adults",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 3294.814570249921,
+        "p50": 17796.49976327517,
+        "p90": 105079.1540936882,
+        "band": "crowd",
+        "bits": 13.826453013805228
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "family:single_mother",
+            "label": "single mothers with kids at home",
+            "cat": "family",
+            "low": 0.027690874524714828,
+            "high": 0.030605703422053234,
+            "grade": "A",
+            "source": "Census Families & Living Arrangements: 7.67M one-parent families with mother (2025)",
+            "url": "https://fred.stlouisfed.org/series/OPFWCUMO",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:twins",
+            "label": "parents of twins under 18",
+            "cat": "family",
+            "low": 0.0038,
+            "high": 0.0075,
+            "grade": "B",
+            "source": "CDC NCHS: twin birth rate 30.1 per 1,000 births (2024) → ~55k twin sets/yr × 18 yrs × 1–2 parents each ÷ US adults",
+            "url": "https://www.cdc.gov/nchs/data/hestat/hestat117.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:kindergartner",
+            "label": "parents of a kindergartner this year",
+            "cat": "family",
+            "low": 0.014,
+            "high": 0.028,
+            "grade": "C",
+            "source": "Rough: NCES ~3.7M kindergarten enrollments × 1–2 parents each ÷ US adults",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 3563.5446042718336,
+        "p50": 20021.808291559435,
+        "p90": 105604.49235632333,
+        "band": "crowd",
+        "bits": 13.656474253280098
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:icu_nurse",
+            "label": "ICU / critical-care nurses",
+            "cat": "occupation",
+            "low": 0.0016,
+            "high": 0.0032,
+            "grade": "C",
+            "source": "Assumes 12–25% of RNs work in critical care (no BLS split published)",
+            "within": "occupation:nurse",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "education:bsn",
+            "label": "nurses with a BSN",
+            "cat": "education",
+            "low": 0.0075,
+            "high": 0.0095,
+            "grade": "C",
+            "source": "Rough: ~65% of RNs hold a BSN or higher",
+            "within": "occupation:nurse",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 13.42125339454298,
+        "p50": 101.32453090692343,
+        "p90": 749.3648083140097,
+        "band": "room",
+        "bits": 21.28291922541229
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:icu_nurse",
+            "label": "ICU / critical-care nurses",
+            "cat": "occupation",
+            "low": 0.0016,
+            "high": 0.0032,
+            "grade": "C",
+            "source": "Assumes 12–25% of RNs work in critical care (no BLS split published)",
+            "within": "occupation:nurse",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "education:bsn",
+            "label": "nurses with a BSN",
+            "cat": "education",
+            "low": 0.0075,
+            "high": 0.0095,
+            "grade": "C",
+            "source": "Rough: ~65% of RNs hold a BSN or higher",
+            "within": "occupation:nurse",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 13.084210913061007,
+        "p50": 104.10875381868212,
+        "p90": 819.3493417417087,
+        "band": "room",
+        "bits": 21.243811341245564
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "pet:one_eyed_cat",
+            "label": "owners of a one-eyed cat",
+            "cat": "pet",
+            "low": 0.0005,
+            "high": 0.005,
+            "grade": "C",
+            "source": "Rough guess: a distinctive pet is a strong marker",
+            "within": "pet:cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "pet:cat",
+            "label": "cat owners",
+            "cat": "pet",
+            "low": 0.2,
+            "high": 0.3,
+            "grade": "B",
+            "source": "APPA: ~1 in 4 US households own a cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 12614.637354797573,
+        "p50": 122803.165057841,
+        "p90": 1186085.2435221395,
+        "band": "crowd",
+        "bits": 11.03977069265891
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "pet:one_eyed_cat",
+            "label": "owners of a one-eyed cat",
+            "cat": "pet",
+            "low": 0.0005,
+            "high": 0.005,
+            "grade": "C",
+            "source": "Rough guess: a distinctive pet is a strong marker",
+            "within": "pet:cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "pet:cat",
+            "label": "cat owners",
+            "cat": "pet",
+            "low": 0.2,
+            "high": 0.3,
+            "grade": "B",
+            "source": "APPA: ~1 in 4 US households own a cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 13166.037148142826,
+        "p50": 123130.92660002438,
+        "p90": 1165150.868314205,
+        "band": "crowd",
+        "bits": 11.035925270267319
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "event:race_medical_volunteer",
+            "label": "medical volunteers at one specific race",
+            "cat": "dated_event",
+            "low": 0.00005,
+            "high": 0.0003,
+            "grade": "C",
+            "source": "Rough: a big-city marathon recruits a few hundred medical volunteers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "hobby:half_marathon",
+            "label": "half-marathon finishers",
+            "cat": "rare_hobby",
+            "low": 0.0035,
+            "high": 0.0075,
+            "grade": "C",
+            "source": "Running USA: 1.85M US half-marathon finishes (2012; finishes, not people) ÷ US adults",
+            "url": "https://www.runningusa.org/",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 16.386838898715933,
+        "p50": 194.61386085458224,
+        "p90": 2282.556675834978,
+        "band": "room",
+        "bits": 20.341288255801746
+      }
+    },
+    {
+      "region": {
+        "key": "us",
+        "label": "United States",
+        "population": 331449281,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/library/stories/state-by-state.html"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "event:race_medical_volunteer",
+            "label": "medical volunteers at one specific race",
+            "cat": "dated_event",
+            "low": 0.00005,
+            "high": 0.0003,
+            "grade": "C",
+            "source": "Rough: a big-city marathon recruits a few hundred medical volunteers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "hobby:half_marathon",
+            "label": "half-marathon finishers",
+            "cat": "rare_hobby",
+            "low": 0.0035,
+            "high": 0.0075,
+            "grade": "C",
+            "source": "Running USA: 1.85M US half-marathon finishes (2012; finishes, not people) ÷ US adults",
+            "url": "https://www.runningusa.org/",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 16.02337192713181,
+        "p50": 209.63669941916436,
+        "p90": 2474.412714330117,
+        "band": "room",
+        "bits": 20.234011421637668
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh:franklin",
+        "label": "Franklin County, Ohio (Columbus)",
+        "population": 1323807,
+        "adultShare": 0.775,
+        "grade": "A",
+        "source": "US Census 2020: 1,323,807 people; 22.5% under 18 (QuickFacts)",
+        "url": "https://www.census.gov/quickfacts/franklincountyohio"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:teacher",
+            "label": "K-12 teachers",
+            "cat": "occupation",
+            "low": 0.0135,
+            "high": 0.0155,
+            "grade": "B",
+            "source": "NCES: ~3.8M public + private K-12 teachers",
+            "url": "https://nces.ed.gov/fastfacts/display.asp?id=28",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "age:single_year",
+            "label": "people of one specific age",
+            "cat": "age",
+            "low": 0.016,
+            "high": 0.018,
+            "grade": "B",
+            "source": "Census age pyramid: each single-year cohort aged 25–45 ≈1.6–1.8% of adults",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "pet:cat",
+            "label": "cat owners",
+            "cat": "pet",
+            "low": 0.2,
+            "high": 0.3,
+            "grade": "B",
+            "source": "APPA: ~1 in 4 US households own a cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 32.34102713879216,
+        "p50": 95.60863778965215,
+        "p90": 291.29541510821963,
+        "band": "room",
+        "bits": 13.389460529740129
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh:franklin",
+        "label": "Franklin County, Ohio (Columbus)",
+        "population": 1323807,
+        "adultShare": 0.775,
+        "grade": "A",
+        "source": "US Census 2020: 1,323,807 people; 22.5% under 18 (QuickFacts)",
+        "url": "https://www.census.gov/quickfacts/franklincountyohio"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:teacher",
+            "label": "K-12 teachers",
+            "cat": "occupation",
+            "low": 0.0135,
+            "high": 0.0155,
+            "grade": "B",
+            "source": "NCES: ~3.8M public + private K-12 teachers",
+            "url": "https://nces.ed.gov/fastfacts/display.asp?id=28",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "age:single_year",
+            "label": "people of one specific age",
+            "cat": "age",
+            "low": 0.016,
+            "high": 0.018,
+            "grade": "B",
+            "source": "Census age pyramid: each single-year cohort aged 25–45 ≈1.6–1.8% of adults",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "pet:cat",
+            "label": "cat owners",
+            "cat": "pet",
+            "low": 0.2,
+            "high": 0.3,
+            "grade": "B",
+            "source": "APPA: ~1 in 4 US households own a cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 34.54184089585892,
+        "p50": 101.25814645937187,
+        "p90": 295.5521009968698,
+        "band": "room",
+        "bits": 13.306635418718756
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh:franklin",
+        "label": "Franklin County, Ohio (Columbus)",
+        "population": 1323807,
+        "adultShare": 0.775,
+        "grade": "A",
+        "source": "US Census 2020: 1,323,807 people; 22.5% under 18 (QuickFacts)",
+        "url": "https://www.census.gov/quickfacts/franklincountyohio"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "family:twins",
+            "label": "parents of twins under 18",
+            "cat": "family",
+            "low": 0.0038,
+            "high": 0.0075,
+            "grade": "B",
+            "source": "CDC NCHS: twin birth rate 30.1 per 1,000 births (2024) → ~55k twin sets/yr × 18 yrs × 1–2 parents each ÷ US adults",
+            "url": "https://www.cdc.gov/nchs/data/hestat/hestat117.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:kindergartner",
+            "label": "parents of a kindergartner this year",
+            "cat": "family",
+            "low": 0.014,
+            "high": 0.028,
+            "grade": "C",
+            "source": "Rough: NCES ~3.7M kindergarten enrollments × 1–2 parents each ÷ US adults",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "pet:one_eyed_cat",
+            "label": "owners of a one-eyed cat",
+            "cat": "pet",
+            "low": 0.0005,
+            "high": 0.005,
+            "grade": "C",
+            "source": "Rough guess: a distinctive pet is a strong marker",
+            "within": "pet:cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 1,
+        "p50": 1.4985989175673842,
+        "p90": 24.68402330956562,
+        "band": "handful",
+        "bits": 19.384915274885195
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh:franklin",
+        "label": "Franklin County, Ohio (Columbus)",
+        "population": 1323807,
+        "adultShare": 0.775,
+        "grade": "A",
+        "source": "US Census 2020: 1,323,807 people; 22.5% under 18 (QuickFacts)",
+        "url": "https://www.census.gov/quickfacts/franklincountyohio"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "family:twins",
+            "label": "parents of twins under 18",
+            "cat": "family",
+            "low": 0.0038,
+            "high": 0.0075,
+            "grade": "B",
+            "source": "CDC NCHS: twin birth rate 30.1 per 1,000 births (2024) → ~55k twin sets/yr × 18 yrs × 1–2 parents each ÷ US adults",
+            "url": "https://www.cdc.gov/nchs/data/hestat/hestat117.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:kindergartner",
+            "label": "parents of a kindergartner this year",
+            "cat": "family",
+            "low": 0.014,
+            "high": 0.028,
+            "grade": "C",
+            "source": "Rough: NCES ~3.7M kindergarten enrollments × 1–2 parents each ÷ US adults",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "pet:one_eyed_cat",
+            "label": "owners of a one-eyed cat",
+            "cat": "pet",
+            "low": 0.0005,
+            "high": 0.005,
+            "grade": "C",
+            "source": "Rough guess: a distinctive pet is a strong marker",
+            "within": "pet:cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 1,
+        "p50": 1.7540606190713774,
+        "p90": 25.174029200785988,
+        "band": "handful",
+        "bits": 19.157830982271175
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh:franklin",
+        "label": "Franklin County, Ohio (Columbus)",
+        "population": 1323807,
+        "adultShare": 0.775,
+        "grade": "A",
+        "source": "US Census 2020: 1,323,807 people; 22.5% under 18 (QuickFacts)",
+        "url": "https://www.census.gov/quickfacts/franklincountyohio"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:teacher",
+            "label": "K-12 teachers",
+            "cat": "occupation",
+            "low": 0.0135,
+            "high": 0.0155,
+            "grade": "B",
+            "source": "NCES: ~3.8M public + private K-12 teachers",
+            "url": "https://nces.ed.gov/fastfacts/display.asp?id=28",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "occupation:software_engineer",
+            "label": "software developers",
+            "cat": "occupation",
+            "low": 0.0062,
+            "high": 0.007,
+            "grade": "A",
+            "source": "BLS: ~1.7M software developers (2024) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "pet:cat",
+            "label": "cat owners",
+            "cat": "pet",
+            "low": 0.2,
+            "high": 0.3,
+            "grade": "B",
+            "source": "APPA: ~1 in 4 US households own a cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:twins",
+            "label": "parents of twins under 18",
+            "cat": "family",
+            "low": 0.0038,
+            "high": 0.0075,
+            "grade": "B",
+            "source": "CDC NCHS: twin birth rate 30.1 per 1,000 births (2024) → ~55k twin sets/yr × 18 yrs × 1–2 parents each ÷ US adults",
+            "url": "https://www.cdc.gov/nchs/data/hestat/hestat117.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "event:moved_year",
+            "label": "people who moved there in one specific year",
+            "cat": "dated_event",
+            "low": 0.03,
+            "high": 0.06,
+            "grade": "C",
+            "source": "Rough: annual in-county movers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "work:night_shift",
+            "label": "night-shift workers",
+            "cat": "work_location",
+            "low": 0.04,
+            "high": 0.07,
+            "grade": "C",
+            "source": "Rough: BLS shift-work surveys put regular night shifts at a few % of workers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 1,
+        "p50": 1,
+        "p90": 1,
+        "band": "handful",
+        "bits": 19.968529589416683
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh:franklin",
+        "label": "Franklin County, Ohio (Columbus)",
+        "population": 1323807,
+        "adultShare": 0.775,
+        "grade": "A",
+        "source": "US Census 2020: 1,323,807 people; 22.5% under 18 (QuickFacts)",
+        "url": "https://www.census.gov/quickfacts/franklincountyohio"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:teacher",
+            "label": "K-12 teachers",
+            "cat": "occupation",
+            "low": 0.0135,
+            "high": 0.0155,
+            "grade": "B",
+            "source": "NCES: ~3.8M public + private K-12 teachers",
+            "url": "https://nces.ed.gov/fastfacts/display.asp?id=28",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "occupation:software_engineer",
+            "label": "software developers",
+            "cat": "occupation",
+            "low": 0.0062,
+            "high": 0.007,
+            "grade": "A",
+            "source": "BLS: ~1.7M software developers (2024) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "pet:cat",
+            "label": "cat owners",
+            "cat": "pet",
+            "low": 0.2,
+            "high": 0.3,
+            "grade": "B",
+            "source": "APPA: ~1 in 4 US households own a cat",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:twins",
+            "label": "parents of twins under 18",
+            "cat": "family",
+            "low": 0.0038,
+            "high": 0.0075,
+            "grade": "B",
+            "source": "CDC NCHS: twin birth rate 30.1 per 1,000 births (2024) → ~55k twin sets/yr × 18 yrs × 1–2 parents each ÷ US adults",
+            "url": "https://www.cdc.gov/nchs/data/hestat/hestat117.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "event:moved_year",
+            "label": "people who moved there in one specific year",
+            "cat": "dated_event",
+            "low": 0.03,
+            "high": 0.06,
+            "grade": "C",
+            "source": "Rough: annual in-county movers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "work:night_shift",
+            "label": "night-shift workers",
+            "cat": "work_location",
+            "low": 0.04,
+            "high": 0.07,
+            "grade": "C",
+            "source": "Rough: BLS shift-work surveys put regular night shifts at a few % of workers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 1,
+        "p50": 1,
+        "p90": 1,
+        "band": "handful",
+        "bits": 19.968529589416683
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh",
+        "label": "Ohio",
+        "population": 11799448,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/quickfacts/OH"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "family:single_mother",
+            "label": "single mothers with kids at home",
+            "cat": "family",
+            "low": 0.027690874524714828,
+            "high": 0.030605703422053234,
+            "grade": "A",
+            "source": "Census Families & Living Arrangements: 7.67M one-parent families with mother (2025)",
+            "url": "https://fred.stlouisfed.org/series/OPFWCUMO",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "gender:female",
+            "label": "women",
+            "cat": "gender",
+            "low": 0.505,
+            "high": 0.515,
+            "grade": "A",
+            "source": "Census QuickFacts, Franklin County: 51.3% female",
+            "url": "https://www.census.gov/quickfacts/franklincountyohio",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "relationship:divorced",
+            "label": "divorced or separated",
+            "cat": "relationship",
+            "low": 0.07,
+            "high": 0.11,
+            "grade": "C",
+            "source": "Rough: ACS shows roughly 1 in 10 adults currently divorced or separated",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:kindergartner",
+            "label": "parents of a kindergartner this year",
+            "cat": "family",
+            "low": 0.014,
+            "high": 0.028,
+            "grade": "C",
+            "source": "Rough: NCES ~3.7M kindergarten enrollments × 1–2 parents each ÷ US adults",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "work:night_shift",
+            "label": "night-shift workers",
+            "cat": "work_location",
+            "low": 0.04,
+            "high": 0.07,
+            "grade": "C",
+            "source": "Rough: BLS shift-work surveys put regular night shifts at a few % of workers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 2.6148832922916507,
+        "p50": 29.647850144484256,
+        "p90": 307.580105888388,
+        "band": "room",
+        "bits": 18.243906473263337
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh",
+        "label": "Ohio",
+        "population": 11799448,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/quickfacts/OH"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "family:single_mother",
+            "label": "single mothers with kids at home",
+            "cat": "family",
+            "low": 0.027690874524714828,
+            "high": 0.030605703422053234,
+            "grade": "A",
+            "source": "Census Families & Living Arrangements: 7.67M one-parent families with mother (2025)",
+            "url": "https://fred.stlouisfed.org/series/OPFWCUMO",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "gender:female",
+            "label": "women",
+            "cat": "gender",
+            "low": 0.505,
+            "high": 0.515,
+            "grade": "A",
+            "source": "Census QuickFacts, Franklin County: 51.3% female",
+            "url": "https://www.census.gov/quickfacts/franklincountyohio",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "relationship:divorced",
+            "label": "divorced or separated",
+            "cat": "relationship",
+            "low": 0.07,
+            "high": 0.11,
+            "grade": "C",
+            "source": "Rough: ACS shows roughly 1 in 10 adults currently divorced or separated",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "family:kindergartner",
+            "label": "parents of a kindergartner this year",
+            "cat": "family",
+            "low": 0.014,
+            "high": 0.028,
+            "grade": "C",
+            "source": "Rough: NCES ~3.7M kindergarten enrollments × 1–2 parents each ÷ US adults",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "work:night_shift",
+            "label": "night-shift workers",
+            "cat": "work_location",
+            "low": 0.04,
+            "high": 0.07,
+            "grade": "C",
+            "source": "Rough: BLS shift-work surveys put regular night shifts at a few % of workers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 2.957711093333739,
+        "p50": 31.351722436460854,
+        "p90": 353.4634822437357,
+        "band": "room",
+        "bits": 18.16328926201532
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh",
+        "label": "Ohio",
+        "population": 11799448,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/quickfacts/OH"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "work:night_shift",
+            "label": "night-shift workers",
+            "cat": "work_location",
+            "low": 0.04,
+            "high": 0.07,
+            "grade": "C",
+            "source": "Rough: BLS shift-work surveys put regular night shifts at a few % of workers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 8897.228236225796,
+        "p50": 40198.69557960768,
+        "p90": 123204.8862109873,
+        "band": "crowd",
+        "bits": 7.838900995284476
+      }
+    },
+    {
+      "region": {
+        "key": "us:oh",
+        "label": "Ohio",
+        "population": 11799448,
+        "adultShare": 0.78,
+        "grade": "A",
+        "source": "US Census 2020",
+        "url": "https://www.census.gov/quickfacts/OH"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:nurse",
+            "label": "registered nurses",
+            "cat": "occupation",
+            "low": 0.012517604562737643,
+            "high": 0.013835247148288973,
+            "grade": "A",
+            "source": "BLS Occupational Outlook: 3,465,400 RN jobs (2025) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/healthcare/registered-nurses.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "work:night_shift",
+            "label": "night-shift workers",
+            "cat": "work_location",
+            "low": 0.04,
+            "high": 0.07,
+            "grade": "C",
+            "source": "Rough: BLS shift-work surveys put regular night shifts at a few % of workers",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 9142.829053213001,
+        "p50": 41279.820667327134,
+        "p90": 123282.0755483127,
+        "band": "crowd",
+        "bits": 7.800612979724588
+      }
+    },
+    {
+      "region": {
+        "key": "in:ka:bengaluru",
+        "label": "Bengaluru Urban district",
+        "population": 9621551,
+        "adultShare": 0.72,
+        "grade": "C",
+        "source": "Census of India 2011: 15 years old and the city has grown a lot since, so graded C (wide range)",
+        "url": "https://en.wikipedia.org/wiki/Bangalore_Urban_district"
+      },
+      "attrs": [],
+      "seed": 7,
+      "result": {
+        "p10": 1883005.7339011845,
+        "p50": 6962916.047951666,
+        "p90": 24206482.097459774,
+        "band": "crowd",
+        "bits": 0
+      }
+    },
+    {
+      "region": {
+        "key": "in:ka:bengaluru",
+        "label": "Bengaluru Urban district",
+        "population": 9621551,
+        "adultShare": 0.72,
+        "grade": "C",
+        "source": "Census of India 2011: 15 years old and the city has grown a lot since, so graded C (wide range)",
+        "url": "https://en.wikipedia.org/wiki/Bangalore_Urban_district"
+      },
+      "attrs": [],
+      "seed": 42,
+      "result": {
+        "p10": 1926085.1884412246,
+        "p50": 6973016.105523206,
+        "p90": 25229571.35341759,
+        "band": "crowd",
+        "bits": 0
+      }
+    },
+    {
+      "region": {
+        "key": "in:ka:bengaluru",
+        "label": "Bengaluru Urban district",
+        "population": 9621551,
+        "adultShare": 0.72,
+        "grade": "C",
+        "source": "Census of India 2011: 15 years old and the city has grown a lot since, so graded C (wide range)",
+        "url": "https://en.wikipedia.org/wiki/Bangalore_Urban_district"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:software_engineer",
+            "label": "software developers",
+            "cat": "occupation",
+            "low": 0.0062,
+            "high": 0.007,
+            "grade": "A",
+            "source": "BLS: ~1.7M software developers (2024) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "vehicle:subaru",
+            "label": "Subaru owners",
+            "cat": "vehicle",
+            "low": 0.02,
+            "high": 0.035,
+            "grade": "C",
+            "source": "Rough: Subaru ≈4% of US new-vehicle sales",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 7,
+      "result": {
+        "p10": 226.55414066723574,
+        "p50": 1456.3427430870959,
+        "p90": 10336.729584497609,
+        "band": "neighbourhood",
+        "bits": 12.215772645744744
+      }
+    },
+    {
+      "region": {
+        "key": "in:ka:bengaluru",
+        "label": "Bengaluru Urban district",
+        "population": 9621551,
+        "adultShare": 0.72,
+        "grade": "C",
+        "source": "Census of India 2011: 15 years old and the city has grown a lot since, so graded C (wide range)",
+        "url": "https://en.wikipedia.org/wiki/Bangalore_Urban_district"
+      },
+      "attrs": [
+        {
+          "rate": {
+            "key": "occupation:software_engineer",
+            "label": "software developers",
+            "cat": "occupation",
+            "low": 0.0062,
+            "high": 0.007,
+            "grade": "A",
+            "source": "BLS: ~1.7M software developers (2024) ÷ US adults",
+            "url": "https://www.bls.gov/ooh/computer-and-information-technology/software-developers.htm",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        },
+        {
+          "rate": {
+            "key": "vehicle:subaru",
+            "label": "Subaru owners",
+            "cat": "vehicle",
+            "low": 0.02,
+            "high": 0.035,
+            "grade": "C",
+            "source": "Rough: Subaru ≈4% of US new-vehicle sales",
+            "origin": "bundled"
+          },
+          "facts": [],
+          "firstSeen": "2024-01-01"
+        }
+      ],
+      "seed": 42,
+      "result": {
+        "p10": 229.8584011471691,
+        "p50": 1517.2600848004156,
+        "p90": 10358.208939301725,
+        "band": "neighbourhood",
+        "bits": 12.15665416257197
+      }
+    }
+  ],
+  "dossier": [
+    {
+      "name": "p1 full (all verified facts from p1-replay.json)",
+      "facts": [
+        {
+          "id": "p1_0003:0",
+          "postId": "p1_0003",
+          "date": "2019-02-07T17:28:11.453Z",
+          "cat": "dated_event",
+          "value": "three years",
+          "quote": "three years since I left him",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0034:0",
+          "postId": "p1_0034",
+          "date": "2019-10-10T19:40:06.121Z",
+          "cat": "occupation",
+          "value": "night shift worker",
+          "quote": "after a night shift the sunrise feels like a personal insult",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0088:0",
+          "postId": "p1_0088",
+          "date": "2021-04-18T06:35:49.422Z",
+          "cat": "health",
+          "value": "sleep deprivation",
+          "quote": "my alarm and I are no longer on speaking terms honestly",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0108:0",
+          "postId": "p1_0108",
+          "date": "2022-01-21T11:22:08.859Z",
+          "cat": "occupation",
+          "value": "registered nurse",
+          "quote": "as a registered nurse I promise you nobody reads the discharge paperwork",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0154:0",
+          "postId": "p1_0154",
+          "date": "2023-10-04T04:18:33.645Z",
+          "cat": "home_location",
+          "value": "Columbus",
+          "quote": "it has rained for nine days straight here in Columbus",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0166:0",
+          "postId": "p1_0166",
+          "date": "2024-03-08T04:42:21.306Z",
+          "cat": "dated_event",
+          "value": "divorce",
+          "quote": "since the divorce I have learned",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0166:1",
+          "postId": "p1_0166",
+          "date": "2024-03-08T04:42:21.306Z",
+          "cat": "occupation",
+          "value": "handyman",
+          "quote": "since the divorce I have learned to fix",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0171:0",
+          "postId": "p1_0171",
+          "date": "2024-04-08T11:03:43.016Z",
+          "cat": "health",
+          "value": "experienced exhaustion",
+          "quote": "I feel 80 years old after that shift",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0175:0",
+          "postId": "p1_0175",
+          "date": "2024-05-14T02:17:48.810Z",
+          "cat": "family",
+          "value": "single mom",
+          "quote": "being a single mom",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0175:1",
+          "postId": "p1_0175",
+          "date": "2024-05-14T02:17:48.810Z",
+          "cat": "work_location",
+          "value": "night shifts",
+          "quote": "night shifts",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0019:0",
+          "postId": "p1_0019",
+          "date": "2019-06-05T18:58:07.600Z",
+          "cat": "dated_event",
+          "value": "Sunday",
+          "quote": "tried meal prepping on Sunday",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0019:1",
+          "postId": "p1_0019",
+          "date": "2019-06-05T18:58:07.600Z",
+          "cat": "health",
+          "value": "cereal",
+          "quote": "by Tuesday I was eating cereal",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0020:0",
+          "postId": "p1_0020",
+          "date": "2019-06-16T04:39:08.686Z",
+          "cat": "relationship",
+          "value": "member of group",
+          "quote": "the group chat",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0023:0",
+          "postId": "p1_0023",
+          "date": "2019-07-25T19:52:00.374Z",
+          "cat": "family",
+          "value": "parent",
+          "quote": "tried meal prepping on Sunday.",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0027:0",
+          "postId": "p1_0027",
+          "date": "2019-08-21T14:59:42.468Z",
+          "cat": "rare_hobby",
+          "value": "plant enthusiast",
+          "quote": "my plants are thriving and I have no idea why",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0046:0",
+          "postId": "p1_0046",
+          "date": "2020-04-09T16:19:19.372Z",
+          "cat": "family",
+          "value": "parent of toddlers",
+          "quote": "toddler asking why the sky is blue on repeat",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0061:0",
+          "postId": "p1_0061",
+          "date": "2020-10-26T13:20:05.157Z",
+          "cat": "family",
+          "value": "parent of toddlers",
+          "quote": "toddler asking why the sky is blue on repeat",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0063:0",
+          "postId": "p1_0063",
+          "date": "2020-11-17T02:32:28.698Z",
+          "cat": "relationship",
+          "value": "member of group chat",
+          "quote": "the group chat has been silent",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0068:0",
+          "postId": "p1_0068",
+          "date": "2020-12-19T16:16:25.157Z",
+          "cat": "rare_hobby",
+          "value": "guitar or keyboard",
+          "quote": "cannot decide between learning guitar or keyboard, help",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0072:0",
+          "postId": "p1_0072",
+          "date": "2021-01-05T14:38:09.777Z",
+          "cat": "dated_event",
+          "value": "Sunday",
+          "quote": "tried meal prepping on Sunday",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0072:1",
+          "postId": "p1_0072",
+          "date": "2021-01-05T14:38:09.777Z",
+          "cat": "dated_event",
+          "value": "Tuesday",
+          "quote": "by Tuesday I was eating cereal",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0077:0",
+          "postId": "p1_0077",
+          "date": "2021-02-23T16:58:57.431Z",
+          "cat": "occupation",
+          "value": "scrubs wearer",
+          "quote": "what is the best way to get coffee stains out of scrubs",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0095:0",
+          "postId": "p1_0095",
+          "date": "2021-08-22T02:56:41.104Z",
+          "cat": "relationship",
+          "value": "member of group chat",
+          "quote": "the group chat has been silent",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0120:0",
+          "postId": "p1_0120",
+          "date": "2022-06-09T23:31:32.184Z",
+          "cat": "relationship",
+          "value": "member of group",
+          "quote": "the group chat",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0126:0",
+          "postId": "p1_0126",
+          "date": "2022-10-09T09:23:17.789Z",
+          "cat": "dated_event",
+          "value": "Sunday",
+          "quote": "tried meal prepping on Sunday",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0126:1",
+          "postId": "p1_0126",
+          "date": "2022-10-09T09:23:17.789Z",
+          "cat": "dated_event",
+          "value": "Tuesday",
+          "quote": "by Tuesday I was eating cereal",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0130:0",
+          "postId": "p1_0130",
+          "date": "2022-11-07T23:21:23.319Z",
+          "cat": "relationship",
+          "value": "person seeking help",
+          "quote": "is there any app that actually helps with budgeting 😭",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0135:0",
+          "postId": "p1_0135",
+          "date": "2023-02-12T08:42:40.719Z",
+          "cat": "occupation",
+          "value": "home cook",
+          "quote": "does anyone have a good chili recipe that is not boring (serious question)",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0136:0",
+          "postId": "p1_0136",
+          "date": "2023-02-26T08:25:43.662Z",
+          "cat": "rare_hobby",
+          "value": "guitar",
+          "quote": "cannot decide between learning guitar or keyboard",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0136:1",
+          "postId": "p1_0136",
+          "date": "2023-02-26T08:25:43.662Z",
+          "cat": "rare_hobby",
+          "value": "keyboard",
+          "quote": "learning guitar or keyboard",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0161:0",
+          "postId": "p1_0161",
+          "date": "2024-01-02T13:41:05.926Z",
+          "cat": "family",
+          "value": "parent of toddlers",
+          "quote": "nothing humbles you like a toddler asking why the sky is blue on repeat lol",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0176:0",
+          "postId": "p1_0176",
+          "date": "2024-05-28T05:49:18.012Z",
+          "cat": "family",
+          "value": "parent of young child",
+          "quote": "toddler asking why the sky is blue on repeat",
+          "certainty": "implied",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [],
+      "dossier": {
+        "regionKey": "us:oh:franklin",
+        "regionFactIds": [
+          "p1_0154:0"
+        ],
+        "attributeKeys": [
+          "occupation:nurse",
+          "family:single_mother",
+          "work:night_shift",
+          "relationship:divorced"
+        ],
+        "attributeFactIds": [
+          [
+            "p1_0108:0"
+          ],
+          [
+            "p1_0175:0"
+          ],
+          [
+            "p1_0034:0",
+            "p1_0175:1"
+          ],
+          [
+            "p1_0003:0",
+            "p1_0166:0"
+          ]
+        ],
+        "attributeFirstSeen": [
+          "2022-01-21T11:22:08.859Z",
+          "2024-05-14T02:17:48.810Z",
+          "2019-10-10T19:40:06.121Z",
+          "2019-02-07T17:28:11.453Z"
+        ],
+        "unresolvedIds": [
+          "p1_0166:1",
+          "p1_0019:0",
+          "p1_0020:0",
+          "p1_0023:0",
+          "p1_0027:0",
+          "p1_0046:0",
+          "p1_0061:0",
+          "p1_0063:0",
+          "p1_0068:0",
+          "p1_0072:0",
+          "p1_0072:1",
+          "p1_0077:0",
+          "p1_0095:0",
+          "p1_0120:0",
+          "p1_0126:0",
+          "p1_0126:1",
+          "p1_0130:0",
+          "p1_0135:0",
+          "p1_0136:0",
+          "p1_0136:1",
+          "p1_0161:0",
+          "p1_0176:0"
+        ],
+        "localOnlyIds": [
+          "p1_0088:0",
+          "p1_0171:0",
+          "p1_0019:1"
+        ]
+      },
+      "crowd": {
+        "p10": 7.445567678577126,
+        "p50": 50.13432259896637,
+        "p90": 333.3531419432253,
+        "band": "room",
+        "bits": 14.32080286537133
+      },
+      "trail": [
+        {
+          "date": "2019-02-07T17:28:11.453Z",
+          "added": [
+            "divorced or separated"
+          ],
+          "estimate": {
+            "p10": 5187305.736288009,
+            "p50": 22924495.100686613,
+            "p90": 94934313.65193048,
+            "band": "crowd",
+            "bits": 3.4953722876494435
+          }
+        },
+        {
+          "date": "2019-10-10T19:40:06.121Z",
+          "added": [
+            "night-shift workers"
+          ],
+          "estimate": {
+            "p10": 188591.99207969123,
+            "p50": 1423282.1235502646,
+            "p90": 11332084.334638624,
+            "band": "crowd",
+            "bits": 7.504968680350127
+          }
+        },
+        {
+          "date": "2022-01-21T11:22:08.859Z",
+          "added": [
+            "registered nurses"
+          ],
+          "estimate": {
+            "p10": 16803.47036886453,
+            "p50": 111650.34022458665,
+            "p90": 811540.603113912,
+            "band": "crowd",
+            "bits": 11.17713078963998
+          }
+        },
+        {
+          "date": "2023-10-04T04:18:33.645Z",
+          "added": [
+            "Franklin County, Ohio (Columbus)"
+          ],
+          "estimate": {
+            "p10": 66.68277677897936,
+            "p50": 443.0724458138416,
+            "p90": 3220.5121737706895,
+            "band": "room",
+            "bits": 11.17713078963998
+          }
+        },
+        {
+          "date": "2024-05-14T02:17:48.810Z",
+          "added": [
+            "single mothers with kids at home"
+          ],
+          "estimate": {
+            "p10": 7.445567678577126,
+            "p50": 50.13432259896637,
+            "p90": 333.3531419432253,
+            "band": "room",
+            "bits": 14.32080286537133
+          }
+        }
+      ],
+      "leftTheCrowdDate": "2024-05-14T02:17:48.810Z",
+      "minimumFixKeys": [
+        "occupation:nurse",
+        "family:single_mother"
+      ]
+    },
+    {
+      "name": "p1 first half of facts",
+      "facts": [
+        {
+          "id": "p1_0003:0",
+          "postId": "p1_0003",
+          "date": "2019-02-07T17:28:11.453Z",
+          "cat": "dated_event",
+          "value": "three years",
+          "quote": "three years since I left him",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0034:0",
+          "postId": "p1_0034",
+          "date": "2019-10-10T19:40:06.121Z",
+          "cat": "occupation",
+          "value": "night shift worker",
+          "quote": "after a night shift the sunrise feels like a personal insult",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0088:0",
+          "postId": "p1_0088",
+          "date": "2021-04-18T06:35:49.422Z",
+          "cat": "health",
+          "value": "sleep deprivation",
+          "quote": "my alarm and I are no longer on speaking terms honestly",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0108:0",
+          "postId": "p1_0108",
+          "date": "2022-01-21T11:22:08.859Z",
+          "cat": "occupation",
+          "value": "registered nurse",
+          "quote": "as a registered nurse I promise you nobody reads the discharge paperwork",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0154:0",
+          "postId": "p1_0154",
+          "date": "2023-10-04T04:18:33.645Z",
+          "cat": "home_location",
+          "value": "Columbus",
+          "quote": "it has rained for nine days straight here in Columbus",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0166:0",
+          "postId": "p1_0166",
+          "date": "2024-03-08T04:42:21.306Z",
+          "cat": "dated_event",
+          "value": "divorce",
+          "quote": "since the divorce I have learned",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0166:1",
+          "postId": "p1_0166",
+          "date": "2024-03-08T04:42:21.306Z",
+          "cat": "occupation",
+          "value": "handyman",
+          "quote": "since the divorce I have learned to fix",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0171:0",
+          "postId": "p1_0171",
+          "date": "2024-04-08T11:03:43.016Z",
+          "cat": "health",
+          "value": "experienced exhaustion",
+          "quote": "I feel 80 years old after that shift",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0175:0",
+          "postId": "p1_0175",
+          "date": "2024-05-14T02:17:48.810Z",
+          "cat": "family",
+          "value": "single mom",
+          "quote": "being a single mom",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0175:1",
+          "postId": "p1_0175",
+          "date": "2024-05-14T02:17:48.810Z",
+          "cat": "work_location",
+          "value": "night shifts",
+          "quote": "night shifts",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0019:0",
+          "postId": "p1_0019",
+          "date": "2019-06-05T18:58:07.600Z",
+          "cat": "dated_event",
+          "value": "Sunday",
+          "quote": "tried meal prepping on Sunday",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0019:1",
+          "postId": "p1_0019",
+          "date": "2019-06-05T18:58:07.600Z",
+          "cat": "health",
+          "value": "cereal",
+          "quote": "by Tuesday I was eating cereal",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0020:0",
+          "postId": "p1_0020",
+          "date": "2019-06-16T04:39:08.686Z",
+          "cat": "relationship",
+          "value": "member of group",
+          "quote": "the group chat",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0023:0",
+          "postId": "p1_0023",
+          "date": "2019-07-25T19:52:00.374Z",
+          "cat": "family",
+          "value": "parent",
+          "quote": "tried meal prepping on Sunday.",
+          "certainty": "implied",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0027:0",
+          "postId": "p1_0027",
+          "date": "2019-08-21T14:59:42.468Z",
+          "cat": "rare_hobby",
+          "value": "plant enthusiast",
+          "quote": "my plants are thriving and I have no idea why",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "p1_0046:0",
+          "postId": "p1_0046",
+          "date": "2020-04-09T16:19:19.372Z",
+          "cat": "family",
+          "value": "parent of toddlers",
+          "quote": "toddler asking why the sky is blue on repeat",
+          "certainty": "implied",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [],
+      "dossier": {
+        "regionKey": "us:oh:franklin",
+        "regionFactIds": [
+          "p1_0154:0"
+        ],
+        "attributeKeys": [
+          "occupation:nurse",
+          "family:single_mother",
+          "work:night_shift",
+          "relationship:divorced"
+        ],
+        "attributeFactIds": [
+          [
+            "p1_0108:0"
+          ],
+          [
+            "p1_0175:0"
+          ],
+          [
+            "p1_0034:0",
+            "p1_0175:1"
+          ],
+          [
+            "p1_0003:0",
+            "p1_0166:0"
+          ]
+        ],
+        "attributeFirstSeen": [
+          "2022-01-21T11:22:08.859Z",
+          "2024-05-14T02:17:48.810Z",
+          "2019-10-10T19:40:06.121Z",
+          "2019-02-07T17:28:11.453Z"
+        ],
+        "unresolvedIds": [
+          "p1_0166:1",
+          "p1_0019:0",
+          "p1_0020:0",
+          "p1_0023:0",
+          "p1_0027:0",
+          "p1_0046:0"
+        ],
+        "localOnlyIds": [
+          "p1_0088:0",
+          "p1_0171:0",
+          "p1_0019:1"
+        ]
+      },
+      "crowd": {
+        "p10": 7.445567678577126,
+        "p50": 50.13432259896637,
+        "p90": 333.3531419432253,
+        "band": "room",
+        "bits": 14.32080286537133
+      },
+      "trail": [
+        {
+          "date": "2019-02-07T17:28:11.453Z",
+          "added": [
+            "divorced or separated"
+          ],
+          "estimate": {
+            "p10": 5187305.736288009,
+            "p50": 22924495.100686613,
+            "p90": 94934313.65193048,
+            "band": "crowd",
+            "bits": 3.4953722876494435
+          }
+        },
+        {
+          "date": "2019-10-10T19:40:06.121Z",
+          "added": [
+            "night-shift workers"
+          ],
+          "estimate": {
+            "p10": 188591.99207969123,
+            "p50": 1423282.1235502646,
+            "p90": 11332084.334638624,
+            "band": "crowd",
+            "bits": 7.504968680350127
+          }
+        },
+        {
+          "date": "2022-01-21T11:22:08.859Z",
+          "added": [
+            "registered nurses"
+          ],
+          "estimate": {
+            "p10": 16803.47036886453,
+            "p50": 111650.34022458665,
+            "p90": 811540.603113912,
+            "band": "crowd",
+            "bits": 11.17713078963998
+          }
+        },
+        {
+          "date": "2023-10-04T04:18:33.645Z",
+          "added": [
+            "Franklin County, Ohio (Columbus)"
+          ],
+          "estimate": {
+            "p10": 66.68277677897936,
+            "p50": 443.0724458138416,
+            "p90": 3220.5121737706895,
+            "band": "room",
+            "bits": 11.17713078963998
+          }
+        },
+        {
+          "date": "2024-05-14T02:17:48.810Z",
+          "added": [
+            "single mothers with kids at home"
+          ],
+          "estimate": {
+            "p10": 7.445567678577126,
+            "p50": 50.13432259896637,
+            "p90": 333.3531419432253,
+            "band": "room",
+            "bits": 14.32080286537133
+          }
+        }
+      ],
+      "leftTheCrowdDate": "2024-05-14T02:17:48.810Z",
+      "minimumFixKeys": [
+        "occupation:nurse",
+        "family:single_mother"
+      ]
+    },
+    {
+      "name": "cloud rate cited (url + grade B) counts",
+      "facts": [
+        {
+          "id": "hc1",
+          "postId": "hc",
+          "date": "2024-03-01",
+          "cat": "occupation",
+          "value": "home cook",
+          "quote": "home cook",
+          "certainty": "stated",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [
+        [
+          "occupation:home cook",
+          {
+            "key": "occupation:home cook",
+            "label": "home cook",
+            "cat": "occupation",
+            "low": 0.01,
+            "high": 0.02,
+            "grade": "B",
+            "source": "Test source",
+            "url": "https://www.bls.gov/x",
+            "origin": "cloud"
+          }
+        ]
+      ],
+      "dossier": {
+        "regionKey": "us",
+        "regionFactIds": [],
+        "attributeKeys": [
+          "occupation:home cook"
+        ],
+        "attributeFactIds": [
+          [
+            "hc1"
+          ]
+        ],
+        "attributeFirstSeen": [
+          "2024-03-01"
+        ],
+        "unresolvedIds": [],
+        "localOnlyIds": []
+      },
+      "crowd": {
+        "p10": 1585006.8557286398,
+        "p50": 3658041.213511252,
+        "p90": 8234944.8995394185,
+        "band": "crowd",
+        "bits": 6.143119012770677
+      },
+      "trail": [
+        {
+          "date": "2024-03-01",
+          "added": [
+            "home cook"
+          ],
+          "estimate": {
+            "p10": 1585006.8557286398,
+            "p50": 3658041.213511252,
+            "p90": 8234944.8995394185,
+            "band": "crowd",
+            "bits": 6.143119012770677
+          }
+        }
+      ],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": []
+    },
+    {
+      "name": "cloud rate uncited (grade C, no url) is ignored",
+      "facts": [
+        {
+          "id": "hc1",
+          "postId": "hc",
+          "date": "2024-03-01",
+          "cat": "occupation",
+          "value": "home cook",
+          "quote": "home cook",
+          "certainty": "stated",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [
+        [
+          "occupation:home cook",
+          {
+            "key": "occupation:home cook",
+            "label": "home cook",
+            "cat": "occupation",
+            "low": 0.01,
+            "high": 0.02,
+            "grade": "C",
+            "source": "Test source",
+            "origin": "cloud"
+          }
+        ]
+      ],
+      "dossier": {
+        "regionKey": "us",
+        "regionFactIds": [],
+        "attributeKeys": [],
+        "attributeFactIds": [],
+        "attributeFirstSeen": [],
+        "unresolvedIds": [
+          "hc1"
+        ],
+        "localOnlyIds": []
+      },
+      "crowd": {
+        "p10": 239336894.49039105,
+        "p50": 258608485.506547,
+        "p90": 278412587.0817476,
+        "band": "crowd",
+        "bits": 0
+      },
+      "trail": [],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": []
+    },
+    {
+      "name": "cloud rate with url but grade C is ignored",
+      "facts": [
+        {
+          "id": "hc1",
+          "postId": "hc",
+          "date": "2024-03-01",
+          "cat": "occupation",
+          "value": "home cook",
+          "quote": "home cook",
+          "certainty": "stated",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [
+        [
+          "occupation:home cook",
+          {
+            "key": "occupation:home cook",
+            "label": "home cook",
+            "cat": "occupation",
+            "low": 0.01,
+            "high": 0.02,
+            "grade": "C",
+            "source": "Test source",
+            "url": "https://example.org/x",
+            "origin": "cloud"
+          }
+        ]
+      ],
+      "dossier": {
+        "regionKey": "us",
+        "regionFactIds": [],
+        "attributeKeys": [],
+        "attributeFactIds": [],
+        "attributeFirstSeen": [],
+        "unresolvedIds": [
+          "hc1"
+        ],
+        "localOnlyIds": []
+      },
+      "crowd": {
+        "p10": 239336894.49039105,
+        "p50": 258608485.506547,
+        "p90": 278412587.0817476,
+        "band": "crowd",
+        "bits": 0
+      },
+      "trail": [],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": []
+    },
+    {
+      "name": "cited live rate replaces a bundled grade C pack rate",
+      "facts": [
+        {
+          "id": "icu1",
+          "postId": "icu",
+          "date": "2024-03-01",
+          "cat": "occupation",
+          "value": "ICU nurse",
+          "quote": "ICU nurse",
+          "certainty": "stated",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [
+        [
+          "occupation:icu nurse",
+          {
+            "key": "occupation:icu nurse",
+            "label": "icu nurse",
+            "cat": "occupation",
+            "low": 0.001,
+            "high": 0.002,
+            "grade": "B",
+            "source": "Test source",
+            "url": "https://www.bls.gov/x",
+            "origin": "cloud"
+          }
+        ]
+      ],
+      "dossier": {
+        "regionKey": "us",
+        "regionFactIds": [],
+        "attributeKeys": [
+          "occupation:icu_nurse"
+        ],
+        "attributeFactIds": [
+          [
+            "icu1"
+          ]
+        ],
+        "attributeFirstSeen": [
+          "2024-03-01"
+        ],
+        "unresolvedIds": [],
+        "localOnlyIds": []
+      },
+      "crowd": {
+        "p10": 158500.68557286393,
+        "p50": 365804.12135112507,
+        "p90": 823494.4899539419,
+        "band": "crowd",
+        "bits": 9.465047107658041
+      },
+      "trail": [
+        {
+          "date": "2024-03-01",
+          "added": [
+            "ICU / critical-care nurses"
+          ],
+          "estimate": {
+            "p10": 158500.68557286393,
+            "p50": 365804.12135112507,
+            "p90": 823494.4899539419,
+            "band": "crowd",
+            "bits": 9.465047107658041
+          }
+        }
+      ],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": []
+    },
+    {
+      "name": "empty fact list",
+      "facts": [],
+      "extraRates": [],
+      "dossier": {
+        "regionKey": "us",
+        "regionFactIds": [],
+        "attributeKeys": [],
+        "attributeFactIds": [],
+        "attributeFirstSeen": [],
+        "unresolvedIds": [],
+        "localOnlyIds": []
+      },
+      "crowd": {
+        "p10": 239336894.49039105,
+        "p50": 258608485.506547,
+        "p90": 278412587.0817476,
+        "band": "crowd",
+        "bits": 0
+      },
+      "trail": [],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": []
+    },
+    {
+      "name": "nested family: nurse, ICU nurse, BSN",
+      "facts": [
+        {
+          "id": "n1",
+          "postId": "p1",
+          "date": "2024-01-05",
+          "cat": "occupation",
+          "value": "registered nurse",
+          "quote": "as a registered nurse",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "n2",
+          "postId": "p2",
+          "date": "2024-02-01",
+          "cat": "occupation",
+          "value": "ICU nurse",
+          "quote": "ICU nurse",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "n3",
+          "postId": "p3",
+          "date": "2024-03-01",
+          "cat": "education",
+          "value": "BSN",
+          "quote": "BSN",
+          "certainty": "stated",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [],
+      "dossier": {
+        "regionKey": "us",
+        "regionFactIds": [],
+        "attributeKeys": [
+          "occupation:icu_nurse"
+        ],
+        "attributeFactIds": [
+          [
+            "n2",
+            "n3",
+            "n1"
+          ]
+        ],
+        "attributeFirstSeen": [
+          "2024-01-05"
+        ],
+        "unresolvedIds": [],
+        "localOnlyIds": []
+      },
+      "crowd": {
+        "p10": 121325.59681110177,
+        "p50": 592589.3094607308,
+        "p90": 2691709.927308287,
+        "band": "crowd",
+        "bits": 8.769085837274782
+      },
+      "trail": [
+        {
+          "date": "2024-01-05",
+          "added": [
+            "ICU / critical-care nurses"
+          ],
+          "estimate": {
+            "p10": 121325.59681110177,
+            "p50": 592589.3094607308,
+            "p90": 2691709.927308287,
+            "band": "crowd",
+            "bits": 8.769085837274782
+          }
+        }
+      ],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": []
+    },
+    {
+      "name": "health and religion stay local",
+      "facts": [
+        {
+          "id": "h1",
+          "postId": "p1",
+          "date": "2024-01-01",
+          "cat": "health",
+          "value": "asthma",
+          "quote": "my asthma",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "r1",
+          "postId": "p2",
+          "date": "2024-02-01",
+          "cat": "religion_community",
+          "value": "Catholic",
+          "quote": "Catholic",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "o1",
+          "postId": "p3",
+          "date": "2024-03-01",
+          "cat": "occupation",
+          "value": "teacher",
+          "quote": "teacher",
+          "certainty": "stated",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [],
+      "dossier": {
+        "regionKey": "us",
+        "regionFactIds": [],
+        "attributeKeys": [
+          "occupation:teacher"
+        ],
+        "attributeFactIds": [
+          [
+            "o1"
+          ]
+        ],
+        "attributeFirstSeen": [
+          "2024-03-01"
+        ],
+        "unresolvedIds": [],
+        "localOnlyIds": [
+          "h1",
+          "r1"
+        ]
+      },
+      "crowd": {
+        "p10": 2016920.5376401087,
+        "p50": 3753061.1182977846,
+        "p90": 6772773.968407012,
+        "band": "crowd",
+        "bits": 6.1061225575588125
+      },
+      "trail": [
+        {
+          "date": "2024-03-01",
+          "added": [
+            "K-12 teachers"
+          ],
+          "estimate": {
+            "p10": 2016920.5376401087,
+            "p50": 3753061.1182977846,
+            "p90": 6772773.968407012,
+            "band": "crowd",
+            "bits": 6.1061225575588125
+          }
+        }
+      ],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": []
+    },
+    {
+      "name": "Bengaluru region",
+      "facts": [
+        {
+          "id": "b1",
+          "postId": "p1",
+          "date": "2024-01-01",
+          "cat": "home_location",
+          "value": "Bengaluru",
+          "quote": "I live in Bengaluru",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "b2",
+          "postId": "p2",
+          "date": "2024-02-01",
+          "cat": "occupation",
+          "value": "teacher",
+          "quote": "teacher",
+          "certainty": "stated",
+          "source": "on_device"
+        },
+        {
+          "id": "b3",
+          "postId": "p3",
+          "date": "2024-03-01",
+          "cat": "rare_hobby",
+          "value": "half marathon",
+          "quote": "half marathon",
+          "certainty": "stated",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [],
+      "dossier": {
+        "regionKey": "in:ka:bengaluru",
+        "regionFactIds": [
+          "b1"
+        ],
+        "attributeKeys": [
+          "hobby:half_marathon",
+          "occupation:teacher"
+        ],
+        "attributeFactIds": [
+          [
+            "b3"
+          ],
+          [
+            "b2"
+          ]
+        ],
+        "attributeFirstSeen": [
+          "2024-03-01",
+          "2024-02-01"
+        ],
+        "unresolvedIds": [],
+        "localOnlyIds": []
+      },
+      "crowd": {
+        "p10": 83.40604298804003,
+        "p50": 640.453214428705,
+        "p90": 4405.781857241873,
+        "band": "room",
+        "bits": 13.400957482797892
+      },
+      "trail": [
+        {
+          "date": "2024-01-01",
+          "added": [
+            "Bengaluru Urban district"
+          ],
+          "estimate": {
+            "p10": 1883005.7339011845,
+            "p50": 6962916.047951666,
+            "p90": 24206482.097459774,
+            "band": "crowd",
+            "bits": 0
+          }
+        },
+        {
+          "date": "2024-02-01",
+          "added": [
+            "K-12 teachers"
+          ],
+          "estimate": {
+            "p10": 24451.603580160012,
+            "p50": 97866.1249002525,
+            "p90": 378938.28229644167,
+            "band": "crowd",
+            "bits": 6.145384901610195
+          }
+        },
+        {
+          "date": "2024-03-01",
+          "added": [
+            "half-marathon finishers"
+          ],
+          "estimate": {
+            "p10": 83.40604298804003,
+            "p50": 640.453214428705,
+            "p90": 4405.781857241873,
+            "band": "room",
+            "bits": 13.400957482797892
+          }
+        }
+      ],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": [
+        "hobby:half_marathon"
+      ]
+    },
+    {
+      "name": "gender is above the 15% cut and never narrows",
+      "facts": [
+        {
+          "id": "g1",
+          "postId": "p1",
+          "date": "2024-01-01",
+          "cat": "gender",
+          "value": "female",
+          "quote": "female",
+          "certainty": "stated",
+          "source": "on_device"
+        }
+      ],
+      "extraRates": [],
+      "dossier": {
+        "regionKey": "us",
+        "regionFactIds": [],
+        "attributeKeys": [],
+        "attributeFactIds": [],
+        "attributeFirstSeen": [],
+        "unresolvedIds": [],
+        "localOnlyIds": []
+      },
+      "crowd": {
+        "p10": 239336894.49039105,
+        "p50": 258608485.506547,
+        "p90": 278412587.0817476,
+        "band": "crowd",
+        "bits": 0
+      },
+      "trail": [],
+      "leftTheCrowdDate": null,
+      "minimumFixKeys": []
+    }
+  ]
+}
