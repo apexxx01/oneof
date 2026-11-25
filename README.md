@@ -110,7 +110,7 @@ OneOf was built and runs on Firebase's free Spark plan, by a student, with no bi
 |---|---|---|
 | Full 200-post scan of the demo persona | 200 calls, **0 failed, 0 cloud calls, $0** (`receipts/p1-nano-run-2026-11-25-x2r.compact.json`) | rate-limited (HTTP 429) within a few dozen calls in our tests, so the live cloud demo is capped at 25 posts |
 | Held-out SynthPAI eval | 80/80 calls succeeded | 11/40 calls failed (28%) (`receipts/heldout-synthpai-cloud.json`) |
-| Google Search grounding | not available on-device | no free quota (429 on every grounded request) |
+| Google Search grounding | not available on-device | no free quota (grounded requests returned 429 in our tests) |
 
 What that means in the product:
 - Reading your history is on-device, so it is free and unlimited, and it can't be rate-limited or switched off by anyone else.
