@@ -6,6 +6,9 @@
 import type { Fact } from './types';
 import type { ScanProgress } from './run';
 import { EXTRACT_PROMPT_VERSION } from './prompts';
+import { record } from './ledger';
+import { verify } from './verify';
+import type { Post } from './types';
 
 export interface RunLogEntry { postId: string; ms: number; source: 'on_device' | 'in_cloud' | 'error'; facts: Fact[] }
 
@@ -59,21 +62,38 @@ const sleep = (ms: number, signal?: AbortSignal) => new Promise<void>((res) => {
   signal?.addEventListener('abort', () => { clearTimeout(t); res(); }, { once: true });
 });
 
-/** Plays a recording back at `speed`× with the same progress shape a live scan emits. */
-export async function playReplay(r: Replay, speed: number, onUpdate: (p: ScanProgress) => void, signal?: AbortSignal): Promise<ScanProgress> {
+/**
+ * Plays a recording back at `speed`x with the same progress shape a live scan emits. Facts go
+ * through the current deterministic checker (verify.ts), so a recording made before a checker
+ * fix doesn't show facts the shipped pipeline would reject. Each recorded call is added to the
+ * ledger, marked as a replay, so "What the cloud saw" shows what the run did.
+ */
+export async function playReplay(r: Replay, speed: number, onUpdate: (p: ScanProgress) => void, signal?: AbortSignal, posts?: Map<string, Post>): Promise<ScanProgress> {
   const st: ScanProgress = { total: r.postsTotal, considered: r.log.length, fastPass: r.fastPass, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
   onUpdate({ ...st });
   for (const e of r.log) {
     if (signal?.aborted) break;
     await sleep(e.ms / speed, signal);
-    st.facts.push(...e.facts);
+    const kept = recheck(e.facts, posts);
+    st.facts.push(...kept);
+    st.rejected += e.facts.length - kept.length;
     st.lastMs = e.ms;
     if (e.source === 'on_device') st.onDevice++; else if (e.source === 'in_cloud') st.inCloud++;
     st.log.push(e);
     st.done++;
+    record({ task: 'extract', mode: 'PREFER_ON_DEVICE', reason: 'Recorded Gemini Nano run, played back', source: e.source === 'in_cloud' ? 'in_cloud' : e.source === 'error' ? 'error' : 'on_device', ms: e.ms, sentToCloud: '', replay: true });
     onUpdate({ ...st, facts: [...st.facts] });
   }
-  st.rejected = r.rejected;
+  st.rejected += r.rejected;
   onUpdate({ ...st });
   return st;
+}
+
+/** The recording's facts, filtered by today's checker (needs the post text). */
+export function recheck(facts: Fact[], posts?: Map<string, Post>): Fact[] {
+  if (!posts) return facts;
+  return facts.filter((f) => {
+    const post = posts.get(f.postId);
+    return !post || verify({ p: 0, cat: f.cat, value: f.value, quote: f.quote, about_self: true, certainty: f.certainty === 'stated' ? 'stated' : 'implied' }, post).ok;
+  });
 }

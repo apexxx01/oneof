@@ -151,7 +151,9 @@ export function Draft({ history, rates, before, placeholder, nano, recorded }: {
     : sentences.flatMap((s) => facts.get(s) ?? []);
   const d = buildDossier([...history, ...draftFacts], rates);
   const after = estimate(d.region, d.attributes);
-  const newKeys = new Set(buildDossier(draftFacts, rates).attributes.map((a) => a.rate.key));
+  const draftAttrs = buildDossier(draftFacts, rates).attributes;
+  const draftCounted = draftAttrs.reduce((n, a) => n + a.facts.length, 0);
+  const newKeys = new Set(draftAttrs.map((a) => a.rate.key));
   const combines = d.attributes.filter((a) => !newKeys.has(a.rate.key) && a.facts.some((f) => !f.postId.startsWith('draft'))).slice(0, 3);
   const worse = draftFacts.length > 0 && after.p50 < before.p50 * 0.8;
 
@@ -171,7 +173,8 @@ export function Draft({ history, rates, before, placeholder, nano, recorded }: {
         </div>
         {draftFacts.length > 0 && (
           <div className="chips">
-            {draftFacts.map((f) => <span key={f.id} className="chip new">+ {f.value} <SourceBadge source={f.source} /></span>)}
+            {draftAttrs.map((a) => <span key={a.rate.key} className="chip new" title={a.facts.map((f) => f.value).join(', ')}>+ {a.rate.label} <SourceBadge source={a.facts[0].source} /></span>)}
+            {draftFacts.length > draftCounted && <span className="chip dim" title="Found, but no cited base rate, so they don't narrow the crowd">+{draftFacts.length - draftCounted} not counted</span>}
           </div>
         )}
         {worse && (
@@ -216,7 +219,7 @@ export function Ledger({ open, onClose }: { open: boolean; onClose: () => void }
         <button className="ghost" onClick={onClose}>Close (Esc)</button>
       </div>
       <div className="ledger-sum mono">
-        <div><b>{s.onDevice}</b> calls on this device</div>
+        <div><b>{s.onDevice}</b> calls on device{s.replayed ? ` (${s.replayed} from a recorded run)` : ''}</div>
         <div><b>{s.cloud}</b> calls to the cloud</div>
         <div><b>{s.postBytesOut}</b> bytes of your posts sent</div>
         <div><b>{s.attrBytesOut}</b> bytes of generic attributes sent</div>
@@ -227,7 +230,7 @@ export function Ledger({ open, onClose }: { open: boolean; onClose: () => void }
         {[...entries].reverse().map((e) => (
           <li key={e.id} className={e.decoy ? 'decoy' : ''}>
             <div className="l-top mono">
-              <SourceBadge source={e.source} /> {e.task}{e.decoy ? ' · decoy' : ''} · {e.mode} · {Math.round(e.ms)} ms
+              <SourceBadge source={e.source} /> {e.task}{e.replay && <span className="replay-tag"> · replay</span>} · {e.mode} · {Math.round(e.ms)} ms
             </div>
             {e.sentToCloud ? (
               <>

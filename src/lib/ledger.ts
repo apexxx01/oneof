@@ -20,6 +20,8 @@ export interface LedgerEntry {
   error?: string;
   /** Cloud model that answered, when a fallback tier was used. */
   model?: string;
+  /** Played back from a recorded on-device run, not run in this browser. */
+  replay?: boolean;
 }
 
 type Listener = (entries: LedgerEntry[]) => void;
@@ -62,5 +64,6 @@ export function summary(list = entries) {
   const attrBytesOut = sent
     .filter((e) => e.task === 'baserate')
     .reduce((n, e) => n + new TextEncoder().encode(e.sentToCloud).length, 0);
-  return { total: list.length, onDevice, cloud: cloud.length, bytesOut, postBytesOut, attrBytesOut };
+  const replayed = list.filter((e) => e.replay).length;
+  return { total: list.length, onDevice, cloud: cloud.length, bytesOut, postBytesOut, attrBytesOut, replayed };
 }

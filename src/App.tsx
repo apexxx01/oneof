@@ -6,12 +6,12 @@ import { estimate, humanCount } from './lib/estimate';
 import { fromPaste, importFile } from './lib/importers';
 import { loadRateCache, plannedLookups, refineRates, scan, type PlannedLookup, type ScanProgress } from './lib/run';
 import { configProblems } from './lib/firebase';
-import { subscribe, summary } from './lib/ledger';
+import { record, subscribe, summary } from './lib/ledger';
 import type { BaseRate, Fact, Post } from './lib/types';
 import { Meter, SourceBadge } from './ui/bits';
 import { DossierList, Draft, Formula, Ledger } from './ui/Panels';
 import { Trail } from './ui/Trail';
-import { chromeVersion, downloadJson, playReplay, toReplay, type Replay } from './lib/replay';
+import { chromeVersion, downloadJson, playReplay, recheck, toReplay, type Replay } from './lib/replay';
 
 type Phase = 'home' | 'scan' | 'result';
 interface Persona { handle: string; posts: Post[]; draft?: string }
@@ -81,6 +81,7 @@ export default function App() {
 
   const postMap = useMemo(() => new Map(posts.map((p) => [p.id, p])), [posts]);
   const dossier = useMemo(() => buildDossier(facts, rates), [facts, rates]);
+  const countedIds = useMemo(() => new Set(dossier.attributes.flatMap((a) => a.facts.map((f) => f.id))), [dossier]);
   const now = useMemo(() => crowdNow(dossier), [dossier]);
   const trail = useMemo(() => crumbTrail(dossier), [dossier]);
   const left = useMemo(() => leftTheCrowd(trail), [trail]);
@@ -147,9 +148,15 @@ export default function App() {
     setReplaying(true); setPhase('scan');
     skipReplay.current = false;
     abort.current = new AbortController();
-    const res = await playReplay(replay, REPLAY_SPEED, (x) => { setProgress(x); setFacts(x.facts); }, abort.current.signal);
-    // "Skip to the result" shows the whole recorded run, not a partial one.
-    setFacts(skipReplay.current ? replay.log.flatMap((e) => e.facts) : res.facts);
+    const postIndex = new Map(p.posts.map((x) => [x.id, x]));
+    const res = await playReplay(replay, REPLAY_SPEED, (x) => { setProgress(x); setFacts(x.facts); }, abort.current.signal, postIndex);
+    // "Skip to the result" shows the whole recorded run, not a partial one, receipts included.
+    if (skipReplay.current) {
+      for (const e of replay.log.slice(res.done)) {
+        record({ task: 'extract', mode: 'PREFER_ON_DEVICE', reason: 'Recorded Gemini Nano run, played back', source: e.source === 'in_cloud' ? 'in_cloud' : e.source === 'error' ? 'error' : 'on_device', ms: e.ms, sentToCloud: '', replay: true });
+      }
+    }
+    setFacts(skipReplay.current ? recheck(replay.log.flatMap((e) => e.facts), postIndex) : res.facts);
     setPhase('result');
   }
 
@@ -237,7 +244,7 @@ export default function App() {
 
       {phase === 'scan' && progress && (
         <main className="scan">
-          {replaying && replay && <div className="banner warn mono">REPLAY · recorded with Gemini Nano in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)}{replay.promptVersion ? ` · prompt ${replay.promptVersion}` : ''} · {REPLAY_SPEED}× speed · real timings shown</div>}
+          {replaying && replay && <div className="banner warn mono">REPLAY · recorded with Gemini Nano in Chrome {chromeVersion(replay.userAgent)} on {replay.recordedAt.slice(0, 10)}{replay.promptVersion ? ` · prompt ${replay.promptVersion}` : ''} · {REPLAY_SPEED}× speed · real timings · facts re-checked by today’s checker</div>}
           <h2>Reading {progress.total} posts like an attacker would</h2>
           <div className="scan-stats mono">
             <span>{progress.done} / {progress.considered} posts read</span>
@@ -256,9 +263,13 @@ export default function App() {
           {!progress.cooling && progress.retried ? <p className="small mono muted">Retrying {progress.retried} posts that timed out.</p> : null}
           {progress.current && <div className="current mono">“{progress.current.text.slice(0, 120)}”</div>}
           <div className="live">
-            <Meter e={estimate(buildDossier(facts, rates).region, buildDossier(facts, rates).attributes)} label="Crowd so far" />
+            <Meter e={estimate(dossier.region, dossier.attributes)} label="Crowd so far" />
             <div className="chips">
-              {facts.slice().reverse().map((f) => <span key={f.id} className="chip">{f.value} <SourceBadge source={f.source} /></span>)}
+              {facts.slice().reverse().map((f) => (
+                <span key={f.id} className={`chip ${countedIds.has(f.id) ? '' : 'dim'}`} title={countedIds.has(f.id) ? 'Counted: has a cited base rate' : 'Found, but not counted: no cited base rate, so it doesn’t narrow the crowd'}>
+                  {f.value} <SourceBadge source={f.source} />
+                </span>
+              ))}
             </div>
           </div>
           {replaying
