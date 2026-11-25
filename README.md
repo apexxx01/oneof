@@ -128,7 +128,7 @@ Receipts: `receipts/heldout-synthpai-on_device.json`, `receipts/heldout-synthpai
 
 ### Full persona run, recorded
 
-`receipts/p1-nano-run-2026-11-24.compact.json`: all 200 posts of `quietnight_rn` on Gemini Nano in Chrome 158, 0 errors, 0 bytes of posts sent, 10 min. The estimate (one of ~50, range 7–330; edit 3 posts to get back to ~5.6k) matches the answer-key dry run, because noise facts such as "Sunday" or "member of group chat" have no base rate and do not change the crowd. This recording is what browsers without Nano play back, labelled as a replay.
+Two full recordings of `quietnight_rn` on Gemini Nano in Chrome 158, all 200 posts on-device, 0 errors, 0 bytes of posts sent, about 10 minutes each: `receipts/p1-nano-run-2026-11-24.compact.json` (prompt x2) and `receipts/p1-nano-run-2026-11-25-x2r.compact.json` (shipped prompt x2r, used for the replay). Both give one of ~50 (range 7–330) and back to ~5.6k after editing 2–3 posts. The runs differ in detail (the x2r run also fell for one planted trap, "my sister in Seattle", which doesn't count because Seattle is not a bundled region), which is why only cited base rates are allowed to narrow the crowd: an unsourced model estimate for a noise fact like "home cook" is shown but never counted. This recording is what browsers without Nano play back, labelled as a replay.
 
 Caveats, stated plainly:
 

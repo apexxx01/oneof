@@ -42,7 +42,11 @@ export function buildDossier(facts: Fact[], extraRates: Map<string, BaseRate> = 
     if (f.cat === 'other') continue;
     if (LOCATION_CATS.has(f.cat) && matchRegion(`${f.value} ${f.quote}`)) continue;
     const pack = matchPack(f.cat, f.value, f.quote);
-    const live = extraRates.get(rateKey(f));
+    // Only cited numbers narrow the crowd. A cloud answer without a grounding source is a model's
+    // opinion (grade C, "model estimate, no source"): it is shown, but never counted. Otherwise
+    // a handful of noise facts with guessed rates multiply the crowd down to nobody.
+    const fetched = extraRates.get(rateKey(f));
+    const live = fetched && isCited(fetched) ? fetched : undefined;
     let rate: BaseRate | undefined;
     if (pack) {
       const { aliases: _a, ...p } = pack;
@@ -87,6 +91,11 @@ export function buildDossier(facts: Fact[], extraRates: Map<string, BaseRate> = 
   }
   const attributes = [...byKey.values()].sort((a, b) => a.rate.high - b.rate.high);
   return { region: regionLabel ?? region, regionFacts, attributes, unresolved, localOnly };
+}
+
+/** A rate counts only if it comes from a table we ship or a lookup that returned a source. */
+export function isCited(r: BaseRate) {
+  return r.origin === 'bundled' || (!!r.url && r.grade !== 'C');
 }
 
 export function rateKey(f: Pick<Fact, 'cat' | 'value'>) {

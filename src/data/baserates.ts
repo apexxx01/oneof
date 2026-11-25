@@ -141,7 +141,8 @@ export function matchPack(cat: string, value: string, quote: string): PackEntry 
 function compatible(a: string, b: string) {
   const groups = [
     ['occupation', 'employer_type', 'work_location', 'education'],
-    ['family', 'relationship', 'gender'],
+    // Life events ("since the divorce", "the twins were born") often come back as dated_event.
+    ['family', 'relationship', 'gender', 'dated_event'],
     ['rare_hobby', 'dated_event'],
   ];
   return groups.some((g) => g.includes(a) && g.includes(b));
