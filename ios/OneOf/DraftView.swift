@@ -25,7 +25,7 @@ struct DraftView: View {
     ScrollView {
       VStack(alignment: .leading, spacing: 16) {
         Panel {
-          Text("YOUR DRAFT").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
+          SectionHead("Your draft")
           TextEditor(text: $text)
             .focused($focused)
             .overlay(alignment: .topLeading) {
@@ -55,6 +55,11 @@ struct DraftView: View {
 
         if !checkedText.isEmpty {
           Panel {
+            if let combined, let before {
+              CrowdField(lit: crowdLit(before, model.dossier.region), previewLit: crowdLit(combined, model.dossier.region), band: combined.band)
+                .frame(height: 140)
+              Text("Outlined dots switch off if you post this.").font(.caption).foregroundStyle(Theme.muted)
+            }
             Meter(e: alone, label: "This draft alone", compact: true)
             if let combined, let before {
               Divider().overlay(Theme.line)
@@ -72,7 +77,7 @@ struct DraftView: View {
 
         if !facts.isEmpty {
           Panel {
-            Text("BLUR IT").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
+            SectionHead("Blur it")
             if let b = blurred {
               Text(b.rewrite).font(.body).textSelection(.enabled)
               if let bf = blurredFacts {
@@ -85,14 +90,14 @@ struct DraftView: View {
                 HStack { ProgressView().controlSize(.small); Text("Re-checking the rewrite on-device…").font(.caption).foregroundStyle(Theme.muted) }
               }
               HStack {
-                Button("Use this") { text = b.rewrite; blurred = nil; blurredFacts = nil }.buttonStyle(.borderedProminent)
-                Button("Copy") { UIPasteboard.general.string = b.rewrite }.buttonStyle(.bordered)
+                Button("Use this") { text = b.rewrite; blurred = nil; blurredFacts = nil }.buttonStyle(Brutal(primary: true))
+                Button("Copy") { UIPasteboard.general.string = b.rewrite }.buttonStyle(Brutal())
               }
             } else {
               Button { Task { await blur() } } label: {
                 Label(blurring ? "Rewriting on-device…" : "Rewrite without the giveaways", systemImage: "eye.slash")
               }
-              .buttonStyle(.bordered)
+              .buttonStyle(Brutal())
               .disabled(blurring || !model.status.ok)
             }
           }

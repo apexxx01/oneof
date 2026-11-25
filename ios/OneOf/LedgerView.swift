@@ -8,7 +8,11 @@ struct LedgerView: View {
     let s = model.summary
     List {
       Section {
-        row("Your posts and drafts sent to the cloud", "\(s.ownPostBytesOut) bytes", s.ownPostBytesOut == 0 ? Theme.device : Theme.danger)
+        VStack(alignment: .leading, spacing: 2) {
+          Text("\(s.ownPostBytesOut) B").font(Theme.numeral(72)).foregroundStyle(s.ownPostBytesOut == 0 ? Theme.device : Theme.signal)
+          Text("of your posts and drafts sent to the cloud").font(.subheadline.weight(.semibold))
+        }
+        .listRowSeparator(.hidden)
         if s.demoPostBytesOut > 0 { row("Synthetic demo posts (cloud fallback)", "\(s.demoPostBytesOut) bytes", Theme.cloud) }
         row("Generic attributes sent for base rates", "\(s.attrBytesOut) bytes", Theme.cloud)
         row("Calls on-device / in cloud", "\(s.onDevice) / \(s.inCloud)", Theme.text)
@@ -43,7 +47,9 @@ struct LedgerView: View {
     .safeAreaInset(edge: .bottom) {
       Toggle("Developer diagnostics", isOn: $dev).font(.caption).padding(.horizontal, 20).padding(.vertical, 8).background(.bar)
     }
+    .listStyle(.plain)
     .scrollContentBackground(.hidden)
+    .background(Theme.bg)
     .navigationTitle("What the cloud saw")
     .navigationBarTitleDisplayMode(.inline)
     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("Clear") { model.clearLedger() }.disabled(model.ledger.isEmpty) } }
@@ -76,7 +82,7 @@ struct PasteView: View {
         model.startScan(posts: posts, data: .own, title: "Your posts")
         path.append(.scan)
       } label: { Text("Scan on this iPhone").frame(maxWidth: .infinity) }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(Brutal(primary: true))
         .disabled(posts.isEmpty || !model.status.ok)
     }
     .padding(16)

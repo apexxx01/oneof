@@ -55,11 +55,16 @@ struct ScanView: View {
             .padding(8).frame(maxWidth: .infinity, alignment: .leading)
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Theme.amber.opacity(0.5)))
         }
-        Panel { Meter(e: crowd, label: s.title) }
+        Panel(lead: true) {
+          CrowdField(lit: crowdLit(crowd, d.region), band: crowd.band)
+            .frame(height: 170)
+            .animation(.easeInOut(duration: 0.9), value: crowd.p50)
+          Meter(e: crowd, label: s.title)
+        }
 
         Panel {
           HStack {
-            Text(phaseLabel.0).font(Theme.mono(11)).tracking(1).foregroundStyle(phaseLabel.1)
+            Text(phaseLabel.0).font(Theme.mono(11, .bold)).tracking(1).foregroundStyle(phaseLabel.1)
             Spacer()
             Text("\(s.done)/\(s.order.count) posts").font(Theme.mono(12)).foregroundStyle(Theme.muted)
           }
@@ -100,7 +105,7 @@ struct ScanView: View {
 
         if !chips.isEmpty {
           VStack(alignment: .leading, spacing: 8) {
-            Text("WHAT IT FOUND").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
+            SectionHead("What it found")
             Text("\(shown.count) detail\(shown.count == 1 ? "" : "s") counted (cited base rates only)\(hidden > 0 ? " · \(hidden) more found, not counted" : "").")
               .font(.caption).foregroundStyle(Theme.muted)
             FlowLayout(spacing: 8) {
@@ -115,10 +120,10 @@ struct ScanView: View {
     .safeAreaInset(edge: .bottom) {
       HStack {
         if s.running {
-          Button(role: .destructive) { model.stopScan() } label: { Text("Stop").frame(maxWidth: .infinity) }.buttonStyle(.bordered)
+          Button(role: .destructive) { model.stopScan() } label: { Text("Stop").frame(maxWidth: .infinity) }.buttonStyle(Brutal())
         }
         Button { path.append(.dossier) } label: { Text("Open the dossier").frame(maxWidth: .infinity) }
-          .buttonStyle(.borderedProminent)
+          .buttonStyle(Brutal(primary: true))
           .disabled(s.done == 0)
       }
       .controlSize(.large)

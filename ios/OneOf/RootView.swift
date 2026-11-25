@@ -58,26 +58,48 @@ struct HomeView: View {
   @Binding var path: [Screen]
 
   var body: some View {
+    let s = model.summary
+    VStack(spacing: 0) {
+      HStack {
+        BrandMark()
+        Spacer()
+        Text(model.status.ok ? "APPLE INTELLIGENCE" : "NO ON-DEVICE MODEL")
+          .font(Theme.mono(10, .bold)).tracking(0.8)
+          .foregroundStyle(model.status.ok ? Theme.device : Theme.amber)
+          .padding(.horizontal, 8).padding(.vertical, 6)
+          .overlay(Rectangle().stroke(model.status.ok ? Theme.device : Theme.amber, lineWidth: 1.5))
+      }
+      .padding(.horizontal, 16).padding(.vertical, 10)
+      .overlay(alignment: .bottom) { Rectangle().fill(Theme.fg).frame(height: 2) }
+      Ticker(items: [
+        "\(s.ownPostBytesOut) BYTES OF YOUR POSTS SENT",
+        "YOUR POSTS ARE READ ON THIS IPHONE",
+        "THE CLOUD ONLY SEES ONE GENERIC WORD, AFTER YOU SAY YES",
+        "FIREBASE AI LOGIC HYBRID INFERENCE",
+        "\(s.onDevice) CALLS ON-DEVICE SO FAR",
+      ])
     ScrollView {
-      VStack(alignment: .leading, spacing: 18) {
-        HStack(spacing: 10) {
-          Text("one/of").font(Theme.mono(15, .bold)).foregroundStyle(Color(hex: 0x120604))
-            .padding(.horizontal, 8).padding(.vertical, 3).background(Theme.signal, in: RoundedRectangle(cornerRadius: 7))
-          Text("OneOf").font(.title3.weight(.semibold))
-          Spacer()
+      VStack(alignment: .leading, spacing: 22) {
+        ZStack(alignment: .bottomLeading) {
+          CrowdField(lit: Double(CrowdField.N), band: .crowd)
+            .frame(height: 260)
+            .padding(.bottom, 60)
+          VStack(alignment: .leading, spacing: 6) {
+            Text("Pseudonymous until you're not.")
+              .font(Theme.numeral(58)).foregroundStyle(Theme.fg)
+              .lineLimit(3).minimumScaleFactor(0.6)
+              .padding(10).background(Theme.bg)
+          }
         }
-        VStack(alignment: .leading, spacing: 8) {
-          Text("Pseudonymous until you're not.").font(.system(size: 32, weight: .bold)).foregroundStyle(Theme.text)
-          Text("OneOf reads your posts on this iPhone with Apple's on-device model, builds the dossier a stranger would, and tells you how many people you could be. Your posts never leave the phone.")
-            .font(.body).foregroundStyle(Theme.muted)
-        }
+        Text("The dots are the crowd you could be. Every detail you post switches some of them off. OneOf reads them on this iPhone with Apple's on-device model, builds the dossier a stranger could, and shows how many people you could still be.")
+          .font(.body).foregroundStyle(Theme.muted)
 
         StatusPanel()
 
         if let p = model.persona {
-          Panel {
-            Text("WATCH A SCAN").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
-            Text("@\(p.handle)").font(.headline)
+          Panel(lead: true) {
+            SectionHead("Watch a scan")
+            Text("@\(p.handle)").font(Theme.mono(14, .bold))
             Text("\(p.posts.count) synthetic posts by an invented night-shift nurse. No real person. Watch the crowd shrink one detail at a time.")
               .font(.subheadline).foregroundStyle(Theme.muted)
             if model.status.ok {
@@ -86,12 +108,12 @@ struct HomeView: View {
                   model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)")
                   path.append(.scan)
                 } label: { Text("Scan all \(p.posts.count) posts").frame(maxWidth: .infinity) }
-                  .buttonStyle(.borderedProminent)
+                  .buttonStyle(Brutal(primary: true))
                 Button {
                   model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)", limit: 60)
                   path.append(.scan)
                 } label: { Text("Quick · 60") }
-                  .buttonStyle(.bordered)
+                  .buttonStyle(Brutal())
               }
               Text("About 2–3 minutes on this iPhone, nothing sent anywhere.").font(.caption).foregroundStyle(Theme.muted)
             } else {
@@ -99,13 +121,13 @@ struct HomeView: View {
                 model.playRecordedRun()
                 path.append(.scan)
               } label: { Text("Watch a recorded on-device run").frame(maxWidth: .infinity) }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(Brutal(primary: true))
                 .disabled(RecordedRun.load() == nil)
               Button {
                 model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)", limit: 25)
                 path.append(.scan)
               } label: { Text("Run 25 posts via the cloud").frame(maxWidth: .infinity) }
-                .buttonStyle(.bordered)
+                .buttonStyle(Brutal())
               Text("Without Apple Intelligence this demo data falls back to Gemini in the cloud (free tier, so capped at 25 posts and a partial dossier). Your own posts never do.")
                 .font(.caption).foregroundStyle(Theme.muted)
             }
@@ -113,27 +135,24 @@ struct HomeView: View {
         }
 
         Panel {
-          Text("YOUR OWN POSTS").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
-          Text("Paste your post history").font(.headline)
-          Text("Only on this iPhone. If Apple Intelligence is off, OneOf refuses rather than send your words anywhere.")
+          SectionHead("Scan your own posts")
+                    Text("Only on this iPhone. If Apple Intelligence is off, OneOf refuses rather than send your words anywhere.")
             .font(.subheadline).foregroundStyle(Theme.muted)
           Button { path.append(.paste) } label: { Text("Paste posts").frame(maxWidth: .infinity) }
-            .buttonStyle(.bordered)
+            .buttonStyle(Brutal())
             .disabled(!model.status.ok)
           if !model.status.ok { Text("Needs Apple Intelligence: your posts are never sent to the cloud instead.").font(.caption).foregroundStyle(Theme.amber) }
         }
 
         Panel {
-          Text("BEFORE YOU POST").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
-          Text("Check a draft").font(.headline)
-          Text("See what a draft gives away before you post it, and get a blurred rewrite. On-device only.")
+          SectionHead("Check a draft before you post")
+                    Text("See what a draft gives away before you post it, and get a blurred rewrite. On-device only.")
             .font(.subheadline).foregroundStyle(Theme.muted)
           Button { path.append(.draft) } label: { Text("Open the draft checker").frame(maxWidth: .infinity) }
-            .buttonStyle(.bordered)
+            .buttonStyle(Brutal())
         }
 
         Button { path.append(.ledger) } label: {
-          let s = model.summary
           HStack {
             Image(systemName: "icloud.and.arrow.up")
             Text("What the cloud saw: \(s.ownPostBytesOut) bytes of your posts\(s.demoPostBytesOut > 0 ? " · \(s.demoPostBytesOut) B of demo posts" : "")")
@@ -150,6 +169,8 @@ struct HomeView: View {
       .padding(20)
     }
     .scrollIndicators(.hidden)
+    }
+    .background(Theme.bg)
     .onAppear { model.refreshStatus() }
     .toolbar(.hidden, for: .navigationBar)
   }

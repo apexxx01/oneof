@@ -15,14 +15,17 @@ struct DossierView: View {
     let left = leftTheCrowd(trail)
     ScrollView {
       VStack(alignment: .leading, spacing: 16) {
-        Panel { Meter(e: crowd, label: "The dossier") }
+        Panel(lead: true) {
+          CrowdField(lit: crowdLit(crowd, d.region), band: crowd.band).frame(height: 170)
+          Meter(e: crowd, label: "The dossier a stranger could build")
+        }
 
         Text("OneOf can miss details an attacker would find (on held-out data the on-device model caught about 4 in 10), so treat this as an upper bound on how many people you could be.")
           .font(.caption).foregroundStyle(Theme.muted)
 
         if trail.count > 1 {
           Panel {
-            Text("THE CRUMB TRAIL").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
+            SectionHead("The crumb trail")
             Text("No single post gave you away. Together, they did. Drag across the chart.").font(.caption).foregroundStyle(Theme.muted)
             TrailChart(points: trail, leftDate: left?.date)
             if let left {
@@ -33,7 +36,7 @@ struct DossierView: View {
         }
 
         Panel {
-          Text("WHAT A STRANGER LEARNS").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
+          SectionHead("What a stranger learns")
           HStack { Text(d.region.label).font(.subheadline.weight(.semibold)); Spacer(); GradeBadge(grade: d.region.grade) }
           Text("\(Int(d.region.population).formatted()) people · \(d.region.source)").font(.caption2).foregroundStyle(Theme.muted)
           if let u = d.region.url, let url = URL(string: u) { Link("Source", destination: url).font(.caption2) }
@@ -46,7 +49,7 @@ struct DossierView: View {
 
         if !fix.isEmpty {
           Panel {
-            Text("REJOIN THE CROWD").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
+            SectionHead("Rejoin the crowd")
             let facts = fix.flatMap(\.facts)
             let posts = Set(facts.map(\.postId))
             Text("Edit or delete **\(posts.count) post\(posts.count == 1 ? "" : "s")**\(afterFix.map { " to get back to one of ~\(humanCount($0.p50))" } ?? ""): drop \(fix.map(\.rate.label).joined(separator: ", ")).")
@@ -62,7 +65,7 @@ struct DossierView: View {
 
         if !d.unresolved.isEmpty || !d.localOnly.isEmpty {
           Panel {
-            Text("NOT COUNTED (YET)").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
+            SectionHead("Not counted (yet)")
             if !d.localOnly.isEmpty {
               Text("\(d.localOnly.count) health or religion detail\(d.localOnly.count == 1 ? "" : "s") stay on this iPhone, never looked up.")
                 .font(.footnote).foregroundStyle(Theme.muted)
@@ -75,7 +78,7 @@ struct DossierView: View {
               Button { showLookups = true } label: {
                 Label(model.refreshing ? "Looking up…" : "Look up base rates", systemImage: "magnifyingglass")
               }
-              .buttonStyle(.bordered)
+              .buttonStyle(Brutal())
               .disabled(model.refreshing || model.plannedLookups.isEmpty)
             }
           }
