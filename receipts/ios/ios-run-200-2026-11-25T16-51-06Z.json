@@ -1,0 +1,2159 @@
+{
+  "attributes" : [
+    "registered nurses",
+    "single mothers with kids at home",
+    "night-shift workers",
+    "divorced or separated"
+  ],
+  "crowd" : {
+    "band" : "room",
+    "bits" : 14.32080286537133,
+    "p10" : 7.445567678577126,
+    "p50" : 50.13432259896638,
+    "p90" : 333.3531419432253
+  },
+  "data" : "synthetic",
+  "device" : "iPhone19,2 iOS Version 27.2 (Build 24B8117)",
+  "factsKept" : 14,
+  "inCloud" : 0,
+  "log" : [
+    {
+      "facts" : [
+
+      ],
+      "ms" : 3406,
+      "postId" : "p1_0000",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1250,
+      "postId" : "p1_0002",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "relationship",
+          "certainty" : "implied",
+          "date" : "2019-02-07T17:28:11.453Z",
+          "id" : "p1_0003:0",
+          "postId" : "p1_0003",
+          "quote" : "three years since I left him",
+          "source" : "on_device",
+          "value" : "ex-partner"
+        }
+      ],
+      "ms" : 1279,
+      "postId" : "p1_0003",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 680,
+      "postId" : "p1_0005",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1241,
+      "postId" : "p1_0008",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 633,
+      "postId" : "p1_0009",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0011",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0015",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1149,
+      "postId" : "p1_0017",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1274,
+      "postId" : "p1_0021",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1191,
+      "postId" : "p1_0022",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0028",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 635,
+      "postId" : "p1_0029",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0032",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0033",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "work_location",
+          "certainty" : "implied",
+          "date" : "2019-10-10T19:40:06.121Z",
+          "id" : "p1_0034:0",
+          "postId" : "p1_0034",
+          "quote" : "after a night shift",
+          "source" : "on_device",
+          "value" : "night shift"
+        }
+      ],
+      "ms" : 1209,
+      "postId" : "p1_0034",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1249,
+      "postId" : "p1_0036",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1229,
+      "postId" : "p1_0042",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1229,
+      "postId" : "p1_0045",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0052",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1131,
+      "postId" : "p1_0060",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1130,
+      "postId" : "p1_0076",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0079",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0083",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1186,
+      "postId" : "p1_0086",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 637,
+      "postId" : "p1_0088",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "pet",
+          "certainty" : "implied",
+          "date" : "2021-08-16T10:20:27.618Z",
+          "id" : "p1_0093:0",
+          "postId" : "p1_0093",
+          "quote" : "my cat has decided the laundry basket is his kingdom now",
+          "source" : "on_device",
+          "value" : "cat"
+        }
+      ],
+      "ms" : 1285,
+      "postId" : "p1_0093",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0099",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 644,
+      "postId" : "p1_0102",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0104",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "occupation",
+          "certainty" : "stated",
+          "date" : "2022-01-21T11:22:08.859Z",
+          "id" : "p1_0108:0",
+          "postId" : "p1_0108",
+          "quote" : "as a registered nurse I promise you nobody reads the discharge paperwork",
+          "source" : "on_device",
+          "value" : "registered nurse"
+        }
+      ],
+      "ms" : 1256,
+      "postId" : "p1_0108",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 636,
+      "postId" : "p1_0110",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0111",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 621,
+      "postId" : "p1_0113",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 621,
+      "postId" : "p1_0117",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 621,
+      "postId" : "p1_0118",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1184,
+      "postId" : "p1_0121",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1195,
+      "postId" : "p1_0122",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1145,
+      "postId" : "p1_0127",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "health",
+          "certainty" : "stated",
+          "date" : "2022-10-24T00:38:08.119Z",
+          "id" : "p1_0129:0",
+          "postId" : "p1_0129",
+          "quote" : "I am not ok",
+          "source" : "on_device",
+          "value" : "not ok"
+        }
+      ],
+      "ms" : 1171,
+      "postId" : "p1_0129",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 631,
+      "postId" : "p1_0131",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "language",
+          "certainty" : "implied",
+          "date" : "2023-01-13T11:09:29.592Z",
+          "id" : "p1_0133:0",
+          "postId" : "p1_0133",
+          "quote" : "just realised I have been pronouncing quinoa wrong for years 😭",
+          "source" : "on_device",
+          "value" : "pronouncing quinoa"
+        }
+      ],
+      "ms" : 1325,
+      "postId" : "p1_0133",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 644,
+      "postId" : "p1_0138",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 631,
+      "postId" : "p1_0140",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 618,
+      "postId" : "p1_0143",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 630,
+      "postId" : "p1_0145",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0146",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0150",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "family",
+          "certainty" : "implied",
+          "date" : "2023-09-09T11:10:16.986Z",
+          "id" : "p1_0151:0",
+          "postId" : "p1_0151",
+          "quote" : "single mom tip",
+          "source" : "on_device",
+          "value" : "single mom"
+        }
+      ],
+      "ms" : 1139,
+      "postId" : "p1_0151",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "home_location",
+          "certainty" : "implied",
+          "date" : "2023-10-04T04:18:33.645Z",
+          "id" : "p1_0154:0",
+          "postId" : "p1_0154",
+          "quote" : "it has rained for nine days straight here in Columbus",
+          "source" : "on_device",
+          "value" : "Columbus"
+        }
+      ],
+      "ms" : 1337,
+      "postId" : "p1_0154",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1215,
+      "postId" : "p1_0158",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1291,
+      "postId" : "p1_0159",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1283,
+      "postId" : "p1_0160",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1225,
+      "postId" : "p1_0162",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "health",
+          "certainty" : "stated",
+          "date" : "2024-02-24T09:19:54.408Z",
+          "id" : "p1_0165:0",
+          "postId" : "p1_0165",
+          "quote" : "I am not ok",
+          "source" : "on_device",
+          "value" : "not ok"
+        }
+      ],
+      "ms" : 1165,
+      "postId" : "p1_0165",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "family",
+          "certainty" : "stated",
+          "date" : "2024-03-08T04:42:21.306Z",
+          "id" : "p1_0166:0",
+          "postId" : "p1_0166",
+          "quote" : "since the divorce",
+          "source" : "on_device",
+          "value" : "divorce"
+        }
+      ],
+      "ms" : 1173,
+      "postId" : "p1_0166",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1289,
+      "postId" : "p1_0168",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1216,
+      "postId" : "p1_0171",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "occupation",
+          "certainty" : "implied",
+          "date" : "2024-04-29T13:21:43.563Z",
+          "id" : "p1_0174:0",
+          "postId" : "p1_0174",
+          "quote" : "the doctor on duty tonight asked me where the gloves are",
+          "source" : "on_device",
+          "value" : "nurse"
+        }
+      ],
+      "ms" : 1221,
+      "postId" : "p1_0174",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "family",
+          "certainty" : "stated",
+          "date" : "2024-05-14T02:17:48.810Z",
+          "id" : "p1_0175:0",
+          "postId" : "p1_0175",
+          "quote" : "being a single mom on night shifts",
+          "source" : "on_device",
+          "value" : "single mom"
+        }
+      ],
+      "ms" : 1202,
+      "postId" : "p1_0175",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "health",
+          "certainty" : "stated",
+          "date" : "2024-06-05T18:32:21.176Z",
+          "id" : "p1_0177:0",
+          "postId" : "p1_0177",
+          "quote" : "I am not ok",
+          "source" : "on_device",
+          "value" : "not ok"
+        }
+      ],
+      "ms" : 1174,
+      "postId" : "p1_0177",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 635,
+      "postId" : "p1_0179",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0184",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0185",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1216,
+      "postId" : "p1_0187",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0191",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0193",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0194",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1140,
+      "postId" : "p1_0199",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1336,
+      "postId" : "p1_0001",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0004",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 635,
+      "postId" : "p1_0006",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 632,
+      "postId" : "p1_0007",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0010",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0012",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0013",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1320,
+      "postId" : "p1_0014",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0016",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0018",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1197,
+      "postId" : "p1_0019",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0020",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1197,
+      "postId" : "p1_0023",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 646,
+      "postId" : "p1_0024",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 630,
+      "postId" : "p1_0025",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1192,
+      "postId" : "p1_0026",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0027",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 623,
+      "postId" : "p1_0030",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0031",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1315,
+      "postId" : "p1_0035",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 633,
+      "postId" : "p1_0037",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0038",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0039",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 623,
+      "postId" : "p1_0040",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0041",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0043",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1201,
+      "postId" : "p1_0044",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 637,
+      "postId" : "p1_0046",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1323,
+      "postId" : "p1_0047",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 620,
+      "postId" : "p1_0048",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 631,
+      "postId" : "p1_0049",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0050",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0051",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 630,
+      "postId" : "p1_0053",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 632,
+      "postId" : "p1_0054",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0055",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0056",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 630,
+      "postId" : "p1_0057",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0058",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0059",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0061",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1211,
+      "postId" : "p1_0062",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0063",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0064",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 623,
+      "postId" : "p1_0065",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0066",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0067",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 634,
+      "postId" : "p1_0068",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 632,
+      "postId" : "p1_0069",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0070",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0071",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1192,
+      "postId" : "p1_0072",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1312,
+      "postId" : "p1_0073",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0074",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0075",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 641,
+      "postId" : "p1_0077",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0078",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 646,
+      "postId" : "p1_0080",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 631,
+      "postId" : "p1_0081",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0082",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0084",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1355,
+      "postId" : "p1_0085",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 631,
+      "postId" : "p1_0087",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0089",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 641,
+      "postId" : "p1_0090",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0091",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1322,
+      "postId" : "p1_0092",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0094",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0095",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 646,
+      "postId" : "p1_0096",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 631,
+      "postId" : "p1_0097",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0098",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 623,
+      "postId" : "p1_0100",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0101",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 630,
+      "postId" : "p1_0103",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0105",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0106",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1186,
+      "postId" : "p1_0107",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1189,
+      "postId" : "p1_0109",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 634,
+      "postId" : "p1_0112",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0114",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0115",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 635,
+      "postId" : "p1_0116",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0119",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 640,
+      "postId" : "p1_0120",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0123",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 632,
+      "postId" : "p1_0124",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1204,
+      "postId" : "p1_0125",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1203,
+      "postId" : "p1_0126",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 638,
+      "postId" : "p1_0128",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0130",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0132",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 631,
+      "postId" : "p1_0134",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0135",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 633,
+      "postId" : "p1_0136",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 633,
+      "postId" : "p1_0137",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0139",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1198,
+      "postId" : "p1_0141",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0142",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1198,
+      "postId" : "p1_0144",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 632,
+      "postId" : "p1_0147",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0148",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1201,
+      "postId" : "p1_0149",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 632,
+      "postId" : "p1_0152",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0153",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0155",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1359,
+      "postId" : "p1_0156",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 630,
+      "postId" : "p1_0157",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+        {
+          "cat" : "family",
+          "certainty" : "implied",
+          "date" : "2024-01-02T13:41:05.926Z",
+          "id" : "p1_0161:0",
+          "postId" : "p1_0161",
+          "quote" : "nothing humbles you like a toddler asking why the sky is blue on repeat",
+          "source" : "on_device",
+          "value" : "parent of a toddler"
+        }
+      ],
+      "ms" : 1397,
+      "postId" : "p1_0161",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 661,
+      "postId" : "p1_0163",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1224,
+      "postId" : "p1_0164",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 636,
+      "postId" : "p1_0167",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0169",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 628,
+      "postId" : "p1_0170",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
+      "postId" : "p1_0172",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 623,
+      "postId" : "p1_0173",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 623,
+      "postId" : "p1_0176",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1200,
+      "postId" : "p1_0178",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 630,
+      "postId" : "p1_0180",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 623,
+      "postId" : "p1_0181",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0182",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 622,
+      "postId" : "p1_0183",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0186",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0188",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 633,
+      "postId" : "p1_0189",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 625,
+      "postId" : "p1_0190",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0192",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0195",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 627,
+      "postId" : "p1_0196",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 626,
+      "postId" : "p1_0197",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 624,
+      "postId" : "p1_0198",
+      "rejected" : 0,
+      "source" : "on_device",
+      "unreadable" : false
+    }
+  ],
+  "malformed" : 0,
+  "onDevice" : 200,
+  "onDeviceModel" : "Apple Foundation Models via Firebase AI Logic (FirebaseAI.SystemLanguageModel)",
+  "persona" : "@quietnight_rn",
+  "postsRead" : 200,
+  "postsTotal" : 200,
+  "promptVersion" : "a3",
+  "recordedAt" : "2026-11-25T16:51:06Z",
+  "region" : "Franklin County, Ohio (Columbus)",
+  "rejected" : 45,
+  "totalMs" : 164069,
+  "unreadable" : 0
+}

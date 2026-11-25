@@ -1,46 +1,37 @@
 {
   "attributes" : [
-    "ICU \/ critical-care nurses",
+    "registered nurses",
     "single mothers with kids at home",
     "night-shift workers",
     "divorced or separated"
   ],
   "crowd" : {
-    "band" : "handful",
-    "bits" : 16.8012425609844,
-    "p10" : 1,
-    "p50" : 8.98355850425896,
-    "p90" : 90.76882689472035
+    "band" : "room",
+    "bits" : 14.32080286537133,
+    "p10" : 7.445567678577126,
+    "p50" : 50.13432259896638,
+    "p90" : 333.3531419432253
   },
   "data" : "synthetic",
   "device" : "iPhone19,2 iOS Version 27.2 (Build 24B8117)",
-  "factsKept" : 31,
+  "factsKept" : 14,
   "inCloud" : 0,
   "log" : [
     {
       "facts" : [
 
       ],
-      "ms" : 2940,
+      "ms" : 3406,
       "postId" : "p1_0000",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
     {
       "facts" : [
-        {
-          "cat" : "health",
-          "certainty" : "stated",
-          "date" : "2019-02-02T14:09:43.637Z",
-          "id" : "p1_0002:0",
-          "postId" : "p1_0002",
-          "quote" : "my diet has officially ended",
-          "source" : "on_device",
-          "value" : "diet has officially ended"
-        }
+
       ],
-      "ms" : 1882,
+      "ms" : 1250,
       "postId" : "p1_0002",
       "rejected" : 1,
       "source" : "on_device",
@@ -49,17 +40,17 @@
     {
       "facts" : [
         {
-          "cat" : "dated_event",
-          "certainty" : "stated",
+          "cat" : "relationship",
+          "certainty" : "implied",
           "date" : "2019-02-07T17:28:11.453Z",
           "id" : "p1_0003:0",
           "postId" : "p1_0003",
           "quote" : "three years since I left him",
           "source" : "on_device",
-          "value" : "three years ago"
+          "value" : "ex-partner"
         }
       ],
-      "ms" : 1394,
+      "ms" : 1279,
       "postId" : "p1_0003",
       "rejected" : 0,
       "source" : "on_device",
@@ -69,7 +60,7 @@
       "facts" : [
 
       ],
-      "ms" : 555,
+      "ms" : 680,
       "postId" : "p1_0005",
       "rejected" : 0,
       "source" : "on_device",
@@ -77,18 +68,9 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "health",
-          "certainty" : "stated",
-          "date" : "2019-03-08T15:48:53.410Z",
-          "id" : "p1_0008:0",
-          "postId" : "p1_0008",
-          "quote" : "my diet has officially ended",
-          "source" : "on_device",
-          "value" : "diet has officially ended"
-        }
+
       ],
-      "ms" : 1871,
+      "ms" : 1241,
       "postId" : "p1_0008",
       "rejected" : 1,
       "source" : "on_device",
@@ -98,7 +80,7 @@
       "facts" : [
 
       ],
-      "ms" : 531,
+      "ms" : 633,
       "postId" : "p1_0009",
       "rejected" : 0,
       "source" : "on_device",
@@ -108,7 +90,7 @@
       "facts" : [
 
       ],
-      "ms" : 525,
+      "ms" : 627,
       "postId" : "p1_0011",
       "rejected" : 0,
       "source" : "on_device",
@@ -118,7 +100,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 627,
       "postId" : "p1_0015",
       "rejected" : 0,
       "source" : "on_device",
@@ -128,9 +110,9 @@
       "facts" : [
 
       ],
-      "ms" : 554,
+      "ms" : 1149,
       "postId" : "p1_0017",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -138,9 +120,9 @@
       "facts" : [
 
       ],
-      "ms" : 511,
+      "ms" : 1274,
       "postId" : "p1_0021",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -148,9 +130,9 @@
       "facts" : [
 
       ],
-      "ms" : 1932,
+      "ms" : 1191,
       "postId" : "p1_0022",
-      "rejected" : 2,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -158,7 +140,7 @@
       "facts" : [
 
       ],
-      "ms" : 522,
+      "ms" : 625,
       "postId" : "p1_0028",
       "rejected" : 0,
       "source" : "on_device",
@@ -168,7 +150,7 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 635,
       "postId" : "p1_0029",
       "rejected" : 0,
       "source" : "on_device",
@@ -178,7 +160,7 @@
       "facts" : [
 
       ],
-      "ms" : 510,
+      "ms" : 622,
       "postId" : "p1_0032",
       "rejected" : 0,
       "source" : "on_device",
@@ -188,7 +170,7 @@
       "facts" : [
 
       ],
-      "ms" : 524,
+      "ms" : 625,
       "postId" : "p1_0033",
       "rejected" : 0,
       "source" : "on_device",
@@ -207,7 +189,7 @@
           "value" : "night shift"
         }
       ],
-      "ms" : 1162,
+      "ms" : 1209,
       "postId" : "p1_0034",
       "rejected" : 0,
       "source" : "on_device",
@@ -217,26 +199,17 @@
       "facts" : [
 
       ],
-      "ms" : 532,
+      "ms" : 1249,
       "postId" : "p1_0036",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
     {
       "facts" : [
-        {
-          "cat" : "health",
-          "certainty" : "stated",
-          "date" : "2020-02-15T09:08:15.757Z",
-          "id" : "p1_0042:0",
-          "postId" : "p1_0042",
-          "quote" : "my diet has officially ended",
-          "source" : "on_device",
-          "value" : "diet has officially ended"
-        }
+
       ],
-      "ms" : 1871,
+      "ms" : 1229,
       "postId" : "p1_0042",
       "rejected" : 1,
       "source" : "on_device",
@@ -244,18 +217,9 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "health",
-          "certainty" : "stated",
-          "date" : "2020-04-04T18:05:08.857Z",
-          "id" : "p1_0045:0",
-          "postId" : "p1_0045",
-          "quote" : "my diet has officially ended",
-          "source" : "on_device",
-          "value" : "diet has officially ended"
-        }
+
       ],
-      "ms" : 1970,
+      "ms" : 1229,
       "postId" : "p1_0045",
       "rejected" : 1,
       "source" : "on_device",
@@ -265,7 +229,7 @@
       "facts" : [
 
       ],
-      "ms" : 541,
+      "ms" : 624,
       "postId" : "p1_0052",
       "rejected" : 0,
       "source" : "on_device",
@@ -275,9 +239,9 @@
       "facts" : [
 
       ],
-      "ms" : 563,
+      "ms" : 1131,
       "postId" : "p1_0060",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -285,9 +249,9 @@
       "facts" : [
 
       ],
-      "ms" : 551,
+      "ms" : 1130,
       "postId" : "p1_0076",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -295,7 +259,7 @@
       "facts" : [
 
       ],
-      "ms" : 522,
+      "ms" : 627,
       "postId" : "p1_0079",
       "rejected" : 0,
       "source" : "on_device",
@@ -305,7 +269,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 625,
       "postId" : "p1_0083",
       "rejected" : 0,
       "source" : "on_device",
@@ -315,7 +279,7 @@
       "facts" : [
 
       ],
-      "ms" : 1166,
+      "ms" : 1186,
       "postId" : "p1_0086",
       "rejected" : 1,
       "source" : "on_device",
@@ -323,18 +287,9 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "relationship",
-          "certainty" : "stated",
-          "date" : "2021-04-18T06:35:49.422Z",
-          "id" : "p1_0088:0",
-          "postId" : "p1_0088",
-          "quote" : "my alarm and I are no longer on speaking terms",
-          "source" : "on_device",
-          "value" : "romantic partner"
-        }
+
       ],
-      "ms" : 1299,
+      "ms" : 637,
       "postId" : "p1_0088",
       "rejected" : 0,
       "source" : "on_device",
@@ -344,7 +299,7 @@
       "facts" : [
         {
           "cat" : "pet",
-          "certainty" : "stated",
+          "certainty" : "implied",
           "date" : "2021-08-16T10:20:27.618Z",
           "id" : "p1_0093:0",
           "postId" : "p1_0093",
@@ -353,7 +308,7 @@
           "value" : "cat"
         }
       ],
-      "ms" : 1307,
+      "ms" : 1285,
       "postId" : "p1_0093",
       "rejected" : 0,
       "source" : "on_device",
@@ -363,7 +318,7 @@
       "facts" : [
 
       ],
-      "ms" : 526,
+      "ms" : 629,
       "postId" : "p1_0099",
       "rejected" : 0,
       "source" : "on_device",
@@ -373,7 +328,7 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 644,
       "postId" : "p1_0102",
       "rejected" : 0,
       "source" : "on_device",
@@ -383,7 +338,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 628,
       "postId" : "p1_0104",
       "rejected" : 0,
       "source" : "on_device",
@@ -402,7 +357,7 @@
           "value" : "registered nurse"
         }
       ],
-      "ms" : 1280,
+      "ms" : 1256,
       "postId" : "p1_0108",
       "rejected" : 0,
       "source" : "on_device",
@@ -412,7 +367,7 @@
       "facts" : [
 
       ],
-      "ms" : 534,
+      "ms" : 636,
       "postId" : "p1_0110",
       "rejected" : 0,
       "source" : "on_device",
@@ -422,7 +377,7 @@
       "facts" : [
 
       ],
-      "ms" : 544,
+      "ms" : 627,
       "postId" : "p1_0111",
       "rejected" : 0,
       "source" : "on_device",
@@ -432,7 +387,7 @@
       "facts" : [
 
       ],
-      "ms" : 519,
+      "ms" : 621,
       "postId" : "p1_0113",
       "rejected" : 0,
       "source" : "on_device",
@@ -442,7 +397,7 @@
       "facts" : [
 
       ],
-      "ms" : 533,
+      "ms" : 621,
       "postId" : "p1_0117",
       "rejected" : 0,
       "source" : "on_device",
@@ -452,7 +407,7 @@
       "facts" : [
 
       ],
-      "ms" : 511,
+      "ms" : 621,
       "postId" : "p1_0118",
       "rejected" : 0,
       "source" : "on_device",
@@ -460,18 +415,9 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "health",
-          "certainty" : "stated",
-          "date" : "2022-07-19T21:04:57.681Z",
-          "id" : "p1_0121:0",
-          "postId" : "p1_0121",
-          "quote" : "my diet has officially ended",
-          "source" : "on_device",
-          "value" : "diet has officially ended"
-        }
+
       ],
-      "ms" : 1871,
+      "ms" : 1184,
       "postId" : "p1_0121",
       "rejected" : 1,
       "source" : "on_device",
@@ -481,7 +427,7 @@
       "facts" : [
 
       ],
-      "ms" : 1184,
+      "ms" : 1195,
       "postId" : "p1_0122",
       "rejected" : 1,
       "source" : "on_device",
@@ -491,9 +437,9 @@
       "facts" : [
 
       ],
-      "ms" : 562,
+      "ms" : 1145,
       "postId" : "p1_0127",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -510,7 +456,7 @@
           "value" : "not ok"
         }
       ],
-      "ms" : 1137,
+      "ms" : 1171,
       "postId" : "p1_0129",
       "rejected" : 0,
       "source" : "on_device",
@@ -520,7 +466,7 @@
       "facts" : [
 
       ],
-      "ms" : 524,
+      "ms" : 631,
       "postId" : "p1_0131",
       "rejected" : 0,
       "source" : "on_device",
@@ -528,9 +474,18 @@
     },
     {
       "facts" : [
-
+        {
+          "cat" : "language",
+          "certainty" : "implied",
+          "date" : "2023-01-13T11:09:29.592Z",
+          "id" : "p1_0133:0",
+          "postId" : "p1_0133",
+          "quote" : "just realised I have been pronouncing quinoa wrong for years 😭",
+          "source" : "on_device",
+          "value" : "pronouncing quinoa"
+        }
       ],
-      "ms" : 516,
+      "ms" : 1325,
       "postId" : "p1_0133",
       "rejected" : 0,
       "source" : "on_device",
@@ -540,7 +495,7 @@
       "facts" : [
 
       ],
-      "ms" : 515,
+      "ms" : 644,
       "postId" : "p1_0138",
       "rejected" : 0,
       "source" : "on_device",
@@ -548,18 +503,9 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "relationship",
-          "certainty" : "implied",
-          "date" : "2023-04-04T21:18:36.896Z",
-          "id" : "p1_0140:0",
-          "postId" : "p1_0140",
-          "quote" : "my alarm and I are no longer on speaking terms",
-          "source" : "on_device",
-          "value" : "romantic partner"
-        }
+
       ],
-      "ms" : 1243,
+      "ms" : 631,
       "postId" : "p1_0140",
       "rejected" : 0,
       "source" : "on_device",
@@ -569,7 +515,7 @@
       "facts" : [
 
       ],
-      "ms" : 529,
+      "ms" : 618,
       "postId" : "p1_0143",
       "rejected" : 0,
       "source" : "on_device",
@@ -579,7 +525,7 @@
       "facts" : [
 
       ],
-      "ms" : 529,
+      "ms" : 630,
       "postId" : "p1_0145",
       "rejected" : 0,
       "source" : "on_device",
@@ -589,7 +535,7 @@
       "facts" : [
 
       ],
-      "ms" : 515,
+      "ms" : 624,
       "postId" : "p1_0146",
       "rejected" : 0,
       "source" : "on_device",
@@ -599,7 +545,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 629,
       "postId" : "p1_0150",
       "rejected" : 0,
       "source" : "on_device",
@@ -609,7 +555,7 @@
       "facts" : [
         {
           "cat" : "family",
-          "certainty" : "stated",
+          "certainty" : "implied",
           "date" : "2023-09-09T11:10:16.986Z",
           "id" : "p1_0151:0",
           "postId" : "p1_0151",
@@ -618,7 +564,7 @@
           "value" : "single mom"
         }
       ],
-      "ms" : 1060,
+      "ms" : 1139,
       "postId" : "p1_0151",
       "rejected" : 0,
       "source" : "on_device",
@@ -632,12 +578,12 @@
           "date" : "2023-10-04T04:18:33.645Z",
           "id" : "p1_0154:0",
           "postId" : "p1_0154",
-          "quote" : "here in Columbus",
+          "quote" : "it has rained for nine days straight here in Columbus",
           "source" : "on_device",
           "value" : "Columbus"
         }
       ],
-      "ms" : 1177,
+      "ms" : 1337,
       "postId" : "p1_0154",
       "rejected" : 0,
       "source" : "on_device",
@@ -647,7 +593,7 @@
       "facts" : [
 
       ],
-      "ms" : 539,
+      "ms" : 1215,
       "postId" : "p1_0158",
       "rejected" : 0,
       "source" : "on_device",
@@ -657,9 +603,9 @@
       "facts" : [
 
       ],
-      "ms" : 603,
+      "ms" : 1291,
       "postId" : "p1_0159",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -667,26 +613,17 @@
       "facts" : [
 
       ],
-      "ms" : 560,
+      "ms" : 1283,
       "postId" : "p1_0160",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
     {
       "facts" : [
-        {
-          "cat" : "health",
-          "certainty" : "stated",
-          "date" : "2024-01-04T11:15:40.356Z",
-          "id" : "p1_0162:0",
-          "postId" : "p1_0162",
-          "quote" : "my diet has officially ended",
-          "source" : "on_device",
-          "value" : "diet has officially ended"
-        }
+
       ],
-      "ms" : 1976,
+      "ms" : 1225,
       "postId" : "p1_0162",
       "rejected" : 1,
       "source" : "on_device",
@@ -705,7 +642,7 @@
           "value" : "not ok"
         }
       ],
-      "ms" : 1188,
+      "ms" : 1165,
       "postId" : "p1_0165",
       "rejected" : 0,
       "source" : "on_device",
@@ -721,21 +658,11 @@
           "postId" : "p1_0166",
           "quote" : "since the divorce",
           "source" : "on_device",
-          "value" : "divorced"
+          "value" : "divorce"
         }
       ],
-      "ms" : 1971,
+      "ms" : 1173,
       "postId" : "p1_0166",
-      "rejected" : 1,
-      "source" : "on_device",
-      "unreadable" : false
-    },
-    {
-      "facts" : [
-
-      ],
-      "ms" : 542,
-      "postId" : "p1_0168",
       "rejected" : 0,
       "source" : "on_device",
       "unreadable" : false
@@ -744,7 +671,17 @@
       "facts" : [
 
       ],
-      "ms" : 1213,
+      "ms" : 1289,
+      "postId" : "p1_0168",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1216,
       "postId" : "p1_0171",
       "rejected" : 1,
       "source" : "on_device",
@@ -760,12 +697,12 @@
           "postId" : "p1_0174",
           "quote" : "the doctor on duty tonight asked me where the gloves are",
           "source" : "on_device",
-          "value" : "ICU nurse"
+          "value" : "nurse"
         }
       ],
-      "ms" : 1979,
+      "ms" : 1221,
       "postId" : "p1_0174",
-      "rejected" : 1,
+      "rejected" : 0,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -777,22 +714,12 @@
           "date" : "2024-05-14T02:17:48.810Z",
           "id" : "p1_0175:0",
           "postId" : "p1_0175",
-          "quote" : "being a single mom",
-          "source" : "on_device",
-          "value" : "single mom"
-        },
-        {
-          "cat" : "occupation",
-          "certainty" : "implied",
-          "date" : "2024-05-14T02:17:48.810Z",
-          "id" : "p1_0175:1",
-          "postId" : "p1_0175",
           "quote" : "being a single mom on night shifts",
           "source" : "on_device",
-          "value" : "night shifts"
+          "value" : "single mom"
         }
       ],
-      "ms" : 1856,
+      "ms" : 1202,
       "postId" : "p1_0175",
       "rejected" : 0,
       "source" : "on_device",
@@ -811,7 +738,7 @@
           "value" : "not ok"
         }
       ],
-      "ms" : 1155,
+      "ms" : 1174,
       "postId" : "p1_0177",
       "rejected" : 0,
       "source" : "on_device",
@@ -821,7 +748,7 @@
       "facts" : [
 
       ],
-      "ms" : 523,
+      "ms" : 635,
       "postId" : "p1_0179",
       "rejected" : 0,
       "source" : "on_device",
@@ -829,18 +756,9 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "relationship",
-          "certainty" : "implied",
-          "date" : "2024-08-09T10:45:20.286Z",
-          "id" : "p1_0184:0",
-          "postId" : "p1_0184",
-          "quote" : "my alarm and I are no longer on speaking terms",
-          "source" : "on_device",
-          "value" : "romantic partner"
-        }
+
       ],
-      "ms" : 1227,
+      "ms" : 624,
       "postId" : "p1_0184",
       "rejected" : 0,
       "source" : "on_device",
@@ -850,7 +768,7 @@
       "facts" : [
 
       ],
-      "ms" : 525,
+      "ms" : 627,
       "postId" : "p1_0185",
       "rejected" : 0,
       "source" : "on_device",
@@ -858,18 +776,9 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "health",
-          "certainty" : "stated",
-          "date" : "2024-08-27T02:37:23.873Z",
-          "id" : "p1_0187:0",
-          "postId" : "p1_0187",
-          "quote" : "my diet has officially ended",
-          "source" : "on_device",
-          "value" : "diet has officially ended"
-        }
+
       ],
-      "ms" : 1852,
+      "ms" : 1216,
       "postId" : "p1_0187",
       "rejected" : 1,
       "source" : "on_device",
@@ -877,18 +786,9 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "relationship",
-          "certainty" : "implied",
-          "date" : "2024-10-03T00:55:36.471Z",
-          "id" : "p1_0191:0",
-          "postId" : "p1_0191",
-          "quote" : "my alarm and I are no longer on speaking terms",
-          "source" : "on_device",
-          "value" : "romantic partner"
-        }
+
       ],
-      "ms" : 1240,
+      "ms" : 622,
       "postId" : "p1_0191",
       "rejected" : 0,
       "source" : "on_device",
@@ -898,7 +798,7 @@
       "facts" : [
 
       ],
-      "ms" : 528,
+      "ms" : 622,
       "postId" : "p1_0193",
       "rejected" : 0,
       "source" : "on_device",
@@ -908,7 +808,7 @@
       "facts" : [
 
       ],
-      "ms" : 518,
+      "ms" : 626,
       "postId" : "p1_0194",
       "rejected" : 0,
       "source" : "on_device",
@@ -918,9 +818,9 @@
       "facts" : [
 
       ],
-      "ms" : 591,
+      "ms" : 1140,
       "postId" : "p1_0199",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -928,9 +828,9 @@
       "facts" : [
 
       ],
-      "ms" : 522,
+      "ms" : 1336,
       "postId" : "p1_0001",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -938,7 +838,7 @@
       "facts" : [
 
       ],
-      "ms" : 518,
+      "ms" : 628,
       "postId" : "p1_0004",
       "rejected" : 0,
       "source" : "on_device",
@@ -948,7 +848,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 635,
       "postId" : "p1_0006",
       "rejected" : 0,
       "source" : "on_device",
@@ -958,7 +858,7 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 632,
       "postId" : "p1_0007",
       "rejected" : 0,
       "source" : "on_device",
@@ -968,7 +868,7 @@
       "facts" : [
 
       ],
-      "ms" : 532,
+      "ms" : 627,
       "postId" : "p1_0010",
       "rejected" : 0,
       "source" : "on_device",
@@ -978,7 +878,7 @@
       "facts" : [
 
       ],
-      "ms" : 521,
+      "ms" : 628,
       "postId" : "p1_0012",
       "rejected" : 0,
       "source" : "on_device",
@@ -988,7 +888,7 @@
       "facts" : [
 
       ],
-      "ms" : 519,
+      "ms" : 628,
       "postId" : "p1_0013",
       "rejected" : 0,
       "source" : "on_device",
@@ -998,9 +898,9 @@
       "facts" : [
 
       ],
-      "ms" : 527,
+      "ms" : 1320,
       "postId" : "p1_0014",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1008,7 +908,7 @@
       "facts" : [
 
       ],
-      "ms" : 519,
+      "ms" : 629,
       "postId" : "p1_0016",
       "rejected" : 0,
       "source" : "on_device",
@@ -1018,7 +918,7 @@
       "facts" : [
 
       ],
-      "ms" : 583,
+      "ms" : 626,
       "postId" : "p1_0018",
       "rejected" : 0,
       "source" : "on_device",
@@ -1028,9 +928,9 @@
       "facts" : [
 
       ],
-      "ms" : 542,
+      "ms" : 1197,
       "postId" : "p1_0019",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1038,7 +938,7 @@
       "facts" : [
 
       ],
-      "ms" : 519,
+      "ms" : 629,
       "postId" : "p1_0020",
       "rejected" : 0,
       "source" : "on_device",
@@ -1048,9 +948,9 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 1197,
       "postId" : "p1_0023",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1058,7 +958,7 @@
       "facts" : [
 
       ],
-      "ms" : 523,
+      "ms" : 646,
       "postId" : "p1_0024",
       "rejected" : 0,
       "source" : "on_device",
@@ -1068,27 +968,8 @@
       "facts" : [
 
       ],
-      "ms" : 537,
+      "ms" : 630,
       "postId" : "p1_0025",
-      "rejected" : 0,
-      "source" : "on_device",
-      "unreadable" : false
-    },
-    {
-      "facts" : [
-        {
-          "cat" : "occupation",
-          "certainty" : "stated",
-          "date" : "2019-08-18T21:57:27.010Z",
-          "id" : "p1_0026:0",
-          "postId" : "p1_0026",
-          "quote" : "the bus driver waited for me this morning",
-          "source" : "on_device",
-          "value" : "bus driver"
-        }
-      ],
-      "ms" : 1235,
-      "postId" : "p1_0026",
       "rejected" : 0,
       "source" : "on_device",
       "unreadable" : false
@@ -1097,7 +978,17 @@
       "facts" : [
 
       ],
-      "ms" : 526,
+      "ms" : 1192,
+      "postId" : "p1_0026",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 629,
       "postId" : "p1_0027",
       "rejected" : 0,
       "source" : "on_device",
@@ -1107,7 +998,7 @@
       "facts" : [
 
       ],
-      "ms" : 515,
+      "ms" : 623,
       "postId" : "p1_0030",
       "rejected" : 0,
       "source" : "on_device",
@@ -1117,7 +1008,7 @@
       "facts" : [
 
       ],
-      "ms" : 518,
+      "ms" : 627,
       "postId" : "p1_0031",
       "rejected" : 0,
       "source" : "on_device",
@@ -1127,9 +1018,9 @@
       "facts" : [
 
       ],
-      "ms" : 529,
+      "ms" : 1315,
       "postId" : "p1_0035",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1137,7 +1028,7 @@
       "facts" : [
 
       ],
-      "ms" : 538,
+      "ms" : 633,
       "postId" : "p1_0037",
       "rejected" : 0,
       "source" : "on_device",
@@ -1147,7 +1038,7 @@
       "facts" : [
 
       ],
-      "ms" : 528,
+      "ms" : 622,
       "postId" : "p1_0038",
       "rejected" : 0,
       "source" : "on_device",
@@ -1157,7 +1048,7 @@
       "facts" : [
 
       ],
-      "ms" : 516,
+      "ms" : 626,
       "postId" : "p1_0039",
       "rejected" : 0,
       "source" : "on_device",
@@ -1167,7 +1058,7 @@
       "facts" : [
 
       ],
-      "ms" : 518,
+      "ms" : 623,
       "postId" : "p1_0040",
       "rejected" : 0,
       "source" : "on_device",
@@ -1177,7 +1068,7 @@
       "facts" : [
 
       ],
-      "ms" : 518,
+      "ms" : 622,
       "postId" : "p1_0041",
       "rejected" : 0,
       "source" : "on_device",
@@ -1187,7 +1078,7 @@
       "facts" : [
 
       ],
-      "ms" : 542,
+      "ms" : 624,
       "postId" : "p1_0043",
       "rejected" : 0,
       "source" : "on_device",
@@ -1197,9 +1088,9 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 1201,
       "postId" : "p1_0044",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1207,7 +1098,7 @@
       "facts" : [
 
       ],
-      "ms" : 511,
+      "ms" : 637,
       "postId" : "p1_0046",
       "rejected" : 0,
       "source" : "on_device",
@@ -1217,9 +1108,9 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 1323,
       "postId" : "p1_0047",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1227,7 +1118,7 @@
       "facts" : [
 
       ],
-      "ms" : 528,
+      "ms" : 620,
       "postId" : "p1_0048",
       "rejected" : 0,
       "source" : "on_device",
@@ -1237,7 +1128,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 631,
       "postId" : "p1_0049",
       "rejected" : 0,
       "source" : "on_device",
@@ -1247,7 +1138,7 @@
       "facts" : [
 
       ],
-      "ms" : 546,
+      "ms" : 625,
       "postId" : "p1_0050",
       "rejected" : 0,
       "source" : "on_device",
@@ -1257,7 +1148,7 @@
       "facts" : [
 
       ],
-      "ms" : 541,
+      "ms" : 626,
       "postId" : "p1_0051",
       "rejected" : 0,
       "source" : "on_device",
@@ -1267,7 +1158,7 @@
       "facts" : [
 
       ],
-      "ms" : 516,
+      "ms" : 630,
       "postId" : "p1_0053",
       "rejected" : 0,
       "source" : "on_device",
@@ -1277,7 +1168,7 @@
       "facts" : [
 
       ],
-      "ms" : 515,
+      "ms" : 632,
       "postId" : "p1_0054",
       "rejected" : 0,
       "source" : "on_device",
@@ -1287,7 +1178,7 @@
       "facts" : [
 
       ],
-      "ms" : 544,
+      "ms" : 628,
       "postId" : "p1_0055",
       "rejected" : 0,
       "source" : "on_device",
@@ -1297,7 +1188,7 @@
       "facts" : [
 
       ],
-      "ms" : 603,
+      "ms" : 622,
       "postId" : "p1_0056",
       "rejected" : 0,
       "source" : "on_device",
@@ -1307,7 +1198,7 @@
       "facts" : [
 
       ],
-      "ms" : 521,
+      "ms" : 630,
       "postId" : "p1_0057",
       "rejected" : 0,
       "source" : "on_device",
@@ -1317,7 +1208,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 627,
       "postId" : "p1_0058",
       "rejected" : 0,
       "source" : "on_device",
@@ -1327,7 +1218,7 @@
       "facts" : [
 
       ],
-      "ms" : 510,
+      "ms" : 626,
       "postId" : "p1_0059",
       "rejected" : 0,
       "source" : "on_device",
@@ -1337,7 +1228,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 629,
       "postId" : "p1_0061",
       "rejected" : 0,
       "source" : "on_device",
@@ -1347,9 +1238,9 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 1211,
       "postId" : "p1_0062",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1357,7 +1248,7 @@
       "facts" : [
 
       ],
-      "ms" : 519,
+      "ms" : 627,
       "postId" : "p1_0063",
       "rejected" : 0,
       "source" : "on_device",
@@ -1367,7 +1258,7 @@
       "facts" : [
 
       ],
-      "ms" : 516,
+      "ms" : 626,
       "postId" : "p1_0064",
       "rejected" : 0,
       "source" : "on_device",
@@ -1377,7 +1268,7 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 623,
       "postId" : "p1_0065",
       "rejected" : 0,
       "source" : "on_device",
@@ -1387,7 +1278,7 @@
       "facts" : [
 
       ],
-      "ms" : 511,
+      "ms" : 628,
       "postId" : "p1_0066",
       "rejected" : 0,
       "source" : "on_device",
@@ -1397,7 +1288,7 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 626,
       "postId" : "p1_0067",
       "rejected" : 0,
       "source" : "on_device",
@@ -1407,7 +1298,7 @@
       "facts" : [
 
       ],
-      "ms" : 519,
+      "ms" : 634,
       "postId" : "p1_0068",
       "rejected" : 0,
       "source" : "on_device",
@@ -1417,7 +1308,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 632,
       "postId" : "p1_0069",
       "rejected" : 0,
       "source" : "on_device",
@@ -1427,7 +1318,7 @@
       "facts" : [
 
       ],
-      "ms" : 526,
+      "ms" : 625,
       "postId" : "p1_0070",
       "rejected" : 0,
       "source" : "on_device",
@@ -1437,7 +1328,7 @@
       "facts" : [
 
       ],
-      "ms" : 510,
+      "ms" : 626,
       "postId" : "p1_0071",
       "rejected" : 0,
       "source" : "on_device",
@@ -1447,9 +1338,9 @@
       "facts" : [
 
       ],
-      "ms" : 510,
+      "ms" : 1192,
       "postId" : "p1_0072",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1457,9 +1348,9 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 1312,
       "postId" : "p1_0073",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1467,7 +1358,7 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 628,
       "postId" : "p1_0074",
       "rejected" : 0,
       "source" : "on_device",
@@ -1477,7 +1368,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 624,
       "postId" : "p1_0075",
       "rejected" : 0,
       "source" : "on_device",
@@ -1487,7 +1378,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 641,
       "postId" : "p1_0077",
       "rejected" : 0,
       "source" : "on_device",
@@ -1497,7 +1388,7 @@
       "facts" : [
 
       ],
-      "ms" : 511,
+      "ms" : 625,
       "postId" : "p1_0078",
       "rejected" : 0,
       "source" : "on_device",
@@ -1507,7 +1398,7 @@
       "facts" : [
 
       ],
-      "ms" : 522,
+      "ms" : 646,
       "postId" : "p1_0080",
       "rejected" : 0,
       "source" : "on_device",
@@ -1517,7 +1408,7 @@
       "facts" : [
 
       ],
-      "ms" : 518,
+      "ms" : 631,
       "postId" : "p1_0081",
       "rejected" : 0,
       "source" : "on_device",
@@ -1527,7 +1418,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 625,
       "postId" : "p1_0082",
       "rejected" : 0,
       "source" : "on_device",
@@ -1537,7 +1428,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 627,
       "postId" : "p1_0084",
       "rejected" : 0,
       "source" : "on_device",
@@ -1547,9 +1438,9 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 1355,
       "postId" : "p1_0085",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1557,7 +1448,7 @@
       "facts" : [
 
       ],
-      "ms" : 511,
+      "ms" : 631,
       "postId" : "p1_0087",
       "rejected" : 0,
       "source" : "on_device",
@@ -1567,7 +1458,7 @@
       "facts" : [
 
       ],
-      "ms" : 523,
+      "ms" : 628,
       "postId" : "p1_0089",
       "rejected" : 0,
       "source" : "on_device",
@@ -1577,7 +1468,7 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 641,
       "postId" : "p1_0090",
       "rejected" : 0,
       "source" : "on_device",
@@ -1587,7 +1478,7 @@
       "facts" : [
 
       ],
-      "ms" : 516,
+      "ms" : 628,
       "postId" : "p1_0091",
       "rejected" : 0,
       "source" : "on_device",
@@ -1597,9 +1488,9 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 1322,
       "postId" : "p1_0092",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1607,7 +1498,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 624,
       "postId" : "p1_0094",
       "rejected" : 0,
       "source" : "on_device",
@@ -1617,7 +1508,7 @@
       "facts" : [
 
       ],
-      "ms" : 512,
+      "ms" : 625,
       "postId" : "p1_0095",
       "rejected" : 0,
       "source" : "on_device",
@@ -1627,7 +1518,7 @@
       "facts" : [
 
       ],
-      "ms" : 533,
+      "ms" : 646,
       "postId" : "p1_0096",
       "rejected" : 0,
       "source" : "on_device",
@@ -1637,7 +1528,7 @@
       "facts" : [
 
       ],
-      "ms" : 511,
+      "ms" : 631,
       "postId" : "p1_0097",
       "rejected" : 0,
       "source" : "on_device",
@@ -1647,7 +1538,7 @@
       "facts" : [
 
       ],
-      "ms" : 510,
+      "ms" : 625,
       "postId" : "p1_0098",
       "rejected" : 0,
       "source" : "on_device",
@@ -1657,7 +1548,7 @@
       "facts" : [
 
       ],
-      "ms" : 520,
+      "ms" : 623,
       "postId" : "p1_0100",
       "rejected" : 0,
       "source" : "on_device",
@@ -1667,7 +1558,7 @@
       "facts" : [
 
       ],
-      "ms" : 527,
+      "ms" : 622,
       "postId" : "p1_0101",
       "rejected" : 0,
       "source" : "on_device",
@@ -1677,7 +1568,7 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 630,
       "postId" : "p1_0103",
       "rejected" : 0,
       "source" : "on_device",
@@ -1687,7 +1578,7 @@
       "facts" : [
 
       ],
-      "ms" : 515,
+      "ms" : 629,
       "postId" : "p1_0105",
       "rejected" : 0,
       "source" : "on_device",
@@ -1697,27 +1588,8 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 625,
       "postId" : "p1_0106",
-      "rejected" : 0,
-      "source" : "on_device",
-      "unreadable" : false
-    },
-    {
-      "facts" : [
-        {
-          "cat" : "occupation",
-          "certainty" : "stated",
-          "date" : "2022-01-20T02:14:38.565Z",
-          "id" : "p1_0107:0",
-          "postId" : "p1_0107",
-          "quote" : "the bus driver waited for me this morning",
-          "source" : "on_device",
-          "value" : "bus driver"
-        }
-      ],
-      "ms" : 1168,
-      "postId" : "p1_0107",
       "rejected" : 0,
       "source" : "on_device",
       "unreadable" : false
@@ -1726,7 +1598,17 @@
       "facts" : [
 
       ],
-      "ms" : 1272,
+      "ms" : 1186,
+      "postId" : "p1_0107",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 1189,
       "postId" : "p1_0109",
       "rejected" : 1,
       "source" : "on_device",
@@ -1736,7 +1618,7 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 634,
       "postId" : "p1_0112",
       "rejected" : 0,
       "source" : "on_device",
@@ -1746,7 +1628,7 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 624,
       "postId" : "p1_0114",
       "rejected" : 0,
       "source" : "on_device",
@@ -1756,7 +1638,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 627,
       "postId" : "p1_0115",
       "rejected" : 0,
       "source" : "on_device",
@@ -1766,7 +1648,7 @@
       "facts" : [
 
       ],
-      "ms" : 509,
+      "ms" : 635,
       "postId" : "p1_0116",
       "rejected" : 0,
       "source" : "on_device",
@@ -1776,7 +1658,7 @@
       "facts" : [
 
       ],
-      "ms" : 517,
+      "ms" : 624,
       "postId" : "p1_0119",
       "rejected" : 0,
       "source" : "on_device",
@@ -1786,7 +1668,7 @@
       "facts" : [
 
       ],
-      "ms" : 516,
+      "ms" : 640,
       "postId" : "p1_0120",
       "rejected" : 0,
       "source" : "on_device",
@@ -1796,7 +1678,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 622,
       "postId" : "p1_0123",
       "rejected" : 0,
       "source" : "on_device",
@@ -1806,7 +1688,7 @@
       "facts" : [
 
       ],
-      "ms" : 530,
+      "ms" : 632,
       "postId" : "p1_0124",
       "rejected" : 0,
       "source" : "on_device",
@@ -1814,20 +1696,11 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "occupation",
-          "certainty" : "stated",
-          "date" : "2022-10-02T23:03:59.126Z",
-          "id" : "p1_0125:0",
-          "postId" : "p1_0125",
-          "quote" : "the bus driver waited for me this morning",
-          "source" : "on_device",
-          "value" : "bus driver"
-        }
+
       ],
       "ms" : 1204,
       "postId" : "p1_0125",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1835,9 +1708,9 @@
       "facts" : [
 
       ],
-      "ms" : 523,
+      "ms" : 1203,
       "postId" : "p1_0126",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1845,7 +1718,7 @@
       "facts" : [
 
       ],
-      "ms" : 525,
+      "ms" : 638,
       "postId" : "p1_0128",
       "rejected" : 0,
       "source" : "on_device",
@@ -1855,7 +1728,7 @@
       "facts" : [
 
       ],
-      "ms" : 524,
+      "ms" : 624,
       "postId" : "p1_0130",
       "rejected" : 0,
       "source" : "on_device",
@@ -1865,7 +1738,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 622,
       "postId" : "p1_0132",
       "rejected" : 0,
       "source" : "on_device",
@@ -1875,7 +1748,7 @@
       "facts" : [
 
       ],
-      "ms" : 514,
+      "ms" : 631,
       "postId" : "p1_0134",
       "rejected" : 0,
       "source" : "on_device",
@@ -1885,7 +1758,7 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 629,
       "postId" : "p1_0135",
       "rejected" : 0,
       "source" : "on_device",
@@ -1895,7 +1768,7 @@
       "facts" : [
 
       ],
-      "ms" : 508,
+      "ms" : 633,
       "postId" : "p1_0136",
       "rejected" : 0,
       "source" : "on_device",
@@ -1905,7 +1778,7 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 633,
       "postId" : "p1_0137",
       "rejected" : 0,
       "source" : "on_device",
@@ -1915,7 +1788,7 @@
       "facts" : [
 
       ],
-      "ms" : 515,
+      "ms" : 625,
       "postId" : "p1_0139",
       "rejected" : 0,
       "source" : "on_device",
@@ -1923,20 +1796,11 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "occupation",
-          "certainty" : "stated",
-          "date" : "2023-04-06T19:58:14.712Z",
-          "id" : "p1_0141:0",
-          "postId" : "p1_0141",
-          "quote" : "the bus driver waited for me this morning",
-          "source" : "on_device",
-          "value" : "bus driver"
-        }
+
       ],
-      "ms" : 1196,
+      "ms" : 1198,
       "postId" : "p1_0141",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1944,7 +1808,7 @@
       "facts" : [
 
       ],
-      "ms" : 531,
+      "ms" : 626,
       "postId" : "p1_0142",
       "rejected" : 0,
       "source" : "on_device",
@@ -1952,20 +1816,11 @@
     },
     {
       "facts" : [
-        {
-          "cat" : "occupation",
-          "certainty" : "stated",
-          "date" : "2023-06-04T16:37:48.959Z",
-          "id" : "p1_0144:0",
-          "postId" : "p1_0144",
-          "quote" : "the bus driver waited for me this morning",
-          "source" : "on_device",
-          "value" : "bus driver"
-        }
+
       ],
-      "ms" : 1204,
+      "ms" : 1198,
       "postId" : "p1_0144",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -1973,7 +1828,7 @@
       "facts" : [
 
       ],
-      "ms" : 552,
+      "ms" : 632,
       "postId" : "p1_0147",
       "rejected" : 0,
       "source" : "on_device",
@@ -1983,27 +1838,8 @@
       "facts" : [
 
       ],
-      "ms" : 523,
+      "ms" : 626,
       "postId" : "p1_0148",
-      "rejected" : 0,
-      "source" : "on_device",
-      "unreadable" : false
-    },
-    {
-      "facts" : [
-        {
-          "cat" : "occupation",
-          "certainty" : "stated",
-          "date" : "2023-07-21T18:08:09.731Z",
-          "id" : "p1_0149:0",
-          "postId" : "p1_0149",
-          "quote" : "the bus driver waited for me this morning",
-          "source" : "on_device",
-          "value" : "bus driver"
-        }
-      ],
-      "ms" : 1225,
-      "postId" : "p1_0149",
       "rejected" : 0,
       "source" : "on_device",
       "unreadable" : false
@@ -2012,7 +1848,17 @@
       "facts" : [
 
       ],
-      "ms" : 562,
+      "ms" : 1201,
+      "postId" : "p1_0149",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 632,
       "postId" : "p1_0152",
       "rejected" : 0,
       "source" : "on_device",
@@ -2022,7 +1868,7 @@
       "facts" : [
 
       ],
-      "ms" : 521,
+      "ms" : 624,
       "postId" : "p1_0153",
       "rejected" : 0,
       "source" : "on_device",
@@ -2032,7 +1878,7 @@
       "facts" : [
 
       ],
-      "ms" : 515,
+      "ms" : 624,
       "postId" : "p1_0155",
       "rejected" : 0,
       "source" : "on_device",
@@ -2042,7 +1888,7 @@
       "facts" : [
 
       ],
-      "ms" : 1312,
+      "ms" : 1359,
       "postId" : "p1_0156",
       "rejected" : 1,
       "source" : "on_device",
@@ -2052,7 +1898,7 @@
       "facts" : [
 
       ],
-      "ms" : 521,
+      "ms" : 630,
       "postId" : "p1_0157",
       "rejected" : 0,
       "source" : "on_device",
@@ -2060,9 +1906,18 @@
     },
     {
       "facts" : [
-
+        {
+          "cat" : "family",
+          "certainty" : "implied",
+          "date" : "2024-01-02T13:41:05.926Z",
+          "id" : "p1_0161:0",
+          "postId" : "p1_0161",
+          "quote" : "nothing humbles you like a toddler asking why the sky is blue on repeat",
+          "source" : "on_device",
+          "value" : "parent of a toddler"
+        }
       ],
-      "ms" : 519,
+      "ms" : 1397,
       "postId" : "p1_0161",
       "rejected" : 0,
       "source" : "on_device",
@@ -2072,27 +1927,8 @@
       "facts" : [
 
       ],
-      "ms" : 509,
+      "ms" : 661,
       "postId" : "p1_0163",
-      "rejected" : 0,
-      "source" : "on_device",
-      "unreadable" : false
-    },
-    {
-      "facts" : [
-        {
-          "cat" : "occupation",
-          "certainty" : "stated",
-          "date" : "2024-01-21T21:08:48.487Z",
-          "id" : "p1_0164:0",
-          "postId" : "p1_0164",
-          "quote" : "the bus driver waited for me this morning",
-          "source" : "on_device",
-          "value" : "bus driver"
-        }
-      ],
-      "ms" : 1197,
-      "postId" : "p1_0164",
       "rejected" : 0,
       "source" : "on_device",
       "unreadable" : false
@@ -2101,7 +1937,17 @@
       "facts" : [
 
       ],
-      "ms" : 533,
+      "ms" : 1224,
+      "postId" : "p1_0164",
+      "rejected" : 1,
+      "source" : "on_device",
+      "unreadable" : false
+    },
+    {
+      "facts" : [
+
+      ],
+      "ms" : 636,
       "postId" : "p1_0167",
       "rejected" : 0,
       "source" : "on_device",
@@ -2111,7 +1957,7 @@
       "facts" : [
 
       ],
-      "ms" : 553,
+      "ms" : 625,
       "postId" : "p1_0169",
       "rejected" : 0,
       "source" : "on_device",
@@ -2121,7 +1967,7 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 628,
       "postId" : "p1_0170",
       "rejected" : 0,
       "source" : "on_device",
@@ -2131,7 +1977,7 @@
       "facts" : [
 
       ],
-      "ms" : 519,
+      "ms" : 629,
       "postId" : "p1_0172",
       "rejected" : 0,
       "source" : "on_device",
@@ -2141,7 +1987,7 @@
       "facts" : [
 
       ],
-      "ms" : 513,
+      "ms" : 623,
       "postId" : "p1_0173",
       "rejected" : 0,
       "source" : "on_device",
@@ -2151,7 +1997,7 @@
       "facts" : [
 
       ],
-      "ms" : 569,
+      "ms" : 623,
       "postId" : "p1_0176",
       "rejected" : 0,
       "source" : "on_device",
@@ -2161,9 +2007,9 @@
       "facts" : [
 
       ],
-      "ms" : 1024,
+      "ms" : 1200,
       "postId" : "p1_0178",
-      "rejected" : 0,
+      "rejected" : 1,
       "source" : "on_device",
       "unreadable" : false
     },
@@ -2171,7 +2017,7 @@
       "facts" : [
 
       ],
-      "ms" : 718,
+      "ms" : 630,
       "postId" : "p1_0180",
       "rejected" : 0,
       "source" : "on_device",
@@ -2181,7 +2027,7 @@
       "facts" : [
 
       ],
-      "ms" : 553,
+      "ms" : 623,
       "postId" : "p1_0181",
       "rejected" : 0,
       "source" : "on_device",
@@ -2191,7 +2037,7 @@
       "facts" : [
 
       ],
-      "ms" : 586,
+      "ms" : 624,
       "postId" : "p1_0182",
       "rejected" : 0,
       "source" : "on_device",
@@ -2201,7 +2047,7 @@
       "facts" : [
 
       ],
-      "ms" : 670,
+      "ms" : 622,
       "postId" : "p1_0183",
       "rejected" : 0,
       "source" : "on_device",
@@ -2211,7 +2057,7 @@
       "facts" : [
 
       ],
-      "ms" : 552,
+      "ms" : 624,
       "postId" : "p1_0186",
       "rejected" : 0,
       "source" : "on_device",
@@ -2221,7 +2067,7 @@
       "facts" : [
 
       ],
-      "ms" : 563,
+      "ms" : 625,
       "postId" : "p1_0188",
       "rejected" : 0,
       "source" : "on_device",
@@ -2231,7 +2077,7 @@
       "facts" : [
 
       ],
-      "ms" : 562,
+      "ms" : 633,
       "postId" : "p1_0189",
       "rejected" : 0,
       "source" : "on_device",
@@ -2241,7 +2087,7 @@
       "facts" : [
 
       ],
-      "ms" : 547,
+      "ms" : 625,
       "postId" : "p1_0190",
       "rejected" : 0,
       "source" : "on_device",
@@ -2251,7 +2097,7 @@
       "facts" : [
 
       ],
-      "ms" : 541,
+      "ms" : 626,
       "postId" : "p1_0192",
       "rejected" : 0,
       "source" : "on_device",
@@ -2261,7 +2107,7 @@
       "facts" : [
 
       ],
-      "ms" : 540,
+      "ms" : 627,
       "postId" : "p1_0195",
       "rejected" : 0,
       "source" : "on_device",
@@ -2271,7 +2117,7 @@
       "facts" : [
 
       ],
-      "ms" : 541,
+      "ms" : 627,
       "postId" : "p1_0196",
       "rejected" : 0,
       "source" : "on_device",
@@ -2281,7 +2127,7 @@
       "facts" : [
 
       ],
-      "ms" : 529,
+      "ms" : 626,
       "postId" : "p1_0197",
       "rejected" : 0,
       "source" : "on_device",
@@ -2291,7 +2137,7 @@
       "facts" : [
 
       ],
-      "ms" : 531,
+      "ms" : 624,
       "postId" : "p1_0198",
       "rejected" : 0,
       "source" : "on_device",
@@ -2304,10 +2150,10 @@
   "persona" : "@quietnight_rn",
   "postsRead" : 200,
   "postsTotal" : 200,
-  "promptVersion" : "a2",
-  "recordedAt" : "2026-11-25T13:44:36Z",
+  "promptVersion" : "a3",
+  "recordedAt" : "2026-11-25T16:51:06Z",
   "region" : "Franklin County, Ohio (Columbus)",
-  "rejected" : 16,
-  "totalMs" : 141030,
+  "rejected" : 45,
+  "totalMs" : 164069,
   "unreadable" : 0
 }

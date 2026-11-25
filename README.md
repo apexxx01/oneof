@@ -11,7 +11,7 @@ OneOf reads your own post history with on-device AI, builds the dossier an AI at
 
 Live demo: **https://apexxx01.github.io/oneof/** (desktop Chrome with Gemini Nano for on-device mode, tested on Chrome 158; other browsers get a labelled replay of a recorded on-device run, or cloud fallback for the synthetic demo)
 
-iOS app: [`ios/`](ios/) — SwiftUI on Firebase AI Logic hybrid inference, with Apple Intelligence on-device and Gemini in the cloud. It shares the web core through a golden-tested Swift port. [Receipt: 200/200 posts on-device, 0 cloud](receipts/ios/README.md)
+iOS app: [`ios/`](ios/README.md) — SwiftUI on Firebase AI Logic hybrid inference, with Apple Intelligence on-device and Gemini in the cloud. It shares the web core through a golden-tested Swift port. [Receipt: 200/200 posts on-device, 0 cloud, same dossier and same number as the web build](receipts/ios/README.md)
 
 Demo video: (coming soon)
 
@@ -116,7 +116,7 @@ The same product as a native iPhone app, on **Firebase AI Logic hybrid inference
 
 - **Where each answer ran is read from the response** (`rawResponse.modelVersion` is Apple's model name for on-device answers). It isn't inferred from the route, and the "What the cloud saw" ledger shows the exact bytes that left the phone.
 - **One core, two languages.** `ios/OneOfCore` ports the checker, cloud-safe filter, estimator, dossier, base rates and router to Swift. `scripts/golden-ios.ts` runs the real TypeScript functions to generate 435 golden cases, and `swift test` (Linux or Mac) must match them: the same `mulberry32` stream bit for bit, the same verdicts and orderings, and the same crowd numbers to 1e-9. The receipt check closes the loop end to end: the web core recomputes the iPhone's crowd from the iPhone's recorded facts and gets the same P50.
-- **Full persona run on the iOS 27.2 simulator:** 200/200 posts on-device, **0 cloud**, median 524 ms per post. The dossier matches the web Nano run (Columbus, nurse, single mother, night shift, divorced) → **one of ~9**. See [`receipts/ios/`](receipts/ios/README.md).
+- **Full persona run on the iOS 27.2 simulator:** 200/200 posts on-device, **0 cloud**, 0 unreadable replies (typed generation with `@Generable`). It finds the same dossier as the web Nano run (Columbus, registered nurse, single mother, night shift, divorced) and the **same number: P50 50.13432259896638 on the iPhone vs 50.13432259896637 on the web**. Two different on-device models, one answer. See [`receipts/ios/`](receipts/ios/README.md).
 - **What Apple's model taught us.** With the web prompt it answered `{"facts": []}` to every post. That prompt is worded as "what would help a stranger figure out who the author is", and the model declines that. OneOf's real job is the author auditing their own posts, and iOS prompt `a2` says exactly that. The model then fell for two traps the persona plants ("I feel 80 years old", "the bus driver waited for me"). Both are now rules in the **shared** deterministic checker, so the web build got stricter too.
 - App Check: the debug provider on the simulator (token from a git-ignored `Secrets.xcconfig`), App Attest on devices. Firebase is pinned to **12.19.3**, the last release that ships `HybridModel` and `SystemLanguageModel` (13.0 removed them).
 
