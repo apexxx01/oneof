@@ -5,6 +5,8 @@ import Foundation
 
 private let PLACEHOLDER = JSRegex(#"\b(unknown|unspecified|not specified|n\/a|none|near me|somewhere|location|self|myself|me)\b"#, caseInsensitive: true)
 private let HYPOTHETICAL = JSRegex(#"\b(imagine|if i (had|were|was|lived)|i wish i|someday|hypothetically|pretend)\b"#, caseInsensitive: true)
+/// "I feel 80 years old after that shift": a figure of speech, not an age (designed persona trap).
+private let FIGURATIVE_AGE = JSRegex(#"\b(feel|feels|feeling|felt)( like)?( i'?m| i am)? (\d+|a hundred|ancient|old)\b"#, caseInsensitive: true)
 private let GENERIC = JSRegex(#"\b(cooking|board games?|football|soccer|basketball|music|movies?|tv|netflix|reading|books?|gaming|video games?|coffee|tea|sleep|food|baking|walking|shopping|travel)\b"#, caseInsensitive: true)
 private let SOMEONE_ELSE = JSRegex(#"\bmy (sister|brother|cousin|friend|best friend|bff|mom|mum|mother|dad|father|aunt|uncle|grand(ma|pa|mother|father)|neighbou?r|co-?worker|colleague|boss|roommate|son|daughter|kid|niece|nephew|in-laws?)s?\b"#, caseInsensitive: true)
 private let THIRD_PARTY_CATS: Set<String> = ["home_location", "work_location", "occupation", "employer_type", "education", "vehicle", "pet", "rare_hobby", "age"]
@@ -44,6 +46,7 @@ public func verify(_ f: RawFact, _ post: Post) -> Verdict {
   if THIRD_PARTY_CATS.contains(f.cat) && SOMEONE_ELSE.test(f.quote) { return .fail("about someone else") }
   let lead = String(np[np.startIndex..<hit.upperBound])
   if HYPOTHETICAL.test(lead) { return .fail("hypothetical") }
+  if f.cat == "age" && FIGURATIVE_AGE.test(f.quote) { return .fail("figure of speech") }
   if f.cat == "rare_hobby" && GENERIC.test(f.value) { return .fail("generic interest") }
   if (f.cat == "occupation" || f.cat == "employer_type") && VAGUE_OCCUPATION.test(f.value.trimmingCharacters(in: .whitespacesAndNewlines)) { return .fail("vague job") }
   if (f.cat == "rare_hobby" || f.cat == "age") && f.certainty == "implied" { return .fail("implied hobby or age") }

@@ -5,6 +5,7 @@ import Foundation
 
 private struct FactBatch: Decodable { var facts: [LooseFact] }
 
+
 /// The on-device model sometimes returns `p` as a string or misses `certainty`; accept what is
 /// unambiguous, drop the rest. The checker (verify) is what decides whether a fact counts.
 private struct LooseFact: Decodable {
@@ -23,20 +24,36 @@ private struct LooseFact: Decodable {
 
 /// Pulls the JSON object out of a model reply (handles ```json fences and chatter around it).
 public func jsonObject(in text: String) -> String? {
-  guard let a = text.firstIndex(of: "{"), let b = text.lastIndex(of: "}"), a < b else { return nil }
+  let brace = text.firstIndex(of: "{"), bracket = text.firstIndex(of: "[")
+  // A bare array of facts ("[{...}]") is accepted too.
+  if let k = bracket, brace == nil || k < brace!, let e = text.lastIndex(of: "]"), k < e { return String(text[k...e]) }
+  guard let a = brace, let b = text.lastIndex(of: "}"), a < b else { return nil }
   return String(text[a...b])
 }
 
-public func parseFactBatch(_ text: String) -> [RawFact]? {
-  guard let json = jsonObject(in: text), let data = json.data(using: .utf8),
-        let batch = try? JSONDecoder().decode(FactBatch.self, from: data) else { return nil }
-  return batch.facts.compactMap { f in
-    guard let cat = f.cat, CATEGORIES.contains(cat), let value = f.value, !value.isEmpty, let quote = f.quote, !quote.isEmpty,
-          let about = f.about_self else { return nil }
-    let certainty = (f.certainty == "implied") ? "implied" : "stated"
+/// "Occupation", "home location", "home-location" all mean home_location.
+func normalizeCategory(_ c: String) -> String {
+  c.lowercased().trimmingCharacters(in: .whitespacesAndNewlines).replacingOccurrences(of: " ", with: "_").replacingOccurrences(of: "-", with: "_")
+}
+
+/// Parsed facts plus how many entries were too malformed to check (missing quote, unknown category...).
+public func parseFactBatchCounting(_ text: String) -> (facts: [RawFact], malformed: Int)? {
+  guard let json = jsonObject(in: text), let data = json.data(using: .utf8) else { return nil }
+  let batch: FactBatch
+  if let b = try? JSONDecoder().decode(FactBatch.self, from: data) { batch = b }
+  else if let arr = try? JSONDecoder().decode([LooseFact].self, from: data) { batch = FactBatch(facts: arr) }
+  else { return nil }
+  var malformed = 0
+  let facts: [RawFact] = batch.facts.compactMap { f in
+    guard let rawCat = f.cat, case let cat = normalizeCategory(rawCat), CATEGORIES.contains(cat),
+          let value = f.value, !value.isEmpty, let quote = f.quote, !quote.isEmpty, let about = f.about_self else { malformed += 1; return nil }
+    let certainty = (f.certainty?.lowercased() == "implied") ? "implied" : "stated"
     return RawFact(p: f.p ?? 0, cat: cat, value: String(value.prefix(120)), quote: String(quote.prefix(300)), about_self: about, certainty: certainty)
   }
+  return (facts, malformed)
 }
+
+public func parseFactBatch(_ text: String) -> [RawFact]? { parseFactBatchCounting(text)?.facts }
 
 public struct RawVerdict: Codable, Equatable, Sendable {
   public var cat: String; public var value: String; public var aboutSelf: Bool; public var certainty: String; public var why: String
@@ -48,11 +65,13 @@ public struct ExtractOutcome: Equatable, Sendable {
   public var raw: [RawVerdict]
   /// The model's reply could not be read as JSON at all.
   public var unreadable: Bool
+  /// Entries dropped before the checker because a field was missing or unknown.
+  public var malformed: Int = 0
 }
 
 /// Model reply for ONE post → verified facts, exactly as the web build does it (ai.ts extractFromPost).
 public func processReply(_ reply: String, post: Post, source: FactSource) -> ExtractOutcome {
-  guard let raws = parseFactBatch(reply) else { return ExtractOutcome(facts: [], rejected: 0, raw: [], unreadable: true) }
+  guard let (raws, malformed) = parseFactBatchCounting(reply) else { return ExtractOutcome(facts: [], rejected: 0, raw: [], unreadable: true) }
   var facts: [Fact] = [], raw: [RawVerdict] = [], rejected = 0
   for f in raws where f.p == 0 {
     let v = verify(f, post)
@@ -61,7 +80,7 @@ public func processReply(_ reply: String, post: Post, source: FactSource) -> Ext
     facts.append(Fact(id: "\(post.id):\(facts.count)", postId: post.id, date: post.date, cat: f.cat, value: String(f.value.prefix(60)),
                       quote: String(f.quote.prefix(160)), certainty: f.certainty, source: source))
   }
-  return ExtractOutcome(facts: facts, rejected: rejected, raw: raw, unreadable: false)
+  return ExtractOutcome(facts: facts, rejected: rejected, raw: raw, unreadable: false, malformed: malformed)
 }
 
 /// Cloud base-rate reply → BaseRate. Grade B only when grounded (a source came back), else C,

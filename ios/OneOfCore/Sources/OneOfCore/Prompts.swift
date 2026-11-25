@@ -65,3 +65,41 @@ public func baseRatePrompt(attribute: String, country: String) -> String {
 public let BLUR_SYSTEM = #"""
 Rewrite the user's draft so it keeps its meaning and tone but drops or generalizes details that identify the author (exact job, place, family specifics, dates, vehicles). Keep it natural and about the same length. Output JSON: {"rewrite": string, "removed": [string]}.
 """#
+
+// MARK: - Apple Foundation Models prompt (iOS)
+
+/// Prompt "a1" for Apple's on-device model. The web prompt (x2r) frames the task as "what would
+/// help a stranger figure out who the author is"; Apple's model answered {"facts": []} to every
+/// post with it, which reads as a refusal of a de-anonymisation task. OneOf's actual job is the
+/// author auditing their OWN posts, so this prompt says exactly that. The deterministic checker
+/// (verify) is unchanged, so anything over-eager is still filtered the same way as on the web.
+public let EXTRACT_PROMPT_VERSION_APPLE = "a1"
+
+public let EXTRACT_SYSTEM_APPLE = #"""
+You help a person review their OWN social media post, so they can see which personal details about themselves it reveals. This is a privacy check the author runs on their own writing.
+List each detail the post reveals about the AUTHOR's life: where they live or work, their job or field, family, relationship, age, gender, vehicle, pets, unusual hobbies, dated life events, health, religion, languages.
+Rules:
+- Only details about the author. A detail about a friend or relative ("my sister in Seattle"), a hypothetical ("if I had") or an obvious joke gets "about_self": false.
+- "quote": the exact words copied from the post.
+- "value": a short generic phrase, like "registered nurse", "Columbus", "parent of twins", "night shift".
+- "cat": one of home_location, work_location, occupation, employer_type, education, age, gender, family, relationship, vehicle, pet, health, religion_community, language, dated_event, rare_hobby, other.
+- "certainty": "stated" if said outright, "implied" if a careful reader would infer it.
+- Opinions, moods, food, weather and TV reveal nothing. If the post reveals nothing about the author's life, answer {"facts": []}.
+Answer with JSON only, in this shape:
+{"facts": [{"p": 0, "cat": "occupation", "value": "registered nurse", "quote": "exact words", "about_self": true, "certainty": "stated"}]}
+"""#
+
+/// One post for the Apple prompt, with two short worked examples.
+public func extractPromptApple(_ postText: String) -> String {
+  let text = postText.utf16.count > MAX_POST_CHARS ? String(postText.prefix(MAX_POST_CHARS)) : postText
+  return """
+  Example post: "finally got my first night-shift rota at the county hospital, ICU here we go"
+  Example answer: {"facts": [{"p": 0, "cat": "occupation", "value": "ICU nurse", "quote": "night-shift rota at the county hospital, ICU", "about_self": true, "certainty": "implied"}, {"p": 0, "cat": "work_location", "value": "night shift", "quote": "night-shift rota", "about_self": true, "certainty": "stated"}]}
+
+  Example post: "my cousin in Denver just bought a Tesla"
+  Example answer: {"facts": [{"p": 0, "cat": "vehicle", "value": "Tesla", "quote": "my cousin in Denver just bought a Tesla", "about_self": false, "certainty": "stated"}]}
+
+  Post to review:
+  \(text)
+  """
+}

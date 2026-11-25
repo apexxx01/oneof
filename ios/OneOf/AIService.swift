@@ -42,6 +42,8 @@ struct ExtractResult {
   var outcome: ExtractOutcome
   var source: FactSource
   var ms: Double
+  /// The model's raw reply, shown on the scan screen so a parsing problem is visible, not silent.
+  var reply: String = ""
 }
 
 /// Every model call goes through here: route → model → ledger. Mirrors src/lib/ai.ts.
@@ -65,15 +67,17 @@ final class AIService {
       record(LedgerEntry(task: task, mode: r.mode, reason: r.reason, source: .blocked, ms: 0, sentToCloud: ""))
       throw AIError.blocked
     }
-    let prompt = extractPrompt(post.text)
+    // Prompt a1 (author's own privacy review): the de-anonymisation wording of the web prompt makes
+    // Apple's on-device model return nothing. The checker downstream is identical on both clients.
+    let prompt = extractPromptApple(post.text)
     let t0 = Date()
     do {
-      let (text, model) = try await respond(mode: r.mode, instructions: EXTRACT_SYSTEM, prompt: prompt, json: true)
+      let (text, model) = try await respond(mode: r.mode, instructions: EXTRACT_SYSTEM_APPLE, prompt: prompt, json: true)
       let ms = Date().timeIntervalSince(t0) * 1000
       let onDevice = model == Self.onDeviceName
       record(LedgerEntry(task: task, mode: r.mode, reason: r.reason, source: onDevice ? .on_device : .in_cloud, ms: ms,
                          sentToCloud: onDevice ? "" : prompt, model: onDevice ? nil : model))
-      return ExtractResult(outcome: processReply(text, post: post, source: onDevice ? .on_device : .in_cloud), source: onDevice ? .on_device : .in_cloud, ms: ms)
+      return ExtractResult(outcome: processReply(text, post: post, source: onDevice ? .on_device : .in_cloud), source: onDevice ? .on_device : .in_cloud, ms: ms, reply: text)
     } catch {
       let ms = Date().timeIntervalSince(t0) * 1000
       // A failed call that may have reached the cloud still sent the prompt; the ledger says so.

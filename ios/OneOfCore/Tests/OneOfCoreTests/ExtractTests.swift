@@ -60,3 +60,11 @@ final class ExtractTests: XCTestCase {
     XCTAssertEqual(o.order.map(\.id), ["4", "3"]); XCTAssertEqual(o.fastPass, 1); XCTAssertEqual(o.empty, 2)
   }
 }
+
+final class ExtractLooseTests: XCTestCase {
+  func testCategoryCaseAndBareArray() {
+    let post = Post(id: "x", date: "2024", text: "I work nights as a nurse in Columbus")
+    let o = processReply(#"[{"p":0,"cat":"Occupation","value":"nurse","quote":"I work nights as a nurse","about_self":true,"certainty":"Stated"},{"cat":"occupation","value":"nurse"}]"#, post: post, source: .on_device)
+    XCTAssertFalse(o.unreadable); XCTAssertEqual(o.facts.map(\.cat), ["occupation"]); XCTAssertEqual(o.malformed, 1)
+  }
+}

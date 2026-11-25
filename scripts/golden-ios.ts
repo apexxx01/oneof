@@ -126,6 +126,10 @@ for (const w of ['sister', 'brother', 'cousin', 'friend', 'best friend', 'bff', 
   addV({ cat: 'occupation', value: 'nurse', quote: `my ${w} is a nurse` }, `my ${w} is a nurse`);
 }
 
+// figurative ages (persona trap p1_0171) and real ones
+for (const [q, t] of [['I feel 80 years old', 'I feel 80 years old after that shift'], ['feeling like 90', 'feeling like 90 today honestly'], ['felt ancient', 'felt ancient at the reunion'], ['I turned 34', 'I turned 34 last week and nobody noticed'], ['feel old', 'kids these days make me feel old']]) {
+  addV({ cat: 'age', value: q.replace(/^(I )?(feel|feeling|felt|turned) (like )?/i, ''), quote: q, certainty: 'stated' }, t);
+}
 // hypotheticals (each HYPOTHETICAL alternative) and a negative where the hedge comes after the quote
 for (const h of ['imagine', 'if i had', 'if i were', 'if i was', 'if i lived', 'i wish i', 'someday', 'hypothetically', 'pretend']) {
   addV({ cat: 'pet', value: 'cat', quote: 'I had a cat' }, `${h} I had a cat`);

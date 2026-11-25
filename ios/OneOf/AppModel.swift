@@ -30,6 +30,10 @@ struct ScanState {
   var onDevice = 0
   var inCloud = 0
   var failed = 0
+  var unreadable = 0
+  var malformed = 0
+  var lastReply = ""
+  var lastError = ""
   var lastMs: Double = 0
   var current: Post?
   var running = false
@@ -115,12 +119,16 @@ final class AppModel {
       scan.facts.append(contentsOf: r.outcome.facts)
       scan.rejected += r.outcome.rejected
       scan.lastMs = r.ms
+      scan.lastReply = r.reply
+      if r.outcome.unreadable { scan.unreadable += 1 }
+      scan.malformed += r.outcome.malformed
       if r.source == .on_device { scan.onDevice += 1 } else { scan.inCloud += 1 }
       return true
     } catch AIError.blocked {
       scan.blocked = true
       return false
     } catch {
+      scan.lastError = String(describing: error).prefix(300).description
       return false
     }
   }

@@ -28,6 +28,18 @@ struct ScanView: View {
             stat("\(s.rejected)", "rejected", Theme.muted)
           }
           if s.lastMs > 0 { Text("last post: \(Int(s.lastMs)) ms").font(Theme.mono(11)).foregroundStyle(Theme.muted) }
+          if s.unreadable + s.malformed > 0 || !s.lastError.isEmpty || !s.lastReply.isEmpty {
+            DisclosureGroup {
+              VStack(alignment: .leading, spacing: 6) {
+                Text("unreadable replies: \(s.unreadable) · malformed facts: \(s.malformed) · retried: \(s.failed)").font(Theme.mono(10))
+                if !s.lastReply.isEmpty { Text("last reply: \(s.lastReply)").font(Theme.mono(10)).foregroundStyle(Theme.muted).lineLimit(12) }
+                if !s.lastError.isEmpty { Text("last error: \(s.lastError)").font(Theme.mono(10)).foregroundStyle(Theme.danger).lineLimit(6) }
+              }
+              .textSelection(.enabled)
+            } label: {
+              Text("Model replies").font(Theme.mono(11)).foregroundStyle(Theme.muted)
+            }
+          }
           if s.blocked {
             Text(AIError.blocked.localizedDescription).font(.footnote).foregroundStyle(Theme.danger)
           }
@@ -49,17 +61,22 @@ struct ScanView: View {
           }
         }
 
-        HStack {
-          if s.running {
-            Button(role: .destructive) { model.stopScan() } label: { Text("Stop").frame(maxWidth: .infinity) }.buttonStyle(.bordered)
-          }
-          Button { path.append(.dossier) } label: { Text("Open the dossier").frame(maxWidth: .infinity) }
-            .buttonStyle(.borderedProminent)
-            .disabled(s.facts.isEmpty)
-        }
       }
       .padding(16)
       .animation(.easeOut(duration: 0.25), value: s.facts.count)
+    }
+    .safeAreaInset(edge: .bottom) {
+      HStack {
+        if s.running {
+          Button(role: .destructive) { model.stopScan() } label: { Text("Stop").frame(maxWidth: .infinity) }.buttonStyle(.bordered)
+        }
+        Button { path.append(.dossier) } label: { Text("Open the dossier").frame(maxWidth: .infinity) }
+          .buttonStyle(.borderedProminent)
+          .disabled(s.facts.isEmpty)
+      }
+      .controlSize(.large)
+      .padding(.horizontal, 16).padding(.vertical, 10)
+      .background(.bar)
     }
     .navigationTitle("Scan")
     .navigationBarTitleDisplayMode(.inline)

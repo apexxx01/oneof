@@ -5,6 +5,9 @@ import type { Post } from './types';
 const PLACEHOLDER = /\b(unknown|unspecified|not specified|n\/a|none|near me|somewhere|location|self|myself|me)\b/i;
 /** Hypotheticals the model sometimes misses: "imagine having five kids", "if I had a Harley". */
 const HYPOTHETICAL = /\b(imagine|if i (had|were|was|lived)|i wish i|someday|hypothetically|pretend)\b/i;
+/** "I feel 80 years old after that shift": a figure of speech, not an age. A designed trap in the
+ * sample persona; Apple's on-device model filed it as a stated age, so the checker now catches it. */
+const FIGURATIVE_AGE = /\b(feel|feels|feeling|felt)( like)?( i'?m| i am)? (\d+|a hundred|ancient|old)\b/i;
 /** Everyday interests that never narrow anyone down. */
 const GENERIC = /\b(cooking|board games?|football|soccer|basketball|music|movies?|tv|netflix|reading|books?|gaming|video games?|coffee|tea|sleep|food|baking|walking|shopping|travel)\b/i;
 /**
@@ -34,6 +37,7 @@ export function verify(f: RawFact, post: Post): { ok: boolean; why?: string } {
   if (THIRD_PARTY_CATS.has(f.cat) && SOMEONE_ELSE.test(f.quote)) return { ok: false, why: 'about someone else' };
   const lead = normalize(post.text).slice(0, normalize(post.text).indexOf(normalize(f.quote)) + normalize(f.quote).length);
   if (HYPOTHETICAL.test(lead)) return { ok: false, why: 'hypothetical' };
+  if (f.cat === 'age' && FIGURATIVE_AGE.test(f.quote)) return { ok: false, why: 'figure of speech' };
   if (f.cat === 'rare_hobby' && GENERIC.test(f.value)) return { ok: false, why: 'generic interest' };
   if ((f.cat === 'occupation' || f.cat === 'employer_type') && VAGUE_OCCUPATION.test(f.value.trim())) return { ok: false, why: 'vague job' };
   // Implied hobbies, ages and family facts were mostly noise on SynthPAI dev personas
