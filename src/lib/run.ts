@@ -10,6 +10,10 @@ export interface ScanProgress {
   considered: number;
   /** Posts with a life-detail cue; scanned first so the crowd estimate moves early. */
   fastPass: number;
+  /** Empty or link-only posts that were never sent to a model. */
+  empty?: number;
+  /** Posts left unread because of a demo limit. */
+  limited?: number;
   done: number;
   facts: Fact[];
   rejected: number;
@@ -43,8 +47,9 @@ export async function scan(
   const scannable = verdicts.filter(({ v }) => v.reason !== 'too_short' && v.reason !== 'link_only');
   const fast = scannable.filter(({ v }) => v.keep).map(({ p }) => p);
   const deep = scannable.filter(({ v }) => !v.keep).map(({ p }) => p);
-  const considered = [...fast, ...deep].slice(0, opts.maxPosts ?? Infinity);
-  const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass: fast.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
+  const all = [...fast, ...deep];
+  const considered = all.slice(0, opts.maxPosts ?? Infinity);
+  const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass: Math.min(fast.length, considered.length), empty: posts.length - all.length, limited: all.length - considered.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
   onUpdate({ ...st });
   // Gemini Nano slows down or stalls under long sustained load (seen live after ~100 prompts).
   // Two failures in a row trigger a cool-down; failed posts get one retry at the end.
