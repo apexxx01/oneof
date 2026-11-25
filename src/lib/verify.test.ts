@@ -45,6 +45,7 @@ describe('rules tuned on SynthPAI dev personas', () => {
   it('drops figurative ages ("I feel 80 years old"), keeps real ones', () => {
     const t = 'I feel 80 years old after that shift';
     expect(verify({ p: 0, cat: 'age', value: '80 years old', quote: 'I feel 80 years old', about_self: true, certainty: 'stated' }, post(t)).why).toBe('figure of speech');
+    expect(verify({ p: 0, cat: 'age', value: '80', quote: '80 years old', about_self: true, certainty: 'stated' }, post(t)).why).toBe('figure of speech');
     const r = 'I turned 34 last week and nobody noticed';
     expect(verify({ p: 0, cat: 'age', value: '34', quote: 'I turned 34', about_self: true, certainty: 'stated' }, post(r)).ok).toBe(true);
   });

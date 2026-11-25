@@ -1,9 +1,18 @@
 import FirebaseAppCheck
 import FirebaseCore
 import SwiftUI
+import UIKit
+
+/// Blocks third-party keyboards: with Full Access they could send typed drafts off the device.
+final class AppDelegate: NSObject, UIApplicationDelegate {
+  func application(_ application: UIApplication, shouldAllowExtensionPointIdentifier id: UIApplication.ExtensionPointIdentifier) -> Bool {
+    id != .keyboard
+  }
+}
 
 @main
 struct OneOfApp: App {
+  @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
   @State private var model: AppModel
 
   init() {
@@ -30,11 +39,13 @@ enum FirebaseBoot {
   static func start() {
     // Simulator: App Check debug provider with a registered token from Config/Secrets.xcconfig.
     // Real device: App Attest.
-    if let token = Bundle.main.object(forInfoDictionaryKey: "OneOfAppCheckDebugToken") as? String,
-       !token.isEmpty, !token.hasPrefix("$(") {
-      setenv("AppCheckDebugToken", token, 1)
-      UserDefaults.standard.set(token, forKey: "GACAppCheckDebugToken")
-    }
+    #if targetEnvironment(simulator) && DEBUG
+      if let token = Bundle.main.object(forInfoDictionaryKey: "OneOfAppCheckDebugToken") as? String,
+         !token.isEmpty, !token.hasPrefix("$(") {
+        setenv("AppCheckDebugToken", token, 1)
+        UserDefaults.standard.set(token, forKey: "GACAppCheckDebugToken")
+      }
+    #endif
     AppCheck.setAppCheckProviderFactory(OneOfAppCheckFactory())
 
     if let path = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),

@@ -1,2 +1,4 @@
 // Shared build settings. Local secrets (never committed) come from ../Secrets.xcconfig.
 #include? "../Secrets.xcconfig"
+// The App Check debug token is for the simulator only; device builds never carry it.
+APPCHECK_DEBUG_TOKEN[sdk=iphoneos*] =

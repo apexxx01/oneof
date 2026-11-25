@@ -11,6 +11,8 @@ struct DraftView: View {
   @State private var error: String?
   @State private var blurred: AIService.Blurred?
   @State private var blurring = false
+  /// The rewrite, re-checked on-device: the honest measure of what the blur removed.
+  @State private var blurredFacts: [Fact]?
   @State private var lastMs: Double = 0
   @FocusState private var focused: Bool
 
@@ -19,13 +21,16 @@ struct DraftView: View {
     let alone = crowdNow(draftDossier)
     let history = model.scan.facts
     let combined = history.isEmpty ? nil : crowdNow(buildDossier(history + facts, extraRates: model.rateCache))
-    let before = history.isEmpty ? nil : crowdNow(model.dossier)
+    let before: CrowdEstimate? = history.isEmpty ? nil : model.crowd
     ScrollView {
       VStack(alignment: .leading, spacing: 16) {
         Panel {
           Text("YOUR DRAFT").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
           TextEditor(text: $text)
             .focused($focused)
+            .overlay(alignment: .topLeading) {
+              if text.isEmpty { Text("Write a post or comment…").foregroundStyle(Theme.muted).padding(.top, 8).padding(.leading, 5).allowsHitTesting(false) }
+            }
             .frame(minHeight: 120)
             .scrollContentBackground(.hidden)
             .font(.body)
@@ -59,7 +64,7 @@ struct DraftView: View {
             if !facts.isEmpty {
               FlowLayout(spacing: 6) { ForEach(facts) { f in FactChip(fact: f) } }
             } else {
-              Text("Nothing identifying found.").font(.footnote).foregroundStyle(Theme.device)
+              Text("No new details found in this draft.").font(.footnote).foregroundStyle(Theme.muted)
             }
             if lastMs > 0 { Text("checked on-device in \(Int(lastMs)) ms").font(Theme.mono(10)).foregroundStyle(Theme.muted) }
           }
@@ -69,10 +74,18 @@ struct DraftView: View {
           Panel {
             Text("BLUR IT").font(Theme.mono(11)).tracking(1).foregroundStyle(Theme.muted)
             if let b = blurred {
-              Text(b.rewrite).font(.body)
-              if let r = b.removed, !r.isEmpty { Text("Removed: \(r.joined(separator: ", "))").font(.caption).foregroundStyle(Theme.muted) }
+              Text(b.rewrite).font(.body).textSelection(.enabled)
+              if let bf = blurredFacts {
+                let after = crowdNow(buildDossier(bf, extraRates: model.rateCache))
+                let gone = facts.filter { f in !bf.contains { $0.cat == f.cat && $0.value.lowercased() == f.value.lowercased() } }
+                Text("Re-checked on-device: this draft alone goes from one of ~\(humanCount(alone.p50)) to **one of ~\(humanCount(after.p50))**.").font(.subheadline)
+                if !gone.isEmpty { Text("No longer gives away: \(gone.map(\.value).joined(separator: ", "))").font(.caption).foregroundStyle(Theme.muted) }
+                if !bf.isEmpty { Text("Still there: \(bf.map(\.value).joined(separator: ", "))").font(.caption).foregroundStyle(Theme.amber) }
+              } else {
+                HStack { ProgressView().controlSize(.small); Text("Re-checking the rewrite on-device…").font(.caption).foregroundStyle(Theme.muted) }
+              }
               HStack {
-                Button("Use this") { text = b.rewrite; blurred = nil }.buttonStyle(.borderedProminent)
+                Button("Use this") { text = b.rewrite; blurred = nil; blurredFacts = nil }.buttonStyle(.borderedProminent)
                 Button("Copy") { UIPasteboard.general.string = b.rewrite }.buttonStyle(.bordered)
               }
             } else {
@@ -104,19 +117,29 @@ struct DraftView: View {
     defer { checking = false }
     do {
       let r = try await model.ai.extract(Post(id: "draft", date: ISO8601DateFormatter().string(from: Date()), text: t), data: .own, task: .draft)
+      guard !Task.isCancelled else { return }
       facts = r.outcome.facts
       lastMs = r.ms
       checkedText = t
       blurred = nil
+      blurredFacts = nil
       error = nil
+    } catch is CancellationError {
+      // Typing again cancels the check in flight; not an error.
     } catch {
-      self.error = error.localizedDescription
+      if !Task.isCancelled { self.error = error.localizedDescription }
     }
   }
 
   private func blur() async {
     blurring = true
     defer { blurring = false }
-    do { blurred = try await model.ai.blur(text) } catch { self.error = error.localizedDescription }
+    blurredFacts = nil
+    do {
+      let b = try await model.ai.blur(text)
+      blurred = b
+      let r = try await model.ai.extract(Post(id: "draft-blurred", date: ISO8601DateFormatter().string(from: Date()), text: b.rewrite), data: .own, task: .draft)
+      blurredFacts = r.outcome.facts
+    } catch is CancellationError {} catch { self.error = error.localizedDescription }
   }
 }

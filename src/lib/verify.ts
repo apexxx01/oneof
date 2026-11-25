@@ -47,7 +47,8 @@ export function verify(f: RawFact, post: Post): { ok: boolean; why?: string } {
   if (THIRD_PARTY_CATS.has(f.cat) && SOMEONE_ELSE.test(f.quote)) return { ok: false, why: 'about someone else' };
   const lead = normalize(post.text).slice(0, normalize(post.text).indexOf(normalize(f.quote)) + normalize(f.quote).length);
   if (HYPOTHETICAL.test(lead)) return { ok: false, why: 'hypothetical' };
-  if (f.cat === 'age' && FIGURATIVE_AGE.test(f.quote)) return { ok: false, why: 'figure of speech' };
+  // The words just before the quote count too: the model may quote "80 years old" without "I feel".
+  if (f.cat === 'age' && FIGURATIVE_AGE.test(lead.slice(Math.max(0, lead.length - normalize(f.quote).length - 25)))) return { ok: false, why: 'figure of speech' };
   if ((f.cat === 'occupation' || f.cat === 'employer_type') && othersJob(f.value, f.quote)) return { ok: false, why: 'about someone else' };
   if (f.cat === 'rare_hobby' && GENERIC.test(f.value)) return { ok: false, why: 'generic interest' };
   if ((f.cat === 'occupation' || f.cat === 'employer_type') && VAGUE_OCCUPATION.test(f.value.trim())) return { ok: false, why: 'vague job' };

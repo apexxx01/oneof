@@ -1801,6 +1801,40 @@
     {
       "fact": {
         "p": 0,
+        "cat": "age",
+        "value": "80 years old",
+        "quote": "80 years old",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I feel 80 years old after that shift"
+      },
+      "ok": false,
+      "why": "figure of speech"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "age",
+        "value": "34 years old",
+        "quote": "34 years old",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I am 34 years old and tired"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
         "cat": "pet",
         "value": "cat",
         "quote": "I had a cat",

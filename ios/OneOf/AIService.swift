@@ -28,7 +28,7 @@ enum OnDeviceStatus: Equatable {
   }
 }
 
-enum AIError: LocalizedError {
+enum AIError: LocalizedError, Equatable {
   case blocked, timeout
   var errorDescription: String? {
     switch self {
@@ -75,15 +75,25 @@ final class AIService {
       let (text, model) = try await respond(mode: r.mode, instructions: EXTRACT_SYSTEM_APPLE, prompt: prompt, json: true)
       let ms = Date().timeIntervalSince(t0) * 1000
       let onDevice = model == Self.onDeviceName
+      // Enforced, not just routed: an own-data answer that didn't come from the on-device model is discarded.
+      if r.mode == .onlyOnDevice && !onDevice {
+        record(LedgerEntry(task: task, mode: r.mode, reason: r.reason, source: .blocked, ms: ms, sentToCloud: "", error: "answer did not come from the on-device model; discarded"))
+        throw AIError.blocked
+      }
       record(LedgerEntry(task: task, mode: r.mode, reason: r.reason, source: onDevice ? .on_device : .in_cloud, ms: ms,
-                         sentToCloud: onDevice ? "" : prompt, model: onDevice ? nil : model))
+                         sentToCloud: onDevice ? "" : prompt, model: onDevice ? nil : model, data: data))
       return ExtractResult(outcome: processReply(text, post: post, source: onDevice ? .on_device : .in_cloud), source: onDevice ? .on_device : .in_cloud, ms: ms, reply: text)
+    } catch let e as AIError where e == .blocked {
+      throw e
+    } catch let error where error is CancellationError || Task.isCancelled {
+      throw CancellationError()
     } catch {
       let ms = Date().timeIntervalSince(t0) * 1000
-      // A failed call that may have reached the cloud still sent the prompt; the ledger says so.
-      let attempted = r.mode == .onlyInCloud || (r.mode == .preferOnDevice && !OnDeviceStatus.current().ok)
+      // HybridModel falls back to Gemini on any on-device error, so any non-on-device route may have
+      // sent the prompt. The ledger assumes it did.
+      let attempted = r.mode != .onlyOnDevice
       record(LedgerEntry(task: task, mode: r.mode, reason: r.reason, source: .error, ms: ms, sentToCloud: attempted ? prompt : "",
-                         error: String(describing: error).prefix(200).description))
+                         error: String(describing: error).prefix(200).description, data: data))
       throw error
     }
   }
@@ -100,10 +110,14 @@ final class AIService {
     }
     let t0 = Date()
     do {
-      let (text, _) = try await respond(mode: .onlyOnDevice, instructions: BLUR_SYSTEM, prompt: draft, json: true)
+      let (text, model) = try await respond(mode: .onlyOnDevice, instructions: BLUR_SYSTEM_APPLE, prompt: "Draft:\n\(draft)", json: false, transform: true)
+      if model != Self.onDeviceName { throw AIError.blocked }
       record(LedgerEntry(task: .blur, mode: r.mode, reason: r.reason, source: .on_device, ms: Date().timeIntervalSince(t0) * 1000, sentToCloud: ""))
-      if let j = jsonObject(in: text), let data = j.data(using: .utf8), let b = try? JSONDecoder().decode(Blurred.self, from: data) { return b }
-      return Blurred(rewrite: text.trimmingCharacters(in: .whitespacesAndNewlines), removed: nil)
+      var out = text.trimmingCharacters(in: .whitespacesAndNewlines)
+      if out.hasPrefix("\""), out.hasSuffix("\""), out.count > 1 { out = String(out.dropFirst().dropLast()) }
+      return Blurred(rewrite: out, removed: nil)
+    } catch let error where error is CancellationError || Task.isCancelled {
+      throw CancellationError()
     } catch {
       record(LedgerEntry(task: .blur, mode: r.mode, reason: r.reason, source: .error, ms: Date().timeIntervalSince(t0) * 1000, sentToCloud: "",
                          error: String(describing: error).prefix(200).description))
@@ -149,8 +163,9 @@ final class AIService {
 
   /// One fresh session per call: no history leaks between posts, and the on-device context
   /// (about 4k tokens) never fills up.
-  private func respond(mode: RouteMode, instructions: String, prompt: String, json: Bool) async throws -> (String, String) {
-    let system = FirebaseAI.SystemLanguageModel.default
+  private func respond(mode: RouteMode, instructions: String, prompt: String, json: Bool, transform: Bool = false) async throws -> (String, String) {
+    // Rewriting the user's own text is what the permissive-transformations guardrail exists for.
+    let system = transform ? FirebaseAI.SystemLanguageModel(useCase: .general, guardrails: .permissiveContentTransformations) : FirebaseAI.SystemLanguageModel.default
     let cloud = ai.geminiModel(name: Self.cloudChain[0].model)
     let session: GenerativeModelSession
     switch mode {
@@ -160,7 +175,7 @@ final class AIService {
     }
     let options = ResponseGenerationOptions.hybrid(
       gemini: GenerationConfig(temperature: 0, responseMIMEType: json ? "application/json" : nil),
-      foundationModels: FirebaseAI.GenerationOptions(temperature: 0))
+      foundationModels: FirebaseAI.GenerationOptions(sampling: .greedy))
     let budget = mode == .onlyInCloud ? Self.cloudChain[0].timeout : Self.onDeviceBudget
     return try await withTimeout(budget) {
       let res = try await session.respond(to: prompt, options: options)

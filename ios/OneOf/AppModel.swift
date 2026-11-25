@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import OneOfCore
+import UIKit
 
 /// The synthetic persona bundled with the app (same file the web demo uses).
 struct Persona: Decodable {
@@ -49,6 +50,12 @@ struct ScanState {
   var current: Post?
   var running = false
   var blocked = false
+  /// Giving the on-device model a breather after consecutive failures.
+  var cooling = false
+  /// Posts being retried at the end of the run.
+  var retrying = 0
+  /// Paused because the app left the foreground (the on-device model only runs in the foreground).
+  var paused = false
   var startedAt: Date?
   var finishedAt: Date?
 }
@@ -75,7 +82,30 @@ final class AppModel {
   func refreshStatus() { status = OnDeviceStatus.current() }
 
   var summary: LedgerSummary { summarize(ledger) }
-  var dossier: Dossier { buildDossier(scan.facts, extraRates: rateCache) }
+  /// Recomputed when facts or rates change, not on every view update.
+  private(set) var dossier: Dossier = buildDossier([])
+  private(set) var crowd: CrowdEstimate = crowdNow(buildDossier([]))
+
+  func recompute() {
+    dossier = buildDossier(scan.facts, extraRates: rateCache)
+    crowd = crowdNow(dossier)
+  }
+
+  /// Foreground/background: the on-device model only runs while the app is active.
+  @ObservationIgnored private var resumeWaiter: CheckedContinuation<Void, Never>?
+  func setActive(_ active: Bool) {
+    refreshStatus()
+    if active {
+      scan.paused = false
+      resumeWaiter?.resume(); resumeWaiter = nil
+    } else if scan.running {
+      scan.paused = true
+    }
+  }
+  private func waitWhilePaused() async {
+    guard scan.paused else { return }
+    await withCheckedContinuation { c in resumeWaiter = c }
+  }
 
   // MARK: - Scan
 
@@ -89,45 +119,65 @@ final class AppModel {
     st.fastPass = min(o.fastPass, st.order.count); st.empty = o.empty
     st.running = true; st.startedAt = Date()
     scan = st
+    recompute()
+    UIApplication.shared.isIdleTimerDisabled = true
     scanTask = Task { [weak self] in await self?.runScan() }
   }
 
   func stopScan() {
     scanTask?.cancel()
     scanTask = nil
-    if scan.running { scan.running = false; scan.current = nil; scan.finishedAt = Date() }
+    resumeWaiter?.resume(); resumeWaiter = nil
+    UIApplication.shared.isIdleTimerDisabled = false
+    if scan.running { scan.running = false; scan.current = nil; scan.cooling = false; scan.finishedAt = Date() }
   }
 
   private func runScan() async {
     var retry: [Post] = []
     var streak = 0
     for (i, post) in scan.order.enumerated() {
-      if Task.isCancelled { break }
+      await waitWhilePaused()
+      if Task.isCancelled { return }
       scan.current = post
-      if await readOne(post) { streak = 0 } else {
+      let ok = await readOne(post)
+      // A stopped scan must never write into the next one.
+      if Task.isCancelled { return }
+      if ok { streak = 0 } else {
         if scan.blocked { break }
         retry.append(post); streak += 1
       }
       scan.done = i + 1
       // The on-device model slows down under long sustained load; give it a breather.
-      if streak >= 2 { try? await Task.sleep(nanoseconds: 8_000_000_000); streak = 0 }
+      if streak >= 2 {
+        scan.cooling = true
+        try? await Task.sleep(nanoseconds: 8_000_000_000)
+        if Task.isCancelled { return }
+        scan.cooling = false; streak = 0
+      }
     }
-    if !Task.isCancelled && !scan.blocked {
+    if !scan.blocked {
+      scan.retrying = retry.count
       for post in retry {
-        if Task.isCancelled { break }
+        await waitWhilePaused()
+        if Task.isCancelled { return }
         scan.current = post
-        if !(await readOne(post)) { scan.failed += 1 }
+        let ok = await readOne(post)
+        if Task.isCancelled { return }
+        if !ok { scan.failed += 1 }
+        scan.retrying -= 1
       }
     }
     scan.current = nil
     scan.running = false
     scan.finishedAt = Date()
-    if !Task.isCancelled { Receipts.write(scan: scan, dossier: dossier) }
+    UIApplication.shared.isIdleTimerDisabled = false
+    Receipts.write(scan: scan, dossier: dossier)
   }
 
   private func readOne(_ post: Post) async -> Bool {
     do {
       let r = try await ai.extract(post, data: scan.data)
+      guard !Task.isCancelled else { return false }
       scan.facts.append(contentsOf: r.outcome.facts)
       scan.log.append(RunLogEntry(postId: post.id, ms: Int(r.ms), source: r.source.rawValue, facts: r.outcome.facts, rejected: r.outcome.rejected, unreadable: r.outcome.unreadable))
       scan.rejected += r.outcome.rejected
@@ -136,11 +186,13 @@ final class AppModel {
       if r.outcome.unreadable { scan.unreadable += 1 }
       scan.malformed += r.outcome.malformed
       if r.source == .on_device { scan.onDevice += 1 } else { scan.inCloud += 1 }
+      if !r.outcome.facts.isEmpty { recompute() }
       return true
     } catch AIError.blocked {
-      scan.blocked = true
+      if !Task.isCancelled { scan.blocked = true }
       return false
     } catch {
+      if Task.isCancelled || error is CancellationError { return false }
       scan.lastError = String(describing: error).prefix(300).description
       return false
     }
@@ -158,6 +210,7 @@ final class AppModel {
       if let r = await ai.lookupBaseRate(item.fact, country: country) {
         rateCache[item.key] = r
         RateCache.save(rateCache)
+        recompute()
       }
     }
   }
@@ -216,7 +269,8 @@ enum Receipts {
   static func write(scan: ScanState, dossier: Dossier) {
     #if targetEnvironment(simulator)
       // Never write the user's own posts anywhere: only synthetic demo runs become receipts.
-      guard scan.data == .synthetic, let home = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] else { return }
+      guard scan.data == .synthetic, scan.log.allSatisfy({ $0.postId.hasPrefix("p1_") }),
+            let home = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] else { return }
       let dir = URL(fileURLWithPath: home).appendingPathComponent("Developer/oneof-spike/receipts/ios")
       let iso = ISO8601DateFormatter()
       let run = Run(

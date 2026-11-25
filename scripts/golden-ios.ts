@@ -131,7 +131,7 @@ for (const [v, q] of [['bus driver', 'the bus driver waited for me'], ['doctor',
   addV({ cat: 'occupation', value: v, quote: q, certainty: 'stated' }, `${q} and that was the day`);
 }
 // figurative ages (persona trap p1_0171) and real ones
-for (const [q, t] of [['I feel 80 years old', 'I feel 80 years old after that shift'], ['feeling like 90', 'feeling like 90 today honestly'], ['felt ancient', 'felt ancient at the reunion'], ['I turned 34', 'I turned 34 last week and nobody noticed'], ['feel old', 'kids these days make me feel old']]) {
+for (const [q, t] of [['I feel 80 years old', 'I feel 80 years old after that shift'], ['feeling like 90', 'feeling like 90 today honestly'], ['felt ancient', 'felt ancient at the reunion'], ['I turned 34', 'I turned 34 last week and nobody noticed'], ['feel old', 'kids these days make me feel old'], ['80 years old', 'I feel 80 years old after that shift'], ['34 years old', 'I am 34 years old and tired']]) {
   addV({ cat: 'age', value: q.replace(/^(I )?(feel|feeling|felt|turned) (like )?/i, ''), quote: q, certainty: 'stated' }, t);
 }
 // hypotheticals (each HYPOTHETICAL alternative) and a negative where the hedge comes after the quote

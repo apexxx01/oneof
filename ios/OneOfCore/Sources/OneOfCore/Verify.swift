@@ -55,7 +55,11 @@ public func verify(_ f: RawFact, _ post: Post) -> Verdict {
   if THIRD_PARTY_CATS.contains(f.cat) && SOMEONE_ELSE.test(f.quote) { return .fail("about someone else") }
   let lead = String(np[np.startIndex..<hit.upperBound])
   if HYPOTHETICAL.test(lead) { return .fail("hypothetical") }
-  if f.cat == "age" && FIGURATIVE_AGE.test(f.quote) { return .fail("figure of speech") }
+  // The words just before the quote count too: the model may quote "80 years old" without "I feel".
+  if f.cat == "age" {
+    let back = min(25, np.distance(from: np.startIndex, to: hit.lowerBound))
+    if FIGURATIVE_AGE.test(String(np[np.index(hit.lowerBound, offsetBy: -back)..<hit.upperBound])) { return .fail("figure of speech") }
+  }
   if (f.cat == "occupation" || f.cat == "employer_type") && othersJob(f.value, f.quote) { return .fail("about someone else") }
   if f.cat == "rare_hobby" && GENERIC.test(f.value) { return .fail("generic interest") }
   if (f.cat == "occupation" || f.cat == "employer_type") && VAGUE_OCCUPATION.test(f.value.trimmingCharacters(in: .whitespacesAndNewlines)) { return .fail("vague job") }

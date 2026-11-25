@@ -3,11 +3,13 @@ import SwiftUI
 
 struct LedgerView: View {
   @Environment(AppModel.self) private var model
+  @AppStorage("oneof.dev") private var dev = false
   var body: some View {
     let s = model.summary
     List {
       Section {
-        row("Your posts and drafts sent to the cloud", "\(s.postBytesOut) bytes", s.postBytesOut == 0 ? Theme.device : Theme.cloud)
+        row("Your posts and drafts sent to the cloud", "\(s.ownPostBytesOut) bytes", s.ownPostBytesOut == 0 ? Theme.device : Theme.danger)
+        if s.demoPostBytesOut > 0 { row("Synthetic demo posts (cloud fallback)", "\(s.demoPostBytesOut) bytes", Theme.cloud) }
         row("Generic attributes sent for base rates", "\(s.attrBytesOut) bytes", Theme.cloud)
         row("Calls on-device / in cloud", "\(s.onDevice) / \(s.inCloud)", Theme.text)
         if s.blocked > 0 { row("Refused (no on-device model)", "\(s.blocked)", Theme.amber) }
@@ -27,7 +29,7 @@ struct LedgerView: View {
             }
             Text("\(e.mode.rawValue): \(e.reason)").font(.caption2).foregroundStyle(Theme.muted)
             if !e.sentToCloud.isEmpty {
-              Text("Sent: \(e.sentToCloud)").font(Theme.mono(10)).foregroundStyle(Theme.cloud).lineLimit(4)
+              Text("Sent: \(e.sentToCloud)").font(Theme.mono(10)).foregroundStyle(Theme.cloud).lineLimit(dev ? nil : 4).textSelection(.enabled)
             } else {
               Text("Sent: nothing").font(Theme.mono(10)).foregroundStyle(Theme.device)
             }
@@ -37,6 +39,9 @@ struct LedgerView: View {
           .padding(.vertical, 2)
         }
       }
+    }
+    .safeAreaInset(edge: .bottom) {
+      Toggle("Developer diagnostics", isOn: $dev).font(.caption).padding(.horizontal, 20).padding(.vertical, 8).background(.bar)
     }
     .scrollContentBackground(.hidden)
     .navigationTitle("What the cloud saw")

@@ -1,10 +1,12 @@
 import OneOfCore
 import SwiftUI
+import UIKit
 
 enum Screen: Hashable { case scan, dossier, draft, ledger, paste }
 
 struct RootView: View {
   @Environment(AppModel.self) private var model
+  @Environment(\.scenePhase) private var scenePhase
   @State private var path: [Screen] = []
 
   var body: some View {
@@ -23,6 +25,16 @@ struct RootView: View {
           .background(Theme.bg.ignoresSafeArea())
         }
         .background(Theme.bg.ignoresSafeArea())
+    }
+    // The app switcher snapshot never shows pasted posts or drafts.
+    .overlay { if scenePhase != .active { Theme.bg.ignoresSafeArea().overlay(Text("one/of").font(Theme.mono(15, .bold)).foregroundStyle(Theme.signal)) } }
+    .onChange(of: scenePhase) { _, p in model.setActive(p == .active) }
+    .task {
+      // Apple Intelligence may still be downloading its model: keep checking until it's ready.
+      while !Task.isCancelled {
+        try? await Task.sleep(nanoseconds: 5_000_000_000)
+        if model.status != .available { model.refreshStatus() }
+      }
     }
   }
 }
@@ -65,20 +77,29 @@ struct HomeView: View {
             Text("@\(p.handle)").font(.headline)
             Text("\(p.posts.count) synthetic posts by an invented night-shift nurse. No real person. Watch the crowd shrink one detail at a time.")
               .font(.subheadline).foregroundStyle(Theme.muted)
-            HStack {
+            if model.status.ok {
+              HStack {
+                Button {
+                  model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)")
+                  path.append(.scan)
+                } label: { Text("Scan all \(p.posts.count) posts").frame(maxWidth: .infinity) }
+                  .buttonStyle(.borderedProminent)
+                Button {
+                  model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)", limit: 60)
+                  path.append(.scan)
+                } label: { Text("Quick · 60") }
+                  .buttonStyle(.bordered)
+              }
+              Text("About 2–3 minutes on this iPhone, nothing sent anywhere.").font(.caption).foregroundStyle(Theme.muted)
+            } else {
               Button {
-                model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)", limit: 60)
+                model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)", limit: 25)
                 path.append(.scan)
-              } label: { Text("Quick scan · 60 posts").frame(maxWidth: .infinity) }
-                .buttonStyle(.borderedProminent)
-              Button {
-                model.startScan(posts: p.asPosts, data: .synthetic, title: "@\(p.handle)")
-                path.append(.scan)
-              } label: { Text("All \(p.posts.count)") }
+              } label: { Text("Run 25 posts via the cloud").frame(maxWidth: .infinity) }
                 .buttonStyle(.bordered)
+              Text("Without Apple Intelligence this demo data falls back to Gemini in the cloud (free tier, so capped at 25 posts and a partial dossier). Your own posts never do.")
+                .font(.caption).foregroundStyle(Theme.muted)
             }
-            Text("Route: PREFER_ON_DEVICE. Synthetic data may fall back to Gemini in the cloud if the on-device model is missing.")
-              .font(Theme.mono(10)).foregroundStyle(Theme.muted)
           }
         }
 
@@ -90,7 +111,7 @@ struct HomeView: View {
           Button { path.append(.paste) } label: { Text("Paste posts").frame(maxWidth: .infinity) }
             .buttonStyle(.bordered)
             .disabled(!model.status.ok)
-          if !model.status.ok { Text("Needs Apple Intelligence").font(Theme.mono(11)).foregroundStyle(Theme.amber) }
+          if !model.status.ok { Text("Needs Apple Intelligence: your posts are never sent to the cloud instead.").font(.caption).foregroundStyle(Theme.amber) }
         }
 
         Panel {
@@ -106,7 +127,7 @@ struct HomeView: View {
           let s = model.summary
           HStack {
             Image(systemName: "icloud.and.arrow.up")
-            Text("What the cloud saw: \(s.calls) calls · \(s.postBytesOut) bytes of posts")
+            Text("What the cloud saw: \(s.ownPostBytesOut) bytes of your posts\(s.demoPostBytesOut > 0 ? " · \(s.demoPostBytesOut) B of demo posts" : "")")
             Spacer()
             Image(systemName: "chevron.right")
           }
@@ -114,7 +135,7 @@ struct HomeView: View {
           .foregroundStyle(Theme.muted)
         }
 
-        Text("Synthetic demo data only on this screen. Built on Firebase AI Logic hybrid inference: Apple Foundation Models on-device, Gemini in the cloud. Firebase config: \(FirebaseBoot.configSource).")
+        Text("Built on Firebase AI Logic hybrid inference: Apple's on-device model for anything you write, Gemini in the cloud only for public statistics. English only.")
           .font(.caption2).foregroundStyle(Theme.muted)
       }
       .padding(20)
@@ -136,11 +157,18 @@ struct StatusPanel: View {
         Badge(text: model.status.ok ? "APPLE INTELLIGENCE" : "UNAVAILABLE", color: model.status.ok ? Theme.device : Theme.amber)
       }
       Text(model.status.label).font(.footnote).foregroundStyle(Theme.muted)
+      if model.status == .notEnabled || model.status == .notReady {
+        Button("Open Settings") {
+          if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+        }
+        .font(.footnote)
+        Text("Settings › Apple Intelligence & Siri. The model downloads once; OneOf checks again automatically.").font(.caption2).foregroundStyle(Theme.muted)
+      }
       Divider().overlay(Theme.line)
       VStack(alignment: .leading, spacing: 4) {
-        routeRow("your posts & drafts", "ONLY_ON_DEVICE", Theme.device)
-        routeRow("synthetic demo", "PREFER_ON_DEVICE", Theme.device)
-        routeRow("base rates (1 generic attribute)", "ONLY_IN_CLOUD", Theme.cloud)
+        routeRow("Your posts and drafts", "this iPhone only", Theme.device)
+        routeRow("Demo persona", "on-device, cloud as backup", Theme.device)
+        routeRow("Public statistics", "cloud, one generic word", Theme.cloud)
       }
     }
   }

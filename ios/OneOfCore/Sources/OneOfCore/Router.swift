@@ -41,9 +41,12 @@ public struct LedgerEntry: Identifiable, Codable, Equatable, Sendable {
   public var sentToCloud: String
   public var model: String?
   public var error: String?
-  public init(task: AITask, mode: RouteMode, reason: String, source: Source, ms: Double, sentToCloud: String, model: String? = nil, error: String? = nil) {
+  /// Whose words these were. Drafts and rewrites are always the user's own.
+  public var data: DataKind
+  public init(task: AITask, mode: RouteMode, reason: String, source: Source, ms: Double, sentToCloud: String, model: String? = nil, error: String? = nil, data: DataKind = .own) {
     self.task = task; self.mode = mode; self.reason = reason; self.source = source; self.ms = ms
     self.sentToCloud = sentToCloud; self.model = model; self.error = error
+    self.data = (task == .draft || task == .blur) ? .own : data
   }
 }
 
@@ -52,6 +55,10 @@ public struct LedgerSummary: Equatable, Sendable {
   /// Bytes of post or draft text that left the device. The privacy claim is that this is 0
   /// for the user's own data.
   public var postBytesOut = 0
+  /// The user's own posts and drafts. The privacy claim is that this stays 0.
+  public var ownPostBytesOut = 0
+  /// Synthetic demo posts that went to the cloud (fallback when on-device was unavailable or failed).
+  public var demoPostBytesOut = 0
   /// Bytes of generic attributes sent for base-rate lookups.
   public var attrBytesOut = 0
 }
@@ -62,7 +69,10 @@ public func summarize(_ entries: [LedgerEntry]) -> LedgerSummary {
     s.calls += 1
     switch e.source { case .on_device: s.onDevice += 1; case .in_cloud: s.inCloud += 1; case .blocked: s.blocked += 1; case .error: s.errors += 1 }
     let bytes = e.sentToCloud.utf8.count
-    if e.task == .baserate { s.attrBytesOut += bytes } else { s.postBytesOut += bytes }
+    if e.task == .baserate { s.attrBytesOut += bytes } else {
+      s.postBytesOut += bytes
+      if e.data == .own { s.ownPostBytesOut += bytes } else { s.demoPostBytesOut += bytes }
+    }
   }
   return s
 }

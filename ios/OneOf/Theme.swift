@@ -148,11 +148,15 @@ func shortDate(_ s: String) -> String {
 struct FactChip: View {
   let fact: Fact
   var counted = true
+  var count = 1
   var body: some View {
     HStack(spacing: 6) {
       Text(fact.cat.replacingOccurrences(of: "_", with: " ")).font(Theme.mono(10)).foregroundStyle(Theme.muted)
-      Text(fact.value).font(.footnote.weight(.semibold)).foregroundStyle(counted ? Theme.text : Theme.muted)
+      Text(fact.value).font(.footnote.weight(.semibold)).foregroundStyle(counted ? Theme.text : Theme.muted).lineLimit(2)
+      if count > 1 { Text("×\(count)").font(Theme.mono(10)).foregroundStyle(Theme.muted) }
     }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel("\(fact.cat.replacingOccurrences(of: "_", with: " ")): \(fact.value)\(count > 1 ? ", \(count) posts" : ""), \(counted ? "counted" : "not counted")")
     .padding(.horizontal, 10).padding(.vertical, 6)
     .background(Theme.bg, in: Capsule())
     .overlay(Capsule().stroke(counted ? Theme.signal.opacity(0.6) : Theme.line, lineWidth: 1))
