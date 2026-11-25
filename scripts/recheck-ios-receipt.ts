@@ -1,0 +1,12 @@
+import { readFileSync } from 'node:fs';
+import { verify } from '../src/lib/verify';
+import { buildDossier, crowdNow } from '../src/lib/dossier';
+const r = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+const persona = JSON.parse(readFileSync(new URL('../public/personas/p1.json', import.meta.url), 'utf8'));
+const posts = new Map(persona.posts.map((p: any) => [p.id, { id: p.id, date: p.date, text: p.text }]));
+const facts = r.log.flatMap((e: any) => e.facts);
+const kept = facts.filter((f: any) => verify({ p: 0, cat: f.cat, value: f.value, quote: f.quote, about_self: true, certainty: f.certainty }, posts.get(f.postId) as any).ok);
+const dropped = facts.filter((f: any) => !kept.includes(f)).map((f: any) => `${f.cat}:${f.value}`);
+const d = buildDossier(kept);
+const c = crowdNow(d);
+console.log(JSON.stringify({ recorded: facts.length, keptToday: kept.length, droppedToday: dropped, region: d.region.label, attributes: d.attributes.map((a) => a.rate.label), crowdTS: { p10: c.p10, p50: c.p50, p90: c.p90, band: c.band }, crowdRecordedOnIPhone: r.crowd }, null, 1));

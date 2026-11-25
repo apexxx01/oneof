@@ -17,6 +17,15 @@ struct Persona: Decodable {
   var asPosts: [Post] { posts.map { Post(id: $0.id, date: $0.date, text: $0.text, where: $0.subreddit) } }
 }
 
+struct RunLogEntry: Codable {
+  var postId: String
+  var ms: Int
+  var source: String
+  var facts: [Fact]
+  var rejected: Int
+  var unreadable: Bool
+}
+
 struct ScanState {
   var data: DataKind = .synthetic
   var title = ""
@@ -34,6 +43,8 @@ struct ScanState {
   var malformed = 0
   var lastReply = ""
   var lastError = ""
+  /// Per-post record of the run (same shape as the web build's replay log).
+  var log: [RunLogEntry] = []
   var lastMs: Double = 0
   var current: Post?
   var running = false
@@ -111,12 +122,14 @@ final class AppModel {
     scan.current = nil
     scan.running = false
     scan.finishedAt = Date()
+    if !Task.isCancelled { Receipts.write(scan: scan, dossier: dossier) }
   }
 
   private func readOne(_ post: Post) async -> Bool {
     do {
       let r = try await ai.extract(post, data: scan.data)
       scan.facts.append(contentsOf: r.outcome.facts)
+      scan.log.append(RunLogEntry(postId: post.id, ms: Int(r.ms), source: r.source.rawValue, facts: r.outcome.facts, rejected: r.outcome.rejected, unreadable: r.outcome.unreadable))
       scan.rejected += r.outcome.rejected
       scan.lastMs = r.ms
       scan.lastReply = r.reply
@@ -172,5 +185,56 @@ func postsFromPaste(_ text: String) -> [Post] {
   let iso = ISO8601DateFormatter()
   return chunks.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }.enumerated().map { i, t in
     Post(id: "own_\(i)", date: iso.string(from: base.addingTimeInterval(Double(i) * 86_400)), text: t)
+  }
+}
+
+/// Simulator-only: writes each finished run into the repo on the host Mac as a receipt.
+/// (Simulator apps can see the host file system; on a real phone this does nothing.)
+enum Receipts {
+  struct Run: Encodable {
+    var recordedAt: String
+    var device: String
+    var onDeviceModel = "Apple Foundation Models via Firebase AI Logic (FirebaseAI.SystemLanguageModel)"
+    var promptVersion = EXTRACT_PROMPT_VERSION_APPLE
+    var persona: String
+    var data: String
+    var postsTotal: Int
+    var postsRead: Int
+    var onDevice: Int
+    var inCloud: Int
+    var factsKept: Int
+    var rejected: Int
+    var unreadable: Int
+    var malformed: Int
+    var totalMs: Int
+    var crowd: CrowdEstimate
+    var region: String
+    var attributes: [String]
+    var log: [RunLogEntry]
+  }
+
+  static func write(scan: ScanState, dossier: Dossier) {
+    #if targetEnvironment(simulator)
+      // Never write the user's own posts anywhere: only synthetic demo runs become receipts.
+      guard scan.data == .synthetic, let home = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] else { return }
+      let dir = URL(fileURLWithPath: home).appendingPathComponent("Developer/oneof-spike/receipts/ios")
+      let iso = ISO8601DateFormatter()
+      let run = Run(
+        recordedAt: iso.string(from: Date()),
+        device: "\(ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "simulator") iOS \(ProcessInfo.processInfo.operatingSystemVersionString)",
+        persona: scan.title, data: scan.data.rawValue, postsTotal: scan.total, postsRead: scan.done,
+        onDevice: scan.onDevice, inCloud: scan.inCloud, factsKept: scan.facts.count, rejected: scan.rejected,
+        unreadable: scan.unreadable, malformed: scan.malformed, totalMs: scan.log.reduce(0) { $0 + $1.ms },
+        crowd: crowdNow(dossier), region: dossier.region.label, attributes: dossier.attributes.map(\.rate.label), log: scan.log)
+      do {
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let enc = JSONEncoder()
+        enc.outputFormatting = [.prettyPrinted, .sortedKeys]
+        let stamp = iso.string(from: Date()).replacingOccurrences(of: ":", with: "-")
+        try enc.encode(run).write(to: dir.appendingPathComponent("ios-run-\(scan.order.count)-\(stamp).json"))
+      } catch {
+        print("receipt not written: \(error)")
+      }
+    #endif
   }
 }

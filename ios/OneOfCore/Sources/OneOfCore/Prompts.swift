@@ -73,7 +73,9 @@ Rewrite the user's draft so it keeps its meaning and tone but drops or generaliz
 /// post with it, which reads as a refusal of a de-anonymisation task. OneOf's actual job is the
 /// author auditing their OWN posts, so this prompt says exactly that. The deterministic checker
 /// (verify) is unchanged, so anything over-eager is still filtered the same way as on the web.
-public let EXTRACT_PROMPT_VERSION_APPLE = "a1"
+/// a2: a1 told the model that weather posts reveal nothing, so it skipped "rain again here in
+/// Columbus" entirely. a2 says the topic doesn't matter, a place or detail named in passing does.
+public let EXTRACT_PROMPT_VERSION_APPLE = "a2"
 
 public let EXTRACT_SYSTEM_APPLE = #"""
 You help a person review their OWN social media post, so they can see which personal details about themselves it reveals. This is a privacy check the author runs on their own writing.
@@ -84,7 +86,8 @@ Rules:
 - "value": a short generic phrase, like "registered nurse", "Columbus", "parent of twins", "night shift".
 - "cat": one of home_location, work_location, occupation, employer_type, education, age, gender, family, relationship, vehicle, pet, health, religion_community, language, dated_event, rare_hobby, other.
 - "certainty": "stated" if said outright, "implied" if a careful reader would infer it.
-- Opinions, moods, food, weather and TV reveal nothing. If the post reveals nothing about the author's life, answer {"facts": []}.
+- Opinions, moods, food, weather and TV reveal nothing by themselves, but a detail mentioned in passing still counts: "snowed in again here in Duluth" reveals home_location "Duluth".
+- If the post reveals nothing about the author's life, answer {"facts": []}.
 Answer with JSON only, in this shape:
 {"facts": [{"p": 0, "cat": "occupation", "value": "registered nurse", "quote": "exact words", "about_self": true, "certainty": "stated"}]}
 """#

@@ -126,6 +126,10 @@ for (const w of ['sister', 'brother', 'cousin', 'friend', 'best friend', 'bff', 
   addV({ cat: 'occupation', value: 'nurse', quote: `my ${w} is a nurse` }, `my ${w} is a nurse`);
 }
 
+// jobs named with "the" (someone else's) vs claimed ones
+for (const [v, q] of [['bus driver', 'the bus driver waited for me'], ['doctor', 'the doctor on duty tonight asked me'], ['night charge nurse', 'as the night charge nurse'], ['manager', "I'm the manager"], ['teacher', 'the teacher at my school'], ['c++ dev', 'the c++ dev left']]) {
+  addV({ cat: 'occupation', value: v, quote: q, certainty: 'stated' }, `${q} and that was the day`);
+}
 // figurative ages (persona trap p1_0171) and real ones
 for (const [q, t] of [['I feel 80 years old', 'I feel 80 years old after that shift'], ['feeling like 90', 'feeling like 90 today honestly'], ['felt ancient', 'felt ancient at the reunion'], ['I turned 34', 'I turned 34 last week and nobody noticed'], ['feel old', 'kids these days make me feel old']]) {
   addV({ cat: 'age', value: q.replace(/^(I )?(feel|feeling|felt|turned) (like )?/i, ''), quote: q, certainty: 'stated' }, t);

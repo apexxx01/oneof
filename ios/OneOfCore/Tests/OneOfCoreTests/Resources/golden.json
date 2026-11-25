@@ -266,7 +266,7 @@
         "text": "back to the grind"
       },
       "ok": false,
-      "why": "vague job"
+      "why": "about someone else"
     },
     {
       "fact": {
@@ -1607,6 +1607,108 @@
         "id": "p",
         "date": "2024-01-01",
         "text": "my sisters is a nurse"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "bus driver",
+        "quote": "the bus driver waited for me",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "the bus driver waited for me and that was the day"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "doctor",
+        "quote": "the doctor on duty tonight asked me",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "the doctor on duty tonight asked me and that was the day"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "night charge nurse",
+        "quote": "as the night charge nurse",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "as the night charge nurse and that was the day"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "manager",
+        "quote": "I'm the manager",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "I'm the manager and that was the day"
+      },
+      "ok": true,
+      "why": null
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "teacher",
+        "quote": "the teacher at my school",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "the teacher at my school and that was the day"
+      },
+      "ok": false,
+      "why": "about someone else"
+    },
+    {
+      "fact": {
+        "p": 0,
+        "cat": "occupation",
+        "value": "c++ dev",
+        "quote": "the c++ dev left",
+        "about_self": true,
+        "certainty": "stated"
+      },
+      "post": {
+        "id": "p",
+        "date": "2024-01-01",
+        "text": "the c++ dev left and that was the day"
       },
       "ok": false,
       "why": "about someone else"

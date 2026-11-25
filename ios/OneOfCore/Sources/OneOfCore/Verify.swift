@@ -7,6 +7,15 @@ private let PLACEHOLDER = JSRegex(#"\b(unknown|unspecified|not specified|n\/a|no
 private let HYPOTHETICAL = JSRegex(#"\b(imagine|if i (had|were|was|lived)|i wish i|someday|hypothetically|pretend)\b"#, caseInsensitive: true)
 /// "I feel 80 years old after that shift": a figure of speech, not an age (designed persona trap).
 private let FIGURATIVE_AGE = JSRegex(#"\b(feel|feels|feeling|felt)( like)?( i'?m| i am)? (\d+|a hundred|ancient|old)\b"#, caseInsensitive: true)
+/// "the bus driver waited for me": a job named with "the" belongs to someone else, unless the
+/// author claims it ("as the", "I'm the").
+func othersJob(_ value: String, _ quote: String) -> Bool {
+  let v = NSRegularExpression.escapedPattern(for: value.trimmingCharacters(in: .whitespacesAndNewlines))
+  if v.isEmpty { return false }
+  let named = JSRegex(#"\bthe "# + v + #"\b"#, caseInsensitive: true).test(quote)
+  let claimed = JSRegex(#"\b(as|i'?m|i am|work as|working as) (an?|the) "# + v + #"\b"#, caseInsensitive: true).test(quote)
+  return named && !claimed
+}
 private let GENERIC = JSRegex(#"\b(cooking|board games?|football|soccer|basketball|music|movies?|tv|netflix|reading|books?|gaming|video games?|coffee|tea|sleep|food|baking|walking|shopping|travel)\b"#, caseInsensitive: true)
 private let SOMEONE_ELSE = JSRegex(#"\bmy (sister|brother|cousin|friend|best friend|bff|mom|mum|mother|dad|father|aunt|uncle|grand(ma|pa|mother|father)|neighbou?r|co-?worker|colleague|boss|roommate|son|daughter|kid|niece|nephew|in-laws?)s?\b"#, caseInsensitive: true)
 private let THIRD_PARTY_CATS: Set<String> = ["home_location", "work_location", "occupation", "employer_type", "education", "vehicle", "pet", "rare_hobby", "age"]
@@ -47,6 +56,7 @@ public func verify(_ f: RawFact, _ post: Post) -> Verdict {
   let lead = String(np[np.startIndex..<hit.upperBound])
   if HYPOTHETICAL.test(lead) { return .fail("hypothetical") }
   if f.cat == "age" && FIGURATIVE_AGE.test(f.quote) { return .fail("figure of speech") }
+  if (f.cat == "occupation" || f.cat == "employer_type") && othersJob(f.value, f.quote) { return .fail("about someone else") }
   if f.cat == "rare_hobby" && GENERIC.test(f.value) { return .fail("generic interest") }
   if (f.cat == "occupation" || f.cat == "employer_type") && VAGUE_OCCUPATION.test(f.value.trimmingCharacters(in: .whitespacesAndNewlines)) { return .fail("vague job") }
   if (f.cat == "rare_hobby" || f.cat == "age") && f.certainty == "implied" { return .fail("implied hobby or age") }

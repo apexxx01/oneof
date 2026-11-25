@@ -36,6 +36,12 @@ describe('rules tuned on SynthPAI dev personas', () => {
   it('keeps a real implied job', () => {
     expect(verify(fact('occupation', 'software developer', 'debugging my code all day'), post('debugging my code all day, send help')).ok).toBe(true);
   });
+  it('drops a job named with "the" (someone else\'s), keeps one the author claims', () => {
+    const t = 'the bus driver waited for me this morning';
+    expect(verify({ p: 0, cat: 'occupation', value: 'bus driver', quote: 'the bus driver waited for me', about_self: true, certainty: 'stated' }, post(t)).why).toBe('about someone else');
+    const c = 'as the night charge nurse I see everything';
+    expect(verify({ p: 0, cat: 'occupation', value: 'night charge nurse', quote: 'as the night charge nurse', about_self: true, certainty: 'stated' }, post(c)).ok).toBe(true);
+  });
   it('drops figurative ages ("I feel 80 years old"), keeps real ones', () => {
     const t = 'I feel 80 years old after that shift';
     expect(verify({ p: 0, cat: 'age', value: '80 years old', quote: 'I feel 80 years old', about_self: true, certainty: 'stated' }, post(t)).why).toBe('figure of speech');

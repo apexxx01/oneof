@@ -8,6 +8,16 @@ const HYPOTHETICAL = /\b(imagine|if i (had|were|was|lived)|i wish i|someday|hypo
 /** "I feel 80 years old after that shift": a figure of speech, not an age. A designed trap in the
  * sample persona; Apple's on-device model filed it as a stated age, so the checker now catches it. */
 const FIGURATIVE_AGE = /\b(feel|feels|feeling|felt)( like)?( i'?m| i am)? (\d+|a hundred|ancient|old)\b/i;
+/** "the bus driver waited for me", "the doctor on duty asked me": a job named with "the" belongs
+ * to someone else, unless the author claims it ("as the", "I'm the"). Seen on Apple's model. */
+const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function othersJob(value: string, quote: string) {
+  const v = esc(value.trim());
+  if (!v) return false;
+  const named = new RegExp(`\\bthe ${v}\\b`, 'i').test(quote);
+  const claimed = new RegExp(`\\b(as|i'?m|i am|work as|working as) (an?|the) ${v}\\b`, 'i').test(quote);
+  return named && !claimed;
+}
 /** Everyday interests that never narrow anyone down. */
 const GENERIC = /\b(cooking|board games?|football|soccer|basketball|music|movies?|tv|netflix|reading|books?|gaming|video games?|coffee|tea|sleep|food|baking|walking|shopping|travel)\b/i;
 /**
@@ -38,6 +48,7 @@ export function verify(f: RawFact, post: Post): { ok: boolean; why?: string } {
   const lead = normalize(post.text).slice(0, normalize(post.text).indexOf(normalize(f.quote)) + normalize(f.quote).length);
   if (HYPOTHETICAL.test(lead)) return { ok: false, why: 'hypothetical' };
   if (f.cat === 'age' && FIGURATIVE_AGE.test(f.quote)) return { ok: false, why: 'figure of speech' };
+  if ((f.cat === 'occupation' || f.cat === 'employer_type') && othersJob(f.value, f.quote)) return { ok: false, why: 'about someone else' };
   if (f.cat === 'rare_hobby' && GENERIC.test(f.value)) return { ok: false, why: 'generic interest' };
   if ((f.cat === 'occupation' || f.cat === 'employer_type') && VAGUE_OCCUPATION.test(f.value.trim())) return { ok: false, why: 'vague job' };
   // Implied hobbies, ages and family facts were mostly noise on SynthPAI dev personas
