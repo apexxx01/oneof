@@ -1,0 +1,26 @@
+/* Side panel layout on top of the web app's stylesheet (src/index.css): same tokens, narrow column. */
+body { min-width: 300px; }
+.xp { padding: 0 14px 28px; display: flex; flex-direction: column; gap: 12px; }
+.xp-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); z-index: 5; }
+.xp-top .brand { cursor: default; font-size: 15px; }
+.xp-tag { font-size: 12.5px; color: var(--muted); font-weight: 500; letter-spacing: 0; }
+.xp-top .pill { font-size: 10.5px; padding: 4px 8px; white-space: nowrap; }
+.xp .banner { margin: 0; font-size: 13px; line-height: 1.45; }
+.xp .card { padding: 14px; gap: 8px; border-radius: 14px; }
+.xp-text { margin: 0; padding: 8px 10px; border-left: 2px solid var(--line); color: #d6d4cc; font-size: 13.5px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; max-height: 160px; overflow: auto; }
+.xp-meters { display: flex; flex-direction: column; gap: 2px; }
+.xp-meters .arrow { color: var(--muted); padding-left: 4px; }
+.xp .meter.compact .meter-num { font-size: 34px; }
+.xp .chips .badge { font-size: 9px; padding: 1px 4px; }
+.xp-rewrite { margin: 6px 0; white-space: pre-wrap; }
+.xp-ledger { border: 1px solid color-mix(in srgb, var(--device) 35%, transparent); background: color-mix(in srgb, var(--device) 6%, transparent); border-radius: 12px; padding: 10px 12px; display: grid; gap: 4px; }
+.xp-zero { font-size: 13px; color: var(--device); }
+.xp-zero b { font-size: 18px; }
+.xp-source { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.xp-choices { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.xp-choices button { text-align: left; display: flex; justify-content: space-between; align-items: center; }
+.xp-choices button.on { border-color: var(--signal); }
+.xp-paste { display: flex; flex-direction: column; gap: 8px; }
+.xp-file { display: flex; flex-direction: column; gap: 4px; }
+.xp-file input { font-size: 12px; color: var(--muted); }
+.xp footer { margin-top: 6px; line-height: 1.45; }
