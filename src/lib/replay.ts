@@ -9,6 +9,14 @@ import { EXTRACT_PROMPT_VERSION } from './prompts';
 
 export interface RunLogEntry { postId: string; ms: number; source: 'on_device' | 'in_cloud' | 'error'; facts: Fact[] }
 
+/** The sample draft, run once on Gemini Nano and recorded, for browsers without Nano. */
+export interface DraftRecording {
+  text: string;
+  recordedAt: string;
+  userAgent: string;
+  sentences: Array<{ text: string; ms: number; facts: Fact[] }>;
+}
+
 export interface Replay {
   version: 1;
   recordedAt: string;
@@ -24,6 +32,7 @@ export interface Replay {
   rejected: number;
   totalMs: number;
   log: RunLogEntry[];
+  draft?: DraftRecording;
 }
 
 export function toReplay(p: ScanProgress, persona: string): Replay {

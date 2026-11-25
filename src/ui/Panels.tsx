@@ -3,6 +3,7 @@ import { liftFor } from '../data/baserates';
 import { estimate, humanCount } from '../lib/estimate';
 import { buildDossier, type Dossier } from '../lib/dossier';
 import { BlockedError, blurDraft, extractFromPost } from '../lib/ai';
+import { chromeVersion, type DraftRecording } from '../lib/replay';
 import { subscribe, summary, type LedgerEntry } from '../lib/ledger';
 import type { Attribute, BaseRate, CrowdEstimate, Fact, Post } from '../lib/types';
 import { GradeBadge, Meter, Pct, SourceBadge } from './bits';
@@ -77,8 +78,12 @@ function highlight(text: string, quote: string) {
 /** Stable id for a sentence (two sentences with the same opening must not collide). */
 function hashText(t: string) { let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
 
-export function Draft({ history, rates, before, placeholder }: {
+export function Draft({ history, rates, before, placeholder, nano, recorded }: {
   history: Fact[]; rates: Map<string, BaseRate>; before: CrowdEstimate; placeholder?: string;
+  /** Gemini Nano is ready in this browser. Drafts are never checked anywhere else. */
+  nano: boolean;
+  /** A real Nano run of the sample draft, played back when this browser has no Nano. */
+  recorded?: DraftRecording;
 }) {
   const [text, setText] = useState('');
   const [facts, setFacts] = useState<Map<string, Fact[]>>(new Map());
@@ -94,11 +99,14 @@ export function Draft({ history, rates, before, placeholder }: {
   // one starts, so overlapping loops would cancel each other. Facts live in a ref so a later
   // loop never overwrites an earlier one's results with a stale copy.
   const factsRef = useRef(facts);
+  const msRef = useRef(new Map<string, number>());
+  const playingRecording = !nano && !!recorded && text.trim() === recorded.text.trim();
   const running = useRef(false);
   const rerun = useRef(false);
   useEffect(() => {
     window.clearTimeout(timer.current);
     const go = async () => {
+      if (!nano) return; // never sent anywhere else; the recorded sample is handled below
       if (running.current) { rerun.current = true; return; }
       running.current = true;
       setErr(null);
@@ -114,6 +122,7 @@ export function Draft({ history, rates, before, placeholder }: {
               // Drafts are always the user's own words: ONLY_ON_DEVICE, whatever data the scan used.
               const r = await extractFromPost({ id: `draft:${hashText(s)}`, date: new Date().toISOString(), text: s }, 'own', 'draft');
               factsRef.current = new Map(factsRef.current).set(s, r.facts);
+              msRef.current.set(s, Math.round(r.ms));
               setFacts(factsRef.current);
             } catch (e) {
               setErr(e instanceof BlockedError ? 'Drafts are checked on this device only, and this browser has no Gemini Nano. Open OneOf in desktop Chrome to check drafts.' : 'The on-device model is busy. Keep typing; it will catch up.');
@@ -126,13 +135,20 @@ export function Draft({ history, rates, before, placeholder }: {
       } finally {
         running.current = false;
         setBusy(false);
+        // Lets a maintainer record the sample draft for browsers without Nano.
+        (window as unknown as { __oneofDraft?: DraftRecording }).__oneofDraft = {
+          text: sentencesRef.current.join(' '), recordedAt: new Date().toISOString(), userAgent: navigator.userAgent,
+          sentences: sentencesRef.current.map((x) => ({ text: x, ms: msRef.current.get(x) ?? 0, facts: factsRef.current.get(x) ?? [] })),
+        };
       }
     };
     timer.current = window.setTimeout(go, 650);
     return () => window.clearTimeout(timer.current);
-  }, [sentences]);
+  }, [sentences, nano]);
 
-  const draftFacts = sentences.flatMap((s) => facts.get(s) ?? []);
+  const draftFacts = playingRecording
+    ? recorded!.sentences.flatMap((x) => x.facts.map((f) => ({ ...f, postId: f.postId.startsWith('draft') ? f.postId : `draft:${f.postId}` })))
+    : sentences.flatMap((s) => facts.get(s) ?? []);
   const d = buildDossier([...history, ...draftFacts], rates);
   const after = estimate(d.region, d.attributes);
   const newKeys = new Set(buildDossier(draftFacts, rates).attributes.map((a) => a.rate.key));
@@ -143,10 +159,15 @@ export function Draft({ history, rates, before, placeholder }: {
     <div className="draft">
       <div className="draft-edit">
         <textarea value={text} onChange={(e) => { setText(e.target.value); setBlur(null); }} placeholder="Write your next post here. OneOf checks it on this device before you share it." rows={4} />
-        {placeholder && !text && <button className="ghost small" onClick={() => setText(placeholder)}>Try a sample draft: “{placeholder.slice(0, 48)}…”</button>}
+        {placeholder && !text && <button className="ghost small" onClick={() => setText(recorded?.text ?? placeholder)}>Try a sample draft: “{(recorded?.text ?? placeholder).slice(0, 48)}…”</button>}
+        {!nano && !playingRecording && <p className="small muted">Blur and live draft checks need Gemini Nano (desktop Chrome). {recorded ? 'The sample draft above plays a recorded on-device result.' : ''}</p>}
         <div className="draft-status mono">
-          {busy ? 'reading on-device…' : draftFacts.length ? `${draftFacts.length} new fact${draftFacts.length > 1 ? 's' : ''} in this draft` : 'nothing identifying yet'}
-          {err && <span className="err"> · {err}</span>}
+          {playingRecording
+            ? `REPLAY · recorded on Gemini Nano in Chrome ${chromeVersion(recorded!.userAgent)} on ${recorded!.recordedAt.slice(0, 10)} · ${draftFacts.length} new fact${draftFacts.length === 1 ? '' : 's'}`
+            : !nano
+              ? (text.trim() ? 'not checked: drafts are read only on this device, and this browser has no Gemini Nano' : 'drafts are checked on this device only')
+              : busy ? 'reading on-device…' : draftFacts.length ? `${draftFacts.length} new fact${draftFacts.length > 1 ? 's' : ''} in this draft` : text.trim() ? 'nothing identifying found' : 'nothing typed yet'}
+          {err && nano && <span className="err"> · {err}</span>}
         </div>
         {draftFacts.length > 0 && (
           <div className="chips">
@@ -160,7 +181,7 @@ export function Draft({ history, rates, before, placeholder }: {
           </div>
         )}
         <div className="row">
-          <button disabled={!text || busy} onClick={async () => {
+          <button disabled={!text || busy || !nano} title={nano ? 'Rewrite on this device' : 'Needs Gemini Nano: drafts never leave this device'} onClick={async () => {
             try { setBlur(await blurDraft(text, 'own')); } catch (e) { setErr(e instanceof BlockedError ? 'Blur runs on this device only, and this browser has no Gemini Nano.' : (e as Error).message); }
           }}>Blur it (on-device)</button>
           {blur && <button className="ghost" onClick={() => { setText(blur.rewrite); setBlur(null); }}>Use rewrite</button>}
@@ -200,6 +221,7 @@ export function Ledger({ open, onClose }: { open: boolean; onClose: () => void }
         <div><b>{s.postBytesOut}</b> bytes of your posts sent</div>
         <div><b>{s.attrBytesOut}</b> bytes of generic attributes sent</div>
       </div>
+      {!entries.length && <p className="small muted">Every model call will appear here: where it ran, why, and the exact text that left this device (if any).</p>}
       <button onClick={exportJson} disabled={!entries.length}>Export receipts.json</button>
       <ol className="ledger-list">
         {[...entries].reverse().map((e) => (

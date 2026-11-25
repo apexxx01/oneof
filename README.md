@@ -57,8 +57,9 @@ Every model call goes through `route(task, data)` in `src/lib/ai.ts`. The reason
 
 | Task | Data | InferenceMode | Reason shown |
 |---|---|---|---|
-| `extract`, `draft`, `blur` | own (your export or paste) | `ONLY_ON_DEVICE` | "Your own posts and drafts never leave this device." |
-| `extract`, `draft`, `blur` | synthetic (demo persona) | `PREFER_ON_DEVICE` | "Synthetic demo data: runs on-device when available, cloud fallback allowed." |
+| `extract` | own (your export or paste) | `ONLY_ON_DEVICE` | "Your own posts and drafts never leave this device." |
+| `draft`, `blur` | always treated as own (it is whatever you type) | `ONLY_ON_DEVICE` | Same. Without Nano the box says "not checked"; the sample draft plays a recorded on-device result. |
+| `extract` | synthetic (demo persona) | `PREFER_ON_DEVICE` | "Synthetic demo data: runs on-device when available, cloud fallback allowed." |
 | `baserate` | any (one generic attribute) | `ONLY_IN_CLOUD` | "Needs current statistics from Google Search. Sends one generic attribute, never your words." |
 
 If your own data is routed `ONLY_ON_DEVICE` and no on-device model is available, the call is blocked and recorded as blocked. It does not fall back to the cloud.
@@ -141,14 +142,15 @@ Caveats, stated plainly:
 Requirements: Node.js, and desktop Chrome with the Prompt API and Gemini Nano for on-device mode (tested on Chrome 158). Check `chrome://on-device-internals` for the model status. The model download needs about 22 GB free on the drive that holds the Chrome profile.
 
 ```bash
-npm install
-cp .env.example .env.local   # fill in the Firebase web app values
-npm test                     # unit, property and regression tests
+npm ci
+npm test                     # unit, property, regression and privacy-invariant tests
 npm run dev                  # http://localhost:5173
+npm run build                # production build in dist/
 ```
 
-- Set `VITE_APPCHECK=off` in `.env.local` for local runs until App Check is configured.
-- In dev, the console prints an App Check debug token. Register it under App Check, Manage debug tokens. Never commit it.
+- No `.env.local` is needed to try it: the public Firebase web config is built in, and the recorded replay works offline. Copy `.env.example` to `.env.local` only to point at your own Firebase project.
+- App Check: in dev the console prints a debug token; register it under App Check → Manage debug tokens (never commit it). Set `VITE_APPCHECK=off` to skip App Check for a local run. Production builds read `VITE_RECAPTCHA_ENTERPRISE_SITE_KEY` or `VITE_APPCHECK_DEBUG_TOKEN` from repository variables.
+- `/?replay` offers the recorded run even in a browser that has Nano.
 - Click "Download Gemini Nano (one time)" on the home page. The download needs a user gesture.
 - The spike benchmark page is at `/?spike`; the held-out SynthPAI evaluation is at `/?eval`.
 - The synthetic persona "quietnight_rn" runs on the home page. It is labelled SYNTHETIC on screen.

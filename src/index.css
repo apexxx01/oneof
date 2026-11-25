@@ -133,8 +133,15 @@ footer { margin-top: 40px; }
 @media (max-width: 900px) {
   .start, .r-hero, .r-grid, .live, .draft { grid-template-columns: 1fr; }
   .meter-num { font-size: 64px; }
-  .top-right .pill:nth-child(2) { display: none; }
+  .top-right .pill.net { display: none; }
 }
+@media (max-width: 640px) {
+  .top { position: static; padding: 12px 0; gap: 8px; }
+  .top-right { gap: 6px; flex-wrap: nowrap; }
+  .top-right .pill.ac, .top-right .long { display: none; }
+  .top-right .pill, .cloud-btn { font-size: 11px; padding: 4px 8px; white-space: nowrap; }
+}
+.import-note { color: var(--device); }
 
 /* ---- /?spike benchmark page ---- */
 .spike { max-width: 1200px; margin: 0 auto; padding: 24px; }
