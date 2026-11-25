@@ -25,6 +25,7 @@ jobs:
           # App Check: set ONE of these as a repository variable (Settings -> Secrets and
           # variables -> Actions -> Variables). Enterprise is preferred; the rules accept debug tokens.
           VITE_RECAPTCHA_ENTERPRISE_SITE_KEY: ${{ vars.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY }}
+          VITE_RECAPTCHA_V3_SITE_KEY: ${{ vars.VITE_RECAPTCHA_V3_SITE_KEY }}
           VITE_APPCHECK_DEBUG_TOKEN: ${{ vars.VITE_APPCHECK_DEBUG_TOKEN }}
       - run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3
