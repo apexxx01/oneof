@@ -86,9 +86,12 @@ Every model call goes through `route(task, data)` in `src/lib/ai.ts`. The reason
 | `extract` | own (your export or paste) | `ONLY_ON_DEVICE` | "Your own posts and drafts never leave this device." |
 | `draft`, `blur` | always treated as own (it is whatever you type) | `ONLY_ON_DEVICE` | Same. Without Nano the box says "not checked"; the sample draft plays a recorded on-device result. |
 | `extract` | synthetic (demo persona) | `PREFER_ON_DEVICE` | "Synthetic demo data: runs on-device when available, cloud fallback allowed." |
-| `baserate` | any (one generic attribute) | `ONLY_IN_CLOUD` | "Needs current statistics from Google Search. Sends one generic attribute, never your words." |
+| `match` | any (one generic attribute, after consent for your own data) | `ONLY_IN_CLOUD` | "Picks which public table a generic attribute belongs to. Sends one generic attribute, never your words; the number always comes from the table." |
+| `baserate` | any (one generic attribute), only if no table matched | `ONLY_IN_CLOUD` | "Needs current statistics from Google Search. Sends one generic attribute, never your words." |
 
 If your own data is routed `ONLY_ON_DEVICE` and no on-device model is available, the call is blocked and recorded as blocked. It does not fall back to the cloud.
+
+**The cloud picks the table, never the number.** When the device finds a detail the bundled tables don't recognise, `matchTable()` sends only the generic phrase (for example `occupation: ICU charge nurse`) and the answer is schema-locked to the bundled table keys or `none`. A match counts with that table's own cited rate; the model can't supply a percentage. Only if nothing matches does OneOf ask for a rough estimate, which is shown but never counted. Live receipt: [`receipts/cloud-match-2026-11-26.json`](receipts/cloud-match-2026-11-26.json) (ICU charge nurse → ICU nurses; half-marathon finisher → half-marathon finishers; scrubs wearer, parent of toddlers, plant enthusiast, home cook → none).
 
 ## The estimator
 
@@ -202,7 +205,7 @@ Requirements: Node.js, and desktop Chrome with the Prompt API and Gemini Nano fo
 
 ```bash
 npm ci
-npm test                     # 150 tests: 84 web (unit, property, regression, privacy invariants) + 66 extension
+npm test                     # 154 tests: 88 web (unit, property, regression, privacy invariants) + 66 extension
 npm run ext:build            # the extension's bundle tests run against extension/dist when it exists
 # cd ios/OneOfCore && swift test   → 18 Swift tests over 435 golden cases
 npm run dev                  # http://localhost:5173

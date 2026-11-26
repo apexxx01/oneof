@@ -32,7 +32,7 @@ interface Step {
 }
 
 /** Sizes of the test suites at the commit this page ships with (npm test, ext:test, swift test). */
-const SUITE = { web: 84, ext: 66, swift: 18, golden: 435 };
+const SUITE = { web: 88, ext: 66, swift: 18, golden: 435 };
 /** P50 from the iPhone receipt (receipts/ios, Apple Foundation Models, typed generation). */
 const IOS_P50 = '50.13432259896638';
 
