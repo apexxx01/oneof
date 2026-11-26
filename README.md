@@ -102,7 +102,7 @@ Copy rules: the output never says "safe" or "identified". Every factor opens to 
 ## Firebase products used
 
 - **Firebase AI Logic, hybrid inference.** `getGenerativeModel` is called with `mode: InferenceMode[...]` set to `ONLY_ON_DEVICE`, `PREFER_ON_DEVICE`, or `ONLY_IN_CLOUD`. The on-device side uses `onDeviceParams.createOptions.initialPrompts` for the system prompt and few-shot example, and `promptOptions.responseConstraint` for the JSON schema. The cloud side uses `inCloudParams` with `gemini-3.5-flash-lite`, falling back to `gemini-3.5-flash`. `initializeDeviceModel` runs the first-time Gemini Nano download from a user gesture. `response.inferenceSource` is read for every call so the ledger can show where it ran.
-- **App Check, enforced.** AI Logic is set to **Enforced**: a request without a valid token gets `401 Firebase App Check token is invalid`. Every AI call uses a fresh limited-use token (`useLimitedUseAppCheckTokens`). The live demo uses the App Check debug provider, which the hackathon rules accept; reCAPTCHA Enterprise is wired in the code (`VITE_RECAPTCHA_ENTERPRISE_SITE_KEY`) as the upgrade path.
+- **App Check, enforced.** AI Logic is set to **Enforced**: a request without a valid token gets `401 Firebase App Check token is invalid`. Every AI call uses a fresh limited-use token (`useLimitedUseAppCheckTokens`). Both live sites attest with **reCAPTCHA Enterprise** (Fraud Defense, score-based and invisible), so there is no debug token in the shipped bundle. Local dev uses the debug provider.
 - **Google Search grounding.** Wired in for base-rate lookups (the grounding source URL becomes a grade-B citation), but it needs a paid plan; see below.
 - **Planned:** Remote Config (batch size, debounce, band thresholds, prompt version) and a Firestore public base-rate cache. Neither is wired up in the current code.
 
@@ -137,7 +137,7 @@ OneOf was built and runs on Firebase's free Spark plan, by a student, with no bi
 What that means in the product:
 - Reading your history is on-device, so it is free and unlimited, and it can't be rate-limited or switched off by anyone else.
 - Cloud base-rate lookups work without grounding, but an answer with no source is shown and **never counted** in the estimate (only bundled tables or sourced lookups narrow the crowd). The headline number never depends on the cloud.
-- With a paid plan, nothing in the code changes: grounded lookups would return grade-B sources that count, the cloud demo cap could go, and App Check would move to reCAPTCHA Enterprise.
+- With a paid plan, nothing in the code changes: grounded lookups would return grade-B sources that count, and the cloud demo cap could go.
 
 ## Results
 
@@ -186,7 +186,7 @@ npm run build                # production build in dist/
 ```
 
 - No `.env.local` is needed to try it: the public Firebase web config is built in, and the recorded replay works offline. Copy `.env.example` to `.env.local` only to point at your own Firebase project.
-- App Check: in dev the console prints a debug token; register it under App Check → Manage debug tokens (never commit it). Set `VITE_APPCHECK=off` to skip App Check for a local run. Production builds read `VITE_RECAPTCHA_ENTERPRISE_SITE_KEY` or `VITE_APPCHECK_DEBUG_TOKEN` from repository variables.
+- App Check: in dev the console prints a debug token; register it under App Check → Manage debug tokens (never commit it). Set `VITE_APPCHECK=off` to skip App Check for a local run. Production builds read `VITE_RECAPTCHA_ENTERPRISE_SITE_KEY` (a public site key; Vercel env var or GitHub repository variable). `VITE_APPCHECK_DEBUG_TOKEN` still works as a fallback but puts the token in the bundle, so the live sites don't use it.
 - `/?replay` offers the recorded run even in a browser that has Nano.
 - A synthetic Reddit export to try the importer: [`quietnight_rn-reddit-export.zip`](https://oneof-app.vercel.app/personas/quietnight_rn-reddit-export.zip) (it includes decoy `ip_logs.csv` and `messages.csv` files that OneOf never opens).
 - Cloud model chain: `gemini-3.5-flash-lite` first; on a timeout or quota error, `gemini-3.5-flash`.
