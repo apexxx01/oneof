@@ -550,7 +550,7 @@ export default function App() {
                       <p className="small">Done. Sources and grades are in “Show the math”, and every request is in the receipts.</p>
                     ) : (
                       <>
-                        <p className="small">{pendingLookups.length} of your attributes have no bundled statistic. OneOf can ask the cloud how common each one is. It would send exactly these strings, one per request, and nothing else:</p>
+                        <p className="small">{pendingLookups.length} of your attributes have no bundled statistic. OneOf can ask the cloud which public table each one belongs to (the number then comes from that table, never from the model), or, if none fits, for a rough estimate that is shown but not counted. It would send exactly these strings, one per request, and nothing else:</p>
                         <div className="chips">{pendingLookups.map((l) => <span key={l.attribute} className="chip mono">{l.attribute}</span>)}</div>
                         <p className="small mut">Names, numbers, places, health and dated events are never sent.</p>
                         <div className="row">

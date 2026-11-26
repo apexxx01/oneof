@@ -7,6 +7,7 @@ import {
 import { record, type Mode, type Task } from './ledger';
 import type { BaseRate, Fact, Post } from './types';
 import { rateKey } from './dossier';
+import { PACK } from '../data/baserates';
 
 export const CLOUD_MODEL = 'gemini-3.5-flash-lite';
 /**
@@ -73,6 +74,7 @@ export interface Route { mode: Mode; reason: string }
 /** The router. Every call goes through here, and the reason is shown in the UI. */
 export function route(task: Task, data: DataKind): Route {
   if (task === 'baserate') return { mode: 'ONLY_IN_CLOUD', reason: 'Needs current statistics from Google Search. Sends one generic attribute, never your words.' };
+  if (task === 'match') return { mode: 'ONLY_IN_CLOUD', reason: 'Picks which public table a generic attribute belongs to. Sends one generic attribute, never your words; the number always comes from the table.' };
   if (data === 'own') return { mode: 'ONLY_ON_DEVICE', reason: 'Your own posts and drafts never leave this device.' };
   return { mode: 'PREFER_ON_DEVICE', reason: 'Synthetic demo data: runs on-device when available, cloud fallback allowed.' };
 }
@@ -277,6 +279,56 @@ export async function lookupBaseRate(f: Fact, country: string, data: DataKind = 
     };
   } catch {
     return undefined;
+  }
+}
+
+// ---------- Table match: the cloud picks the table, never the number ----------
+/**
+ * For an attribute the bundled tables don't recognise, Gemini (ONLY_IN_CLOUD) chooses which bundled,
+ * cited table contains everyone with that attribute, or "none". The answer is constrained to the
+ * table keys, and the rate that counts is the table's own, so the cloud can change *which* number
+ * applies but can never invent one. Choosing a containing group keeps the crowd an upper bound.
+ */
+export function matchPrompt(attribute: string, country: string): string {
+  const tables = PACK.map((p) => `${p.key}: ${p.label} (${p.source.split(/[,;(]/)[0].trim()})`).join('\n');
+  return `Attribute: ${attribute}\nCountry: ${country}\n\nTables:\n${tables}\nnone: no table fits`;
+}
+export const MATCH_SYSTEM = 'You map one generic personal attribute to an official statistics table. Pick the table whose group CONTAINS every person with the attribute (the attribute is the same as, or a narrower case of, the table\'s group), choosing the smallest such group. If no table contains it, answer "none". Never pick a table that only overlaps. Reply as JSON {"table": "<key>"}.';
+
+export function parseMatch(text: string): string | undefined {
+  const m = text.replace(/```json|```/g, '').match(/\{[\s\S]*\}/);
+  if (!m) return undefined;
+  try {
+    const key = String((JSON.parse(m[0]) as { table?: unknown }).table ?? '');
+    return PACK.some((p) => p.key === key) ? key : undefined;
+  } catch { return undefined; }
+}
+
+export async function matchTable(f: Fact, country: string, data: DataKind = 'own'): Promise<{ rate?: BaseRate; asked: boolean }> {
+  const safe = cloudSafeAttribute(f);
+  if (!safe.ok) return { asked: false };
+  const r = route('match', data);
+  const { ai } = getFirebase();
+  const schema = { type: 'object', properties: { table: { type: 'string', enum: [...PACK.map((p) => p.key), 'none'] } }, required: ['table'] } as const;
+  const at = (t: (typeof CLOUD_CHAIN)[number]) => getGenerativeModel(ai, {
+    mode: InferenceMode[r.mode],
+    inCloudParams: { model: t.model, systemInstruction: MATCH_SYSTEM, generationConfig: { responseMimeType: 'application/json', responseJsonSchema: schema, temperature: 0 } },
+  }, { timeout: t.timeout });
+  const payload = matchPrompt(safe.attribute, country);
+  const t0 = performance.now();
+  try {
+    const res = (await hedged(r.mode, at, (m) => m.generateContent(payload))).value;
+    const key = parseMatch(res.response.text());
+    // Only the attribute line counts as "sent about you"; the table list is public and identical for everyone.
+    record({ task: 'match', mode: r.mode, reason: r.reason, source: 'in_cloud', ms: performance.now() - t0, sentToCloud: `Attribute: ${safe.attribute}\nCountry: ${country}`, decoy: false, data });
+    const p = key ? PACK.find((x) => x.key === key) : undefined;
+    if (!p) return { asked: true };
+    const { aliases: _a, ...rest } = p;
+    void _a;
+    return { asked: true, rate: { ...rest, key: p.key, label: p.label, origin: 'cloud', matchedFrom: safe.attribute, source: `${p.source} · table chosen by Gemini for “${safe.attribute}”` } };
+  } catch (e) {
+    record({ task: 'match', mode: r.mode, reason: r.reason, source: 'error', ms: performance.now() - t0, sentToCloud: `Attribute: ${safe.attribute}\nCountry: ${country}`, decoy: false, data, error: String((e as Error).message).slice(0, 200) });
+    return { asked: true };
   }
 }
 

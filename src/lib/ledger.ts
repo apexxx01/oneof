@@ -3,7 +3,7 @@
  * exactly what (if anything) left the device. Firebase's console doesn't show on-device
  * calls, so we keep our own receipts and let the user export them.
  */
-export type Task = 'extract' | 'draft' | 'blur' | 'baserate';
+export type Task = 'extract' | 'draft' | 'blur' | 'baserate' | 'match';
 export type Mode = 'ONLY_ON_DEVICE' | 'PREFER_ON_DEVICE' | 'ONLY_IN_CLOUD' | 'PREFER_IN_CLOUD';
 
 export interface LedgerEntry {

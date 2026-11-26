@@ -39,6 +39,7 @@ export function Formula({ d, e }: { d: Dossier; e: CrowdEstimate }) {
                 <td className="src">
                   {a.rate.url ? <a href={a.rate.url} target="_blank" rel="noreferrer">{a.rate.source}</a> : a.rate.source}
                   {a.rate.origin === 'cloud' && <> <SourceBadge source="cloud" /></>}
+                  {a.rate.matchedFrom && <span className="small mut"> The cloud only chose this table for “{a.rate.matchedFrom}”; the percentage is the table’s.</span>}
                 </td>
               </tr>
             );

@@ -36,6 +36,8 @@ export interface BaseRate {
   url?: string;
   /** Where this number came from at runtime. */
   origin: 'bundled' | 'cache' | 'cloud' | 'fallback';
+  /** Set when Gemini picked this bundled table for a phrase the tables didn't cover. The rate is the table's own. */
+  matchedFrom?: string;
   /** Keys this one is a strict subset of (e.g. "occupation:icu_nurse" ⊂ "occupation:nurse"). */
   within?: string;
 }

@@ -147,3 +147,13 @@ ran on device     ${sum.onDevice}/${sum.n}, errors ${sum.errors}`}</pre>
     </div>
   );
 }
+
+// Console hook for recording table-match receipts (receipts/cloud-match-*.json): on /?eval only,
+// `await __oneofMatch('occupation', 'ICU charge nurse')` runs the real ONLY_IN_CLOUD match for one
+// generic attribute (synthetic context), exactly as a scan would.
+(window as unknown as { __oneofMatch?: unknown }).__oneofMatch = async (cat: string, value: string) => {
+  const { matchTable } = await import('../lib/ai');
+  const t0 = performance.now();
+  const r = await matchTable({ id: 'eval', postId: 'eval', date: '', cat: cat as never, value, quote: value, certainty: 'stated', source: 'on_device' }, 'United States', 'synthetic');
+  return { attribute: `${cat}: ${value}`, asked: r.asked, table: r.rate ? r.rate.key : 'none', label: r.rate?.label ?? null, grade: r.rate?.grade ?? null, ms: Math.round(performance.now() - t0) };
+};

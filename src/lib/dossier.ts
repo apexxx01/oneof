@@ -95,7 +95,7 @@ export function buildDossier(facts: Fact[], extraRates: Map<string, BaseRate> = 
 
 /** A rate counts only if it comes from a table we ship or a lookup that returned a source. */
 export function isCited(r: BaseRate) {
-  return r.origin === 'bundled' || (!!r.url && r.grade !== 'C');
+  return r.origin === 'bundled' || !!r.matchedFrom || (!!r.url && r.grade !== 'C');
 }
 
 export function rateKey(f: Pick<Fact, 'cat' | 'value'>) {

@@ -1,5 +1,5 @@
 import { prefilter } from './prefilter';
-import { BlockedError, extractFromPost, lookupBaseRate, type DataKind } from './ai';
+import { BlockedError, extractFromPost, lookupBaseRate, matchTable, type DataKind } from './ai';
 import { cloudSafeAttribute } from './attribute';
 import { buildDossier, rateKey } from './dossier';
 import type { BaseRate, Fact, Post } from './types';
@@ -204,7 +204,10 @@ export async function refineRates(plan: PlannedLookup[], country: string, onUpda
   const cache = loadRateCache();
   for (const { fact } of plan) {
     if (!navigator.onLine) break;
-    const r = await lookupBaseRate(fact, country, data);
+    // First let the cloud pick an existing cited table (it can't invent a number); only if none
+    // contains the attribute, ask for an estimate, which is shown but never counted unless cited.
+    const m = await matchTable(fact, country, data);
+    const r = m.rate ?? await lookupBaseRate(fact, country, data);
     if (r) {
       cache.set(rateKey(fact), r);
       saveRateCache(cache);
