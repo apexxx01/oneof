@@ -14,6 +14,7 @@ import { FIELD_N, fieldBase, litCount } from './ui/crowd';
 import { plural } from './lib/text';
 import { DossierList, Draft, Formula, Ledger } from './ui/Panels';
 import { Trail } from './ui/Trail';
+import { Story } from './ui/Story';
 import { chromeVersion, downloadJson, playReplay, recheck, toReplay, type Replay } from './lib/replay';
 import { isDemoExport } from './lib/demo';
 
@@ -304,8 +305,15 @@ export default function App() {
                 AI agents can now <b>unmask pseudonymous accounts</b> by stitching together harmless details across years of posts.
                 OneOf builds that dossier first, <b>on your own device</b>, and shows how small a crowd you’re really hiding in.
               </p>
-              <a className="jump" href="#try" onClick={(e) => { e.preventDefault(); scrollToTry(); }}>Watch the demo</a>
-              <p className="cite">English only for now. Lermen et al., “Large-scale online deanonymization with LLMs”, USENIX Security ’26: LLM agents re-identified 25–67% of Hacker News and Reddit users at 70–90% precision.</p>
+              <div className="hero-cta">
+                <button className="primary" onClick={scrollToTry}>Try it now</button>
+                <a className="ghost-a" href="#story">See how a stranger finds her</a>
+              </div>
+              <div className="hero-facts">
+                <div><b>3</b><span>places: web, iPhone, Chrome extension</span></div>
+                <div><b className="dev">0 B</b><span>of your posts ever sent</span></div>
+                <div><b>1</b><span>generic phrase to the cloud, after you say yes</span></div>
+              </div>
             </div>
             <figure className="front-side field-fig">
               <div className="field-box"><CrowdField p50={fullRunEst.p50} base={fullRunBase} band={fullRunEst.band} from={FIELD_N} label={`A field of ${FIELD_N} dots on a log scale; all lit would be all US adults. After six years of posts, ${litCount(fullRunEst.p50, fullRunBase)} stay lit: one of about ${fullRunCrowd}.`} /></div>
@@ -317,6 +325,12 @@ export default function App() {
             </figure>
           </section>
 
+          <Story dossier={fullRunDossier} replay={replay} onTry={scrollToTry} />
+          <header className="x-head try-head" id="try-head">
+            <span className="x-k lbl">Your turn</span>
+            <h2>Find out how many people you could be</h2>
+            <p>Start with the synthetic nurse to see it work, then check your own history. Your posts never leave this device.</p>
+          </header>
           <section className="start" id="try" ref={actionRef}>
             <article className="card primary">
               <div className="card-k"><span className="lbl">Demo</span><span className="tag">Synthetic, not a real person</span></div>
