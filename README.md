@@ -9,15 +9,37 @@ OneOf reads your own post history with on-device AI, builds the dossier an AI at
 [![CI](https://github.com/apexxx01/oneof/actions/workflows/ci.yml/badge.svg)](https://github.com/apexxx01/oneof/actions/workflows/ci.yml)
 ![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)
 
-Live demo: **https://oneof-app.vercel.app** (mirror: apexxx01.github.io/oneof) (desktop Chrome with Gemini Nano for on-device mode, tested on Chrome 158; other browsers get a labelled replay of a recorded on-device run, or cloud fallback for the synthetic demo)
+Live site: **https://oneof-app.vercel.app** (mirror: https://apexxx01.github.io/oneof/). It works in any browser: the explainer and the crowd calculator need no AI, browsers without Gemini Nano get a labelled replay of a recorded on-device run, and desktop Chrome with Gemini Nano (tested on Chrome 158) scans live.
 
-Chrome extension: [`extension/`](extension/README.md) — checks a Reddit draft in the comment box before you post it, on-device with Gemini Nano, with no network access at all (CSP `connect-src 'self'`).
+Chrome extension: [`extension/`](extension/README.md) — checks the draft in any reply box you allow (Reddit and the [practice page](https://oneof-app.vercel.app/practice/) are built in) before you post it, on-device with Gemini Nano, with no network access at all (CSP `connect-src 'self'`).
 
 iOS app: [`ios/`](ios/README.md) — SwiftUI on Firebase AI Logic hybrid inference, with Apple Intelligence on-device and Gemini in the cloud. It shares the web core through a golden-tested Swift port. [Receipt: 200/200 posts on-device, 0 cloud, same dossier and same number as the web build](receipts/ios/README.md)
 
 Demo video: (coming soon)
 
 Built for the Firebase #BuildHybridAI hackathon.
+
+![The OneOf home page: How many people could you be?](docs/img/site-hero.jpg)
+
+## What's on the site
+
+Every number on the home page is computed in your browser from the committed recorded run (`public/personas/p1-replay.json`), the synthetic persona and the `receipts/` folder, with the same code the app uses.
+
+| Section | What it shows |
+|---|---|
+| **The case file** | Scroll through the 5 posts (of 200) that matter. Each highlights the phrase that leaks, and the crowd field and number shrink: 258.5M → 22.9M → 1.42M → 112k → 440 → **one of ~50**. |
+| **Alone vs together** | Each detail alone still leaves millions (night shift: 13.8M). All five together: ~50. Edit 2 posts and she's back to ~5.6k. |
+| **Try the math** | A crowd calculator: pick ordinary details and a place, and the real estimator runs on the bundled public tables. No model, nothing sent. "Load the nurse" lands on the same ~50. |
+| **Where your words go** | The six on-device steps, the one arrow to the cloud (the exact phrase sent), 12,301 B read vs 0 B sent, and the four routing rules. |
+| **The checker** | 214 claims from Gemini Nano in, 33 kept by the deterministic checker. 8 planted traps, 0 counted. |
+| **Web, iPhone, Chrome** | The three surfaces, and the same P50 from two different on-device models. |
+| **Receipts** | Held-out SynthPAI results per prompt, including the one we rolled back, with links to every receipt. |
+| **Limits** | What OneOf won't tell you. |
+
+| ![Case file](docs/img/site-story.jpg) | ![Alone vs together](docs/img/site-together.jpg) |
+|---|---|
+| ![Crowd calculator](docs/img/site-calc.jpg) | ![Where your words go](docs/img/site-words.jpg) |
+| ![The checker](docs/img/site-checker.jpg) | ![Receipts](docs/img/site-receipts.jpg) |
 
 ---
 
@@ -118,7 +140,7 @@ The same product as a native iPhone app, on **Firebase AI Logic hybrid inference
 
 - **Where each answer ran is read from the response** (`rawResponse.modelVersion` is Apple's model name for on-device answers). It isn't inferred from the route, and the "What the cloud saw" ledger shows the exact bytes that left the phone.
 - **One core, two languages.** `ios/OneOfCore` ports the checker, cloud-safe filter, estimator, dossier, base rates and router to Swift. `scripts/golden-ios.ts` runs the real TypeScript functions to generate 435 golden cases, and `swift test` (Linux or Mac) must match them: the same `mulberry32` stream bit for bit, the same verdicts and orderings, and the same crowd numbers to 1e-9. The receipt check closes the loop end to end: the web core recomputes the iPhone's crowd from the iPhone's recorded facts and gets the same P50.
-- **Full persona run on the iOS 27.2 simulator:** 200/200 posts on-device, **0 cloud**, 0 unreadable replies (typed generation with `@Generable`). It finds the same dossier as the web Nano run (Columbus, registered nurse, single mother, night shift, divorced) and the **same number: P50 50.13432259896638 on the iPhone vs 50.13432259896637 on the web**. Two different on-device models, one answer. See [`receipts/ios/`](receipts/ios/README.md).
+- **Full persona run on the iOS 27.2 simulator:** 200/200 posts on-device, **0 cloud**, 0 unreadable replies (typed generation with `@Generable`). It finds the same dossier as the web Nano run (Columbus, registered nurse, single mother, night shift, divorced) and the **same number: P50 50.13432259896638 on the iPhone**, and the web core recomputes 50.13432259896638 in Chrome (50.13432259896637 under Node; the last digit is floating-point rounding between engines). Two different on-device models, one answer. See [`receipts/ios/`](receipts/ios/README.md).
 - **What Apple's model taught us.** With the web prompt it answered `{"facts": []}` to every post. That prompt is worded as "what would help a stranger figure out who the author is", and the model declines that. OneOf's real job is the author auditing their own posts, and iOS prompt `a2` says exactly that. The model then fell for two traps the persona plants ("I feel 80 years old", "the bus driver waited for me"). Both are now rules in the **shared** deterministic checker, so the web build got stricter too.
 - App Check: the debug provider on the simulator (token from a git-ignored `Secrets.xcconfig`), App Attest on devices. Firebase is pinned to **12.19.3**, the last release that ships `HybridModel` and `SystemLanguageModel` (13.0 removed them).
 
@@ -180,7 +202,8 @@ Requirements: Node.js, and desktop Chrome with the Prompt API and Gemini Nano fo
 
 ```bash
 npm ci
-npm test                     # unit, property, regression and privacy-invariant tests
+npm test                     # 147 unit, property, regression and privacy-invariant tests
+npm run ext:test             # 65 extension tests (cd ios/OneOfCore && swift test: 18 more, 435 golden cases)
 npm run dev                  # http://localhost:5173
 npm run build                # production build in dist/
 ```

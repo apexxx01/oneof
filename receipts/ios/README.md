@@ -18,7 +18,7 @@ Full persona run with extraction through guided generation (`respond(to:generati
 | Attributes counted | registered nurse, single mother, night shift, divorced |
 | Crowd | **one of ~50** (P50 50.13432259896638) |
 
-**The same answer on two platforms.** The web build's recorded Gemini Nano run of this persona gives the same four attributes and region and a P50 of **50.13432259896637**. Two different on-device models (Apple Foundation Models on iOS, Gemini Nano in Chrome) produce the same dossier, and the Swift and TypeScript cores agree to the last digit. `npx tsx scripts/recheck-ios-receipt.ts receipts/ios/ios-run-200-2026-11-25T16-51-06Z.json` reproduces it from the receipt with today's checker (0 facts dropped).
+**The same answer on two platforms.** The web build's recorded Gemini Nano run of this persona gives the same four attributes and region and a P50 of **50.13432259896637** under Node and **50.13432259896638** in Chrome (floating-point rounding differs between engine versions in the last digit). Two different on-device models (Apple Foundation Models on iOS, Gemini Nano in Chrome) produce the same dossier, and the Swift and TypeScript cores agree to the last digit. `npx tsx scripts/recheck-ios-receipt.ts receipts/ios/ios-run-200-2026-11-25T16-51-06Z.json` reproduces it from the receipt with today's checker (0 facts dropped).
 
 This file is also bundled in the app as `recorded-run.json`: on a device without Apple Intelligence, OneOf offers a labelled replay of it.
 

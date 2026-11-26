@@ -301,7 +301,7 @@ function Words({ postBytes, postsTotal, onDevice }: { postBytes: number; postsTo
           <p className="small mut">Every request carries an App Check token: reCAPTCHA Enterprise on the web, App Attest on iPhone.</p>
         </div>
       </div>
-      <div className="bytes">
+      <div className="byt">
         <div className="by-row"><span className="lbl">Read on this device</span><span className="by-bar dev"><i style={{ width: '100%' }} /></span><b>{fmt(postBytes)} B</b></div>
         <div className="by-row"><span className="lbl">Sent anywhere</span><span className="by-bar"><i style={{ width: '0%' }} /></span><b className="dev">0 B</b></div>
         <p className="small mut">The recorded demo run: {onDevice} of {postsTotal} posts read by Gemini Nano, 0 in the cloud. Count it yourself in “What the cloud saw”, the receipt in the top bar.</p>
