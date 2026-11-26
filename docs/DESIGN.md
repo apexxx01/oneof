@@ -23,15 +23,18 @@ screen should read like the front page that says how findable you are.
 Bands: crowd = device green, neighbourhood = amber, room = signal, handful = signal on a solid block.
 
 ## Type
-- Display: **Archivo** variable (width axis). Headline numbers at `font-stretch: 62%`, weight 900,
-  line-height .86, letter-spacing -.01em. The crowd number is the hero of every screen: 96–160px on
-  desktop, 72–96pt on phone. "one of" sits small and mono next to it.
-- Labels: **JetBrains Mono**, 11px, 700, uppercase, letter-spacing .09em.
-- Body: Archivo at normal width, 15px/1.45. Numbers use tabular figures.
+- Display: **Big Shoulders** variable (weight and optical-size axes), weight 900. Every heading is set
+  in **uppercase** (civic signage, a public notice about you), line-height .9. The crowd number is the
+  hero of every screen: 96–180px on desktop, 72–110pt on phone. "one of" sits small and mono next to it.
+- Body: **Schibsted Grotesk** variable, a grotesk drawn for a newsroom, 15px/1.45.
+- Labels and data: **Martian Mono** variable at `font-stretch: 87.5%`, 11px, 700, uppercase,
+  letter-spacing .09em. Tabular figures on numerals and data only (Schibsted's tabular punctuation looks
+  broken in running text).
 - iOS: system font `.width(.compressed)` + `.weight(.black)` for numerals (SF Pro Compressed),
   `.monospaced` design for labels, Dynamic Type via TextStyle-relative sizes.
-- Fonts are self-hosted (the extension CSP forbids remote fonts): @fontsource-variable/archivo and
-  @fontsource-variable/jetbrains-mono.
+- Fonts are self-hosted (the extension CSP forbids remote fonts): @fontsource-variable/big-shoulders,
+  schibsted-grotesk and martian-mono. The in-page pill inlines static subsets made by
+  `extension/scripts/pill-fonts.py`; the practice page ships its own copies in `public/practice/fonts/`.
 
 ## The one bold thing: the crowd field
 
@@ -46,8 +49,8 @@ dossier), cheap (canvas on web and extension, Canvas/TimelineView on iOS), and r
 Everything else stays quiet so this lands: no gradients, no glows, no decorative illustrations.
 
 ## Restraint notes (Jury DNA, applied with judgement)
-- Uppercase mono labels only for status cells and source badges (data). Section headings are Archivo
-  condensed in sentence case, large ("What a stranger learns", "Rejoin the crowd").
+- Uppercase mono labels only for status cells and source badges (data). Section headings are Big Shoulders
+  in uppercase, large ("What a stranger learns", "Rejoin the crowd").
 - No middle-dot meta strings in body copy; use separate cells or short sentences.
 - No arrows appended to buttons. Buttons say exactly what happens ("Scan all 200 posts").
 
@@ -62,7 +65,7 @@ Everything else stays quiet so this lands: no gradients, no glows, no decorative
 - **Cards:** 2px fg border, no radius (max 2px), hard 6px offset shadow on the primary card only.
 - **Buttons:** primary = solid signal, fg text black, 2px fg border, hard 4px shadow that collapses on
   press (translate 4px). Secondary = transparent with 2px fg border. Squared corners.
-- **Chips (facts):** mono category label + Archivo value; counted = 2px signal border; not counted =
+- **Chips (facts):** mono category label + Schibsted value; counted = 2px signal border; not counted =
   1px line, muted. Count suffix "×3".
 - **Meter:** a 10px hard bar from 1 to 100M (log), band-coloured segment for P10–P90, a square marker for
   P50, mono ticks 1 · 100 · 10k · 1M · 100M.

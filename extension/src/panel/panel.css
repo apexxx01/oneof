@@ -27,7 +27,7 @@ body { min-width: 300px; }
 .xp-rewrite { margin: 4px 0; white-space: pre-wrap; }
 .xp-slip { border: 2px solid var(--fg); padding: 12px 14px; display: grid; gap: 8px; font-family: var(--mono); }
 .xp-zero { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.xp-zero .tbig { font-family: var(--disp); font-weight: 900; font-stretch: 62%; font-size: 52px; line-height: .82; color: var(--device); }
+.xp-zero .tbig { font-family: var(--disp); font-weight: 900; font-size: 52px; line-height: .82; color: var(--device); }
 .slip-rows { display: grid; gap: 2px; border-top: 2px dashed var(--fg); padding-top: 8px; }
 .slip-rows .row2 { display: flex; align-items: baseline; gap: 8px; font-size: 11.5px; }
 .slip-rows .dots { flex: 1; border-bottom: 2px dotted var(--line2); transform: translateY(-3px); min-width: 12px; }

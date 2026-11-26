@@ -10,7 +10,8 @@ import monoFont from './fonts/pill-mono.woff2?inline';
 import numFont from './fonts/pill-numeral.woff2?inline';
 
 /**
- * Fonts: tiny subsets of the self-hosted Archivo (condensed numerals) and JetBrains Mono, inlined
+ * Fonts: tiny subsets of the self-hosted Big Shoulders (numerals) and Martian Mono, made by
+ * scripts/pill-fonts.py and inlined
  * in this script and registered from bytes, so nothing is fetched and the page's CSP never applies.
  * Shadow-root @font-face rules are ignored by Chrome, hence document.fonts.
  */

@@ -31,8 +31,8 @@ def make(src, axes, text, dest):
     f.save(dest)
     print(dest, dest.stat().st_size, 'bytes')
 
-make(nm / 'archivo' / 'files' / 'archivo-latin-wdth-normal.woff2', {'wdth': 62, 'wght': 900},
+make(nm / 'big-shoulders' / 'files' / 'big-shoulders-latin-opsz-normal.woff2', {'wght': 900, 'opsz': 72},
      '0123456789~kMB.,-/ ', out / 'pill-numeral.woff2')
 ascii_ = ''.join(chr(c) for c in range(0x20, 0x7f))
-make(nm / 'jetbrains-mono' / 'files' / 'jetbrains-mono-latin-wght-normal.woff2', {'wght': 700},
+make(nm / 'martian-mono' / 'files' / 'martian-mono-latin-wdth-normal.woff2', {'wght': 700, 'wdth': 87.5},
      ascii_ + '·→–…×’', out / 'pill-mono.woff2')
