@@ -1,0 +1,16 @@
+{
+  "what": "Live ONLY_IN_CLOUD table matches (src/lib/ai.ts matchTable) run on https://oneof-app.vercel.app/?eval through Firebase AI Logic with App Check (reCAPTCHA Enterprise). The model may only answer a bundled table key or none; the rate that counts is always the table's own.",
+  "recordedAt": "2026-11-26T16:45:58.114Z",
+  "model": "gemini-3.5-flash-lite (hedged to gemini-3.5-flash)",
+  "userAgent": "Chrome 156 (desktop app browser pane)",
+  "results": [
+    { "attribute": "occupation: ICU charge nurse", "sent": true, "table": "occupation:icu_nurse", "label": "ICU / critical-care nurses", "grade": "C", "ms": 8370 },
+    { "attribute": "occupation: scrubs wearer", "sent": true, "table": "none", "ms": 4056 },
+    { "attribute": "family: parent of toddlers", "sent": true, "table": "none", "ms": 4240 },
+    { "attribute": "rare_hobby: plant enthusiast", "sent": true, "table": "none", "ms": 6644 },
+    { "attribute": "occupation: home cook", "sent": true, "table": "none", "ms": 3756 },
+    { "attribute": "rare_hobby: half-marathon finisher", "sent": true, "table": "hobby:half_marathon", "label": "half-marathon finishers", "grade": "C", "ms": 4322 },
+    { "attribute": "family: mom of twins starting kindergarten", "sent": false, "note": "blocked by the cloud-safe filter before any request" },
+    { "attribute": "work_schedule: works night shifts in a hospital", "sent": false, "note": "blocked by the cloud-safe filter before any request" }
+  ]
+}

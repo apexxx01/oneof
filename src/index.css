@@ -21,7 +21,7 @@
 * { box-sizing: border-box; }
 html { background: var(--bg); scroll-padding-top: calc(var(--bar) + 12px); }
 body { margin: 0; font-optical-sizing: auto; background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
-.num, .big, .stat .v, .tg-v, .by-row b, .rc-stats b, .big3 b, .same-row b, .sc-after b, .field-cap b, .hero-facts b, .mono, .lbl, td, .tbig { font-variant-numeric: tabular-nums; }
+.num, .big, .stat .v, .tg-v, .by-row b, .rc-stats b, .big3 b, .same-row b, .sc-after b, .field-cap b, .hero-facts b, .mono, .lbl, .tbig, td.v, td.num { font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 a { color: inherit; text-underline-offset: 3px; }
 :focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
@@ -655,3 +655,14 @@ button.chip.pick.on .small { color: #000; opacity: .7; }
 .rj-list li.off .rj-text { text-decoration: line-through; color: var(--mut); }
 .rj-list li.off .rj-tags .chip { opacity: .45; }
 @media (max-width: 640px) { .rj-list label { grid-template-columns: auto minmax(0, 1fr); } .rj-list .mono { grid-column: 2; } .rj-text, .rj-tags { grid-column: 2; } }
+
+/* cloud table match */
+.match { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 12px var(--pad); padding: var(--pad); border-top: 2px solid var(--fg); align-items: start; }
+.match p { color: var(--mut); max-width: 56ch; margin-top: 8px; }
+.match .mt { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.match .mt th { text-align: left; font-family: var(--mono); font-stretch: 87.5%; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 2px solid var(--fg); padding: 6px 8px 6px 0; }
+.match .mt td { border-bottom: 1px solid var(--line2); padding: 8px 8px 8px 0; vertical-align: top; }
+.match .mt td.mono { font-size: 12.5px; }
+.match .mt b { color: var(--cloud); }
+.match > a { grid-column: 2; justify-self: end; }
+@media (max-width: 900px) { .match { grid-template-columns: minmax(0, 1fr); } .match > a { grid-column: 1; } }

@@ -7,6 +7,7 @@ import type { Attribute, CrowdEstimate, Grade, Post as CorePost } from '../lib/t
 /** p1.json posts carry the subreddit as `subreddit`. */
 type Post = CorePost & { subreddit?: string };
 import { COMMITTED, PREFILTER, REPO, receiptUrl } from '../eval/receipts';
+import matchReceipt from '../../receipts/cloud-match-2026-11-26.json';
 import { recheck, type Replay } from '../lib/replay';
 import { CrowdField } from './CrowdField';
 import { FIELD_N, fieldBase, litCount } from './crowd';
@@ -298,9 +299,24 @@ function Words({ postBytes, postsTotal, onDevice }: { postBytes: number; postsTo
           <div className="wd-k"><span className="badge b-cloud">IN CLOUD</span><span className="lbl mut">Gemini via Firebase</span></div>
           <p className="mut small">The exact request, nothing more:</p>
           <pre className="wd-req">{'occupation: registered nurse\nUnited States'}</pre>
-          <p className="small">Answer: how common that is, with a source and a grade. Names, numbers, places, health and dated events are refused before they can be sent.</p>
+          <p className="small">Answer: which cited public table the phrase belongs to, or none. The percentage always comes from that table. Names, numbers, places, health and dated events are refused before they can be sent.</p>
           <p className="small mut">Every request carries an App Check token: reCAPTCHA Enterprise on the web, App Attest on iPhone.</p>
         </div>
+      </div>
+      <div className="match">
+        <div>
+          <span className="lbl mut">The cloud picks the table, never the number</span>
+          <p>When your device finds a detail the bundled tables don’t know, Gemini in the cloud gets only the generic phrase and may answer with one of the cited tables, or “none”. The answer is locked to that list, so the percentage that counts always comes from a public table. Live calls through Firebase AI Logic, recorded {matchReceipt.recordedAt.slice(0, 10)}:</p>
+        </div>
+        <table className="mt">
+          <thead><tr><th>Generic phrase sent</th><th>Cloud chose</th></tr></thead>
+          <tbody>
+            {matchReceipt.results.map((r) => (
+              <tr key={r.attribute}><td className="mono">{r.attribute}</td><td>{!r.sent ? <span className="mut">never sent: blocked on the device</span> : r.table === 'none' ? <span className="mut">none: no table contains it, so it doesn’t count</span> : <b>{r.label}</b>}</td></tr>
+            ))}
+          </tbody>
+        </table>
+        <a className="lbl" href={receiptUrl('cloud-match-2026-11-26.json')} target="_blank" rel="noreferrer">receipt</a>
       </div>
       <div className="byt">
         <div className="by-row"><span className="lbl">Read on this device</span><span className="by-bar dev"><i style={{ width: '100%' }} /></span><b>{fmt(postBytes)} B</b></div>
