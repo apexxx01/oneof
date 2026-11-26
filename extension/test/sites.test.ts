@@ -133,3 +133,12 @@ describe('removing and reconciling', () => {
     expect(await reconcile(f.c)).toEqual({ added: [], removed: [] });
   });
 });
+
+import { isPracticeHost } from '../src/shared/sites';
+describe('practice host', () => {
+  it('only the practice hosts auto-load the synthetic demo history', () => {
+    expect(isPracticeHost('apexxx01.github.io')).toBe(true);
+    expect(isPracticeHost('localhost:5173')).toBe(true);
+    for (const h of ['www.reddit.com', 'old.reddit.com', 'news.ycombinator.com', 'github.com', 'evil.github.io']) expect(isPracticeHost(h)).toBe(false);
+  });
+});

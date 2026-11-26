@@ -149,3 +149,9 @@ export async function reconcile(c: SitesChrome): Promise<{ added: string[]; remo
   for (const o of granted) if (!registered.includes(o)) { await registerSite(c, o); added.push(o); }
   return { added, removed };
 }
+
+/** Hosts that serve OneOf's practice composer (a made-up thread). The content script only runs on the
+ * practice path of these hosts, so a draft from them comes from the practice page. */
+export function isPracticeHost(host: string): boolean {
+  return host === 'apexxx01.github.io' || host === 'localhost:5173' || host === 'localhost';
+}

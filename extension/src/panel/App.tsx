@@ -13,6 +13,7 @@ import { disableSite, enableSite, isBuiltIn, isBuiltInHost, listSites, siteOrigi
 import { loadHistory, NO_HISTORY, saveHistory, type StoredHistory } from '../shared/history';
 import { DraftEngine, MAX_HISTORY_POSTS, verdictFor, type DraftAnalysis } from './engine';
 import { loadDemo } from './demo';
+import { isPracticeHost } from '../shared/sites';
 import { watchNetwork } from './netwatch';
 import { connectEngine } from './port';
 
@@ -45,6 +46,8 @@ export function App() {
   const abort = useRef<AbortController | null>(null);
   const link = useRef<Link | null>(null);
   const last = useRef<Omit<Current, 'a'> | null>(null);
+  const histRef = useRef<StoredHistory>(NO_HISTORY);
+  const autoDemo = useRef(false);
 
   // Push an analysis to the panel and to the pill of the tab it came from.
   const deliver = (m: Omit<Current, 'a'>) => (a: DraftAnalysis) => {
@@ -63,9 +66,18 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    void loadHistory(chrome.storage.local).then((h) => { engine.setHistory(h.facts); setHistory(h); });
+    void loadHistory(chrome.storage.local).then((h) => { engine.setHistory(h.facts); histRef.current = h; setHistory(h); });
     const l = connectEngine((m) => {
       last.current = { tabId: m.tabId, seq: m.seq, host: m.host, text: m.text };
+      // The practice page is a made-up thread for trying OneOf: if no history is chosen yet, compare
+      // against the synthetic demo persona once, clearly labelled. Never on any other site.
+      if (isPracticeHost(m.host) && histRef.current.source === 'none' && !autoDemo.current) {
+        autoDemo.current = true;
+        void loadDemo(chrome.runtime.getURL('demo/p1-demo.json'))
+          .then((h) => applyHistory({ ...h, label: `Practice page: ${h.label}` }))
+          .catch(() => engine.submit(m.text, deliver(last.current!)));
+        return;
+      }
       engine.submit(m.text, deliver(last.current));
     });
     link.current = l;
@@ -78,6 +90,7 @@ export function App() {
   const applyHistory = async (h: StoredHistory) => {
     await saveHistory(chrome.storage.local, h);
     engine.setHistory(h.facts);
+    histRef.current = h;
     setHistory(h);
     // Re-score the open draft against the new history (cached sentences: no model call).
     if (last.current) { last.current = { ...last.current }; engine.submit(last.current.text, deliver(last.current)); }
