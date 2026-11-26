@@ -6,7 +6,10 @@ import { fromPaste, importFile } from '../../../src/lib/importers';
 import { getLedger, subscribe, summary, type LedgerEntry } from '../../../src/lib/ledger';
 import type { ScanProgress } from '../../../src/lib/run';
 import type { Fact, Post } from '../../../src/lib/types';
-import { GradeBadge, Meter, SourceBadge } from '../../../src/ui/bits';
+import { GradeBadge, Meter, SourceBadge, ThemeToggle } from '../../../src/ui/bits';
+import { CrowdField } from '../../../src/ui/CrowdField';
+import { fieldBase } from '../../../src/ui/crowd';
+import { disableSite, enableSite, isBuiltIn, isBuiltInHost, listSites, siteOrigin, type SitesChrome } from '../shared/sites';
 import { loadHistory, NO_HISTORY, saveHistory, type StoredHistory } from '../shared/history';
 import { DraftEngine, MAX_HISTORY_POSTS, verdictFor, type DraftAnalysis } from './engine';
 import { loadDemo } from './demo';
@@ -114,11 +117,18 @@ export function App() {
     el.click();
   };
 
+  const base = fieldBase(hd.region);
+  const shrinks = !!a && !a.blocked && a.after.p50 < a.before.p50;
+  const fieldNow = a ? a.before : before;
+  const host = cur?.host.replace(/^www\./, '');
+
   return (
     <div className="xp">
-      <header className="xp-top">
-        <div className="brand"><span className="logo">OneOf</span><span className="xp-tag">check before you post</span></div>
-        <NanoPill avail={avail} />
+      <header className="top xp-top">
+        <div className="brand" aria-label="OneOf"><span className="mark" aria-hidden>1/</span><span className="word">OneOf</span></div>
+        <div className="top-fill" />
+        <NanoCell avail={avail} />
+        <ThemeToggle />
       </header>
 
       <NanoBanner avail={avail} dl={dl} onDownload={async () => {
@@ -126,113 +136,198 @@ export function App() {
         try { await prepareOnDevice((p) => setDl(p)); setAvail(await onDeviceAvailability()); } catch (e) { setMsg((e as Error).message); } finally { setDl(null); }
       }} />
 
-      <section className="card xp-draft">
-        <div className="eyebrow mono">This draft{cur ? ` · ${cur.host.replace(/^www\./, '')}` : ''} · read on this computer</div>
-        {!cur && <p className="small muted">Start writing a comment or post on Reddit. When you pause, Gemini Nano reads it here, inside this panel, and the pill next to the box shows what it gives away.</p>}
+      <section className="card primary xp-draft">
+        <div className="card-k"><span className="lbl">This draft{host ? ` on ${host}` : ''}</span><SourceBadge source="on_device" /></div>
+        {!cur && <p className="small">Start writing a post or comment on Reddit, the practice page, or a site you turned on below. When you pause, Gemini Nano reads it here, inside this panel, and the pill next to the box shows what it gives away.</p>}
         {cur && a && (
           <>
             <blockquote className="xp-text">{cur.text.length > 320 ? `${cur.text.slice(0, 320)}…` : cur.text}</blockquote>
-            <div className="draft-status mono">
-              {a.blocked ? 'not checked: drafts are read only on this device, and Gemini Nano isn’t ready'
-                : a.pending ? `reading on-device… ${a.read}/${a.sentences} sentences`
-                  : a.facts.length ? `${a.facts.length} detail${a.facts.length === 1 ? '' : 's'} found in ${a.sentences} sentence${a.sentences === 1 ? '' : 's'}` : 'no identifying details found'}
-              {a.failed > 0 && <span className="warn-text"> · {a.failed} not read (model busy)</span>}
-              {a.error && !a.blocked && <span className="err"> · {a.error}</span>}
+            <div className="draft-status">
+              {a.blocked ? 'Not checked: drafts are read only on this device, and Gemini Nano isn’t ready'
+                : a.pending ? `Reading on-device: ${a.read} of ${a.sentences} sentences`
+                  : a.facts.length ? `${a.facts.length} detail${a.facts.length === 1 ? '' : 's'} found in ${a.sentences} sentence${a.sentences === 1 ? '' : 's'}` : 'No identifying details found'}
+              {a.failed > 0 && <span className="warn-text"> {a.failed} not read (model busy)</span>}
+              {a.error && !a.blocked && <span className="err"> {a.error}</span>}
             </div>
             <DetailChips a={a} />
-            <div className="xp-meters">
-              <Meter e={a.before} compact label={history.source === 'none' ? 'Before: all US adults' : 'Before this draft'} />
-              <div className="arrow mono">↓</div>
-              {a.blocked
-                ? <div className="not-checked"><div className="eyebrow mono">If you post it</div><p className="mono">not checked</p></div>
-                : <Meter e={a.after} compact label="If you post it" />}
-            </div>
-            {a.combines.length > 0 && (
-              <div className="combines">Combines with your history: {a.combines.map((x) => <span key={x.rate.key} className="chip">{x.rate.label} · {x.firstSeen.slice(0, 4)}</span>)}</div>
-            )}
-            <div className="row">
-              <button className="primary" disabled={blurBusy || a.blocked || avail !== 'available'} title="Rewrite on this device" onClick={async () => {
-                setBlurBusy(true); setMsg(null);
-                try { const r = await engine.blur(cur.text); setBlur({ forText: cur.text, ...r }); } catch (e) { setMsg((e as Error).message); } finally { setBlurBusy(false); }
-              }}>{blurBusy ? 'Blurring on-device…' : 'Blur it (on-device)'}</button>
-            </div>
-            {blur && (
-              <div className="blur">
-                <div className="mono small">REWRITE · <SourceBadge source={blur.source} />{blur.forText !== cur.text && <span className="warn-text"> · for an earlier version of the draft</span>}</div>
-                <p className="xp-rewrite">{blur.rewrite}</p>
-                {blur.removed.length > 0 && <div className="small muted">blurred: {blur.removed.join(', ')}</div>}
-                <div className="row">
-                  <button onClick={() => link.current?.post({ kind: 'apply-rewrite', tabId: cur.tabId, text: blur.rewrite })}>Put it in the composer</button>
-                  <button className="ghost" onClick={() => navigator.clipboard.writeText(blur.rewrite).then(() => setMsg('Copied.'), () => setMsg('Copy failed.'))}>Copy</button>
-                </div>
-              </div>
-            )}
           </>
         )}
-        {msg && <p className="small muted">{msg}</p>}
+        <figure className="field-fig xp-field">
+          <div className="field-box"><CrowdField p50={fieldNow.p50} base={base} band={fieldNow.band} preview={shrinks ? a!.after.p50 : null} /></div>
+          {shrinks && <figcaption><span><i className="key pre" />darkened if you post it</span></figcaption>}
+        </figure>
+        <div className="xp-meters">
+          <Meter e={fieldNow} compact scale={false} label={history.source === 'none' ? 'All US adults' : 'Before this draft'} />
+          {a && (a.blocked
+            ? <div className="not-checked"><div className="lbl mut">If you post it</div><div className="num">not checked</div></div>
+            : <Meter e={a.after} compact scale={false} label="If you post it" />)}
+        </div>
+        {a && a.combines.length > 0 && (
+          <div className="combines"><span className="lbl">Combines with your history</span><div className="chips">{a.combines.map((x) => <span key={x.rate.key} className="chip">{x.rate.label} <span className="cat">{x.firstSeen.slice(0, 4)}</span></span>)}</div></div>
+        )}
+        {cur && a && (
+          <div className="row">
+            <button className="primary" disabled={blurBusy || a.blocked || avail !== 'available'} title="Rewrite on this device" onClick={async () => {
+              setBlurBusy(true); setMsg(null);
+              try { const r = await engine.blur(cur.text); setBlur({ forText: cur.text, ...r }); } catch (e) { setMsg((e as Error).message); } finally { setBlurBusy(false); }
+            }}>{blurBusy ? 'Blurring on this device' : 'Blur it on this device'}</button>
+          </div>
+        )}
+        {cur && blur && (
+          <div className="blur">
+            <div className="lbl">Rewrite <SourceBadge source={blur.source} />{blur.forText !== cur.text && <span className="warn-text"> for an earlier version of the draft</span>}</div>
+            <p className="xp-rewrite">{blur.rewrite}</p>
+            {blur.removed.length > 0 && <div className="small mut">Blurred: {blur.removed.join(', ')}</div>}
+            <div className="row">
+              <button className="ghost" onClick={() => link.current?.post({ kind: 'apply-rewrite', tabId: cur.tabId, text: blur.rewrite })}>Put it in the composer</button>
+              <button className="ghost" onClick={() => navigator.clipboard.writeText(blur.rewrite).then(() => setMsg('Copied.'), () => setMsg('Copy failed.'))}>Copy</button>
+            </div>
+          </div>
+        )}
+        {msg && <p className="small mut">{msg}</p>}
       </section>
 
-      <section className="xp-ledger">
-        <div className="mono xp-zero"><b>{ds.postBytesOut}</b> bytes of this draft left your computer</div>
-        <div className="small muted mono">{all.onDevice} on-device call{all.onDevice === 1 ? '' : 's'} · {all.cloud} cloud · {net.length} network request{net.length === 1 ? '' : 's'} from this panel{all.total ? <> · <a href="#" onClick={(e) => { e.preventDefault(); exportReceipts(); }}>export receipts</a></> : null}</div>
+      <section className="xp-slip">
+        <div className="xp-zero"><span className="tbig">{ds.postBytesOut} B</span><span className="lbl">of this draft left your computer</span></div>
+        <div className="slip-rows">
+          <div className="row2"><span>On-device calls</span><span className="dots" /><b>{all.onDevice}</b></div>
+          <div className="row2"><span>Cloud calls</span><span className="dots" /><b>{all.cloud}</b></div>
+          <div className="row2"><span>Network requests from this panel</span><span className="dots" /><b>{net.length}</b></div>
+        </div>
         {net.length > 0 && <pre className="payload">{net.join('\n')}</pre>}
+        {all.total > 0 && <button className="link small" onClick={exportReceipts}>Export receipts</button>}
       </section>
+
+      <Sites />
 
       <section className="card">
-        <div className="eyebrow mono">Compared against</div>
-        <div className="xp-source">
-          {history.source === 'demo' && <span className="tag">SYNTHETIC</span>}
-          {history.source === 'pasted' && <span className="badge b-device">YOUR POSTS · ON DEVICE</span>}
-          {history.source === 'none' && <span className="badge b-muted">NO HISTORY</span>}
-          <span className="small">{history.label}</span>
+        <div className="card-k"><span className="lbl">Compared against</span>
+          {history.source === 'demo' && <span className="tag">Synthetic</span>}
+          {history.source === 'pasted' && <SourceBadge source="on_device" />}
         </div>
+        <p className="small">{history.label}</p>
         {history.source !== 'none' && (
           <>
-            <Meter e={before} compact label="Your crowd before any draft" />
-            <div className="small muted mono">{history.facts.length} facts kept · {hd.attributes.length} counted · region {hd.region.label}</div>
+            <Meter e={before} compact scale label="Your crowd before any draft" />
+            <div className="small mut mono">{history.facts.length} facts kept, {hd.attributes.length} counted. Region: {hd.region.label}.</div>
             <div className="chips">
               {hd.attributes.map((x) => <span key={x.rate.key} className="chip" title={x.rate.source}>{x.rate.label} <GradeBadge grade={x.rate.grade} /></span>)}
             </div>
           </>
         )}
-        <div className="xp-choices">
-          <button className={history.source === 'demo' ? 'on' : ''} disabled={!!scan} onClick={async () => { try { await applyHistory(await loadDemo(chrome.runtime.getURL('demo/p1-demo.json'))); } catch (e) { setMsg(`Demo history failed to load: ${(e as Error).message}`); } }}>
-            Use the demo history <span className="tag">SYNTHETIC</span>
+        <div className="xp-choices" role="group" aria-label="History to compare against">
+          <button className={history.source === 'demo' ? 'on' : ''} aria-pressed={history.source === 'demo'} disabled={!!scan} onClick={async () => { try { await applyHistory(await loadDemo(chrome.runtime.getURL('demo/p1-demo.json'))); } catch (e) { setMsg(`Demo history failed to load: ${(e as Error).message}`); } }}>
+            Use the demo history <span className="tag">Synthetic</span>
           </button>
-          <button className={pasteOpen || history.source === 'pasted' ? 'on' : ''} disabled={!!scan} onClick={() => setPasteOpen((x) => !x)}>Paste my posts</button>
-          <button className={history.source === 'none' ? 'on' : ''} disabled={!!scan} onClick={() => applyHistory({ ...NO_HISTORY })}>No history</button>
+          <button className={pasteOpen || history.source === 'pasted' ? 'on' : ''} aria-pressed={history.source === 'pasted'} disabled={!!scan} onClick={() => setPasteOpen((x) => !x)}>Paste my posts</button>
+          <button className={history.source === 'none' ? 'on' : ''} aria-pressed={history.source === 'none'} disabled={!!scan} onClick={() => applyHistory({ ...NO_HISTORY })}>No history</button>
         </div>
         {pasteOpen && (
           <div className="xp-paste">
             <textarea rows={6} value={paste} disabled={!!scan} onChange={(e) => { setPaste(e.target.value); setFilePosts(null); }} placeholder="Paste your old posts or comments here, separated by blank lines. They're read on this computer and never stored; only the details found are kept." />
-            <label className="small muted xp-file">or choose your Reddit data export (.zip), a .json or a .csv
+            <label className="small mut xp-file">Or choose your Reddit data export (.zip), a .json or a .csv
               <input type="file" accept=".zip,.json,.csv,.txt" disabled={!!scan} onChange={async (e) => {
                 const f = e.target.files?.[0];
                 if (!f) return;
-                try { const r = await importFile(f); setPaste(''); setFilePosts({ posts: r.posts, note: `${r.posts.length} posts from ${r.format}${r.skippedFiles.length ? ` · ${r.skippedFiles.length} other files listed, never opened` : ''}` }); } catch (err) { setMsg(`Couldn’t read that file: ${(err as Error).message}`); }
+                try { const r = await importFile(f); setPaste(''); setFilePosts({ posts: r.posts, note: `${r.posts.length} posts from ${r.format}${r.skippedFiles.length ? `. ${r.skippedFiles.length} other files listed, never opened` : ''}` }); } catch (err) { setMsg(`Couldn’t read that file: ${(err as Error).message}`); }
               }} />
             </label>
-            {filePosts && <div className="small import-note">{filePosts.note}</div>}
+            {filePosts && <div className="import-note">{filePosts.note}</div>}
             {!scan ? (
               <button className="primary" disabled={avail !== 'available' || (!paste.trim() && !filePosts)} onClick={() => runScan(filePosts?.posts ?? fromPaste(paste))}>
-                Read on this device (up to {MAX_HISTORY_POSTS} posts)
+                Read up to {MAX_HISTORY_POSTS} posts on this device
               </button>
             ) : (
-              <div>
+              <div className="stack">
                 <div className="bar"><div style={{ width: `${(scan.done / Math.max(1, scan.considered)) * 100}%` }} /></div>
-                <div className="small muted mono">{scan.done}/{scan.considered} read · {scan.facts.length} facts{scan.cooling ? ' · letting Gemini Nano cool down' : ''}{scan.paused ? ' · paused while hidden' : ''}</div>
+                <div className="note">{scan.done} of {scan.considered} read, {scan.facts.length} facts.{scan.cooling ? ' Letting Gemini Nano cool down.' : ''}{scan.paused ? ' Paused while hidden.' : ''}</div>
                 <button className="ghost" onClick={() => abort.current?.abort()}>Stop and keep what’s read</button>
               </div>
             )}
-            {avail !== 'available' && <p className="small muted">Needs Gemini Nano: your posts are never sent anywhere else.</p>}
+            {avail !== 'available' && <p className="small mut">Needs Gemini Nano: your posts are never sent anywhere else.</p>}
           </div>
         )}
       </section>
 
-      <footer className="small muted">
+      <footer className="small mut xp-foot">
         Ranges are estimates from bundled, cited tables (P10–P90), never a verdict. OneOf never outputs a name or an identity guess. Every model call here runs on Gemini Nano through Firebase AI Logic with <span className="mono">ONLY_ON_DEVICE</span>; this extension makes no cloud calls.
       </footer>
     </div>
+  );
+}
+
+const SUGGESTED = ['news.ycombinator.com', 'x.com', 'www.linkedin.com', 'github.com', 'discord.com', 'mail.google.com'];
+
+/** Where drafts are checked: built-in hosts, sites the user turned on, and the open tab. */
+function Sites() {
+  const c = chrome as unknown as SitesChrome;
+  const [tab, setTab] = useState<{ id?: number; url?: string } | null>(null);
+  const [list, setList] = useState<string[]>([]);
+  const [typed, setTyped] = useState('');
+  const [note, setNote] = useState<string | null>(null);
+  const getTab = async () => {
+    const [t] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+    return t ? { id: t.id, url: t.url } : undefined;
+  };
+  const refresh = () => { void getTab().then((t) => setTab(t ?? null)); void listSites(c).then(setList).catch(() => undefined); };
+  useEffect(() => {
+    refresh();
+    const onAct = () => refresh();
+    const onUpd = (_: number, info: { status?: string; url?: string }) => { if (info.status === 'complete' || info.url) refresh(); };
+    chrome.tabs.onActivated.addListener(onAct);
+    chrome.tabs.onUpdated.addListener(onUpd);
+    chrome.permissions.onAdded.addListener(onAct);
+    chrome.permissions.onRemoved.addListener(onAct);
+    return () => {
+      chrome.tabs.onActivated.removeListener(onAct); chrome.tabs.onUpdated.removeListener(onUpd);
+      chrome.permissions.onAdded.removeListener(onAct); chrome.permissions.onRemoved.removeListener(onAct);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const here = siteOrigin(tab?.url);
+  const builtIn = isBuiltIn(tab?.url);
+  const typedOrigin = siteOrigin(typed);
+  const target = here && !builtIn ? here : typedOrigin && !isBuiltInHost(typedOrigin) ? typedOrigin : null;
+  const on = !!here && list.includes(here);
+  const hostOf = (o: string) => new URL(o).host;
+  return (
+    <section className="card xp-sites">
+      <div className="card-k"><span className="lbl">Where drafts are checked</span></div>
+      <ul className="site-list">
+        <li><span>reddit.com</span><span className="lbl mut">Built in</span></li>
+        <li><span>OneOf practice page</span><span className="lbl mut">Built in</span></li>
+        {list.map((o) => (
+          <li key={o}><span>{hostOf(o)}</span><button className="link" onClick={async () => { await disableSite(c, o); setNote(`Stopped checking ${hostOf(o)}. Its permission was handed back.`); refresh(); }}>Remove</button></li>
+        ))}
+      </ul>
+      <div className="site-here">
+        <span className="lbl mut">This tab</span>
+        {builtIn ? <p className="small">{tab?.url ? new URL(tab.url).host : ''}: built in, drafts here are checked.</p>
+          : on ? <p className="small">{here && hostOf(here)}: drafts here are checked.</p>
+            : here ? <p className="small"><b>{hostOf(here)}</b> isn’t turned on.</p>
+              : (
+                <>
+                  <input type="text" value={typed} onChange={(e) => setTyped(e.target.value)} placeholder="Site address, e.g. news.ycombinator.com" aria-label="Site address" spellCheck={false} />
+                  <div className="chips">{SUGGESTED.map((h) => <button key={h} className="chip" onClick={() => setTyped(h)}>{h}</button>)}</div>
+                </>
+              )}
+        {!builtIn && !on && (
+          <button className="primary" disabled={!target} onClick={() => {
+            if (!target) return;
+            // permissions.request runs first, synchronously inside this click (Chrome needs the gesture).
+            void enableSite(c, target, getTab).then((r) => {
+              setNote(!r.granted ? 'Not turned on: Chrome’s permission was declined.'
+                : r.error ? `Permission granted, but the script couldn’t be registered: ${r.error}`
+                  : `Checking drafts on ${hostOf(target)}${r.injected ? ', starting with this tab.' : '. Reload its tab if it was already open.'}`);
+              setTyped('');
+              refresh();
+            });
+          }}>Check drafts on this site</button>
+        )}
+        {note && <p className="note">{note}</p>}
+        <p className="small mut">Chrome asks you first. OneOf only reads the box you type in, on the sites listed here, and sends nothing anywhere.</p>
+      </div>
+    </section>
   );
 }
 
@@ -244,9 +339,9 @@ function DetailChips({ a }: { a: DraftAnalysis }) {
   const others = a.facts.filter((f) => !counted.has(f.id));
   return (
     <div className="chips">
-      {a.region && <span className="chip new">+ {a.region.label} <GradeBadge grade={a.region.grade} /></span>}
+      {a.region && <span className="chip on new">+ {a.region.label} <GradeBadge grade={a.region.grade} /></span>}
       {!a.region && places.map((f) => <span key={f.id} className="chip dim" title="Your history already places you here, so it adds nothing new">{CAT_LABEL[f.cat]}: {f.value} · already known</span>)}
-      {a.attrs.map((x) => <span key={x.rate.key} className="chip new" title={x.facts.map((f) => `“${f.quote}”`).join('\n')}>+ {x.rate.label} <SourceBadge source="on_device" /></span>)}
+      {a.attrs.map((x) => <span key={x.rate.key} className="chip on new" title={x.facts.map((f) => `“${f.quote}”`).join('\n')}>+ {x.rate.label} <SourceBadge source="on_device" /></span>)}
       {others.map((f: Fact) => (
         <span key={f.id} className="chip dim" title={LOCAL_ONLY.has(f.cat) ? 'Sensitive: kept on this device and never counted' : 'Found, but no cited base rate, so it doesn’t move the number'}>
           {CAT_LABEL[f.cat] ?? f.cat}: {f.value}
@@ -256,27 +351,25 @@ function DetailChips({ a }: { a: DraftAnalysis }) {
   );
 }
 
-function NanoPill({ avail }: { avail: Availability | 'checking' }) {
-  if (avail === 'available') return <span className="pill ok mono">Gemini Nano · on device</span>;
-  if (avail === 'checking') return <span className="pill mono">checking…</span>;
-  if (avail === 'downloadable' || avail === 'downloading') return <span className="pill warn mono">Nano {avail}</span>;
-  return <span className="pill off mono">no on-device model</span>;
+function NanoCell({ avail }: { avail: Availability | 'checking' }) {
+  const [sq, label] = avail === 'available' ? ['ok', 'on device'] : avail === 'checking' ? ['', 'checking'] : avail === 'downloadable' || avail === 'downloading' ? ['warn', avail === 'downloading' ? 'downloading' : 'not downloaded'] : ['bad', 'not here'];
+  return <span className="cell" title="Gemini Nano via Chrome built-in AI"><i className={`sq ${sq}`} aria-hidden /><span className="k">Nano</span><b>{label}</b></span>;
 }
 
 function NanoBanner({ avail, dl, onDownload }: { avail: Availability | 'checking'; dl: number | null; onDownload: () => void }) {
   if (avail === 'available' || avail === 'checking') return null;
   if (avail === 'downloadable' || avail === 'downloading') {
     return (
-      <div className="banner warn">
+      <div className="notice warn">
         Gemini Nano isn’t on this computer yet. OneOf reads drafts only on-device, so it needs the model first (a one-time download by Chrome).
         <div className="row">
-          <button className="primary" disabled={dl !== null} onClick={onDownload}>{dl !== null ? `Downloading… ${Math.round(dl * 100)}%` : 'Download Gemini Nano'}</button>
+          <button className="primary" disabled={dl !== null} onClick={onDownload}>{dl !== null ? `Downloading ${Math.round(dl * 100)}%` : 'Download Gemini Nano'}</button>
         </div>
       </div>
     );
   }
   return (
-    <div className="banner err">
+    <div className="notice err">
       {avail === 'unsupported'
         ? 'This Chrome has no built-in Prompt API. OneOf needs desktop Chrome (138 or later) with Gemini Nano.'
         : 'Gemini Nano can’t run on this computer (Chrome reports it unavailable: hardware, disk space or policy).'}

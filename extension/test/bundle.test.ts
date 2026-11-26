@@ -19,7 +19,9 @@ const built = existsSync(join(dist, 'manifest.json'));
 const read = (p: string) => readFileSync(p, 'utf8');
 const walk = (d: string): string[] => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
 
-const HOSTS = ['https://www.reddit.com/*', 'https://old.reddit.com/*', 'https://sh.reddit.com/*'];
+const HOSTS = ['https://www.reddit.com/*', 'https://old.reddit.com/*', 'https://sh.reddit.com/*', 'https://apexxx01.github.io/oneof/practice/*', 'http://localhost:5173/*'];
+/** Permissions that would let the extension reach the network, read browsing data, or talk to other apps. */
+const NETWORK_CAPABLE = ['webRequest', 'webRequestBlocking', 'webRequestAuthProvider', 'declarativeNetRequest', 'declarativeNetRequestWithHostAccess', 'declarativeNetRequestFeedback', 'proxy', 'cookies', 'history', 'tabs', 'identity', 'identity.email', 'nativeMessaging', 'downloads', 'debugger', 'webNavigation', 'gcm', 'pageCapture', 'tabCapture', 'desktopCapture', 'clipboardRead', 'management', 'bookmarks', 'topSites', 'browsingData', 'privacy', 'enterprise.platformKeys', 'vpnProvider', 'offscreen', 'background'];
 const NETWORK = /\bfetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon|EventSource|importScripts|navigator\.connection/;
 
 describe('extension source', () => {
@@ -72,8 +74,10 @@ describe.skipIf(!built)('built bundle (extension/dist)', () => {
 
   it('asks for minimal permissions', () => {
     expect(manifest.manifest_version).toBe(3);
-    expect([...manifest.permissions].sort()).toEqual(['sidePanel', 'storage']);
+    expect([...manifest.permissions].sort()).toEqual(['activeTab', 'scripting', 'sidePanel', 'storage']);
     expect([...manifest.host_permissions].sort()).toEqual([...HOSTS].sort());
+    // Any other site is opt-in, one origin at a time, from a click in the panel.
+    expect(manifest.optional_host_permissions).toEqual(['https://*/*']);
     expect(manifest.optional_permissions ?? []).toEqual([]);
     expect(manifest.content_scripts).toHaveLength(1);
     expect([...manifest.content_scripts[0].matches].sort()).toEqual([...HOSTS].sort());
@@ -81,11 +85,42 @@ describe.skipIf(!built)('built bundle (extension/dist)', () => {
     expect(manifest.side_panel.default_path).toBe('sidepanel.html');
   });
 
+  it('has no cloud or network capabilities in the manifest', () => {
+    for (const p of [...manifest.permissions, ...(manifest.optional_permissions ?? [])]) expect(NETWORK_CAPABLE, p).not.toContain(p);
+    // Nothing else can message it, embed it or load its files; no remote update or OAuth endpoints.
+    for (const k of ['externally_connectable', 'web_accessible_resources', 'oauth2', 'update_url', 'key', 'sandbox', 'chrome_url_overrides', 'declarative_net_request']) expect(manifest, k).not.toHaveProperty(k);
+    // Optional hosts are https pages to read drafts on, never http(s) wildcards for everything.
+    expect(manifest.optional_host_permissions).not.toContain('<all_urls>');
+    expect(manifest.host_permissions).not.toContain('<all_urls>');
+  });
+
+  it('the built-in host list in the code matches the manifest', async () => {
+    const { BUILT_IN_MATCHES } = await import('../src/shared/sites');
+    const src = JSON.parse(read(join(ext, 'manifest.json')));
+    expect([...BUILT_IN_MATCHES].sort()).toEqual([...src.host_permissions].sort());
+    expect([...BUILT_IN_MATCHES].sort()).toEqual([...HOSTS].sort());
+  });
+
   it('extension pages may connect only to the extension itself', () => {
     const csp: string = manifest.content_security_policy.extension_pages;
     expect(csp).toMatch(/connect-src 'self'(;|$)/);
     expect(csp).toMatch(/script-src 'self'(;|$)/);
-    expect(csp).not.toMatch(/https?:|\*/);
+    expect(csp).toMatch(/default-src 'self'(;|$)/);
+    expect(csp).not.toMatch(/https?:|\*|wss?:/);
+    // Fonts are bundled: no font-src override, so fonts fall back to default-src 'self'.
+    expect(csp).not.toMatch(/font-src/);
+    expect(Object.keys(manifest.content_security_policy)).toEqual(['extension_pages']);
+  });
+
+  it('bundles its fonts (the panel loads only packaged font files; the pill inlines tiny subsets)', () => {
+    const css = all.filter((f) => f.endsWith('.css')).map(read).join('\n');
+    const urls = [...css.matchAll(/url\(([^)]+)\)/g)].map((m) => m[1].replace(/["']/g, ''));
+    expect(urls.length).toBeGreaterThan(0);
+    for (const u of urls) {
+      expect(u).not.toMatch(/^(https?:|data:|\/\/)/);
+      expect(existsSync(join(dist, 'assets', u.replace(/^\.\//, '')))).toBe(true);
+    }
+    expect(read(join(dist, 'content.js'))).toContain('OneOf Pill Numeral');
   });
 
   it('ships every file it loads (no remote scripts or styles)', () => {

@@ -14,7 +14,7 @@ export function Trail({ points, left, threshold = 100, span }: { points: TrailPo
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
-  const W = width, H = width < 500 ? 220 : 260, P = { l: 48, r: 12, t: 16, b: 30 };
+  const W = width, H = width < 500 ? 240 : 300, P = { l: 48, r: 12, t: 24, b: 30 };
   const geo = useMemo(() => {
     if (!points.length) return null;
     // The x-axis covers the whole posting history, not just the dates facts appeared.
@@ -48,35 +48,35 @@ export function Trail({ points, left, threshold = 100, span }: { points: TrailPo
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Crowd size over time">
         {[1, 2, 4, 6, 8].map((e) => (
           <g key={e}>
-            <line x1={P.l} x2={W - P.r} y1={y(10 ** e)} y2={y(10 ** e)} className="grid" />
-            <text x={P.l - 8} y={y(10 ** e) + 4} className="axis" textAnchor="end">{humanCount(10 ** e)}</text>
+            <line x1={P.l} x2={W - P.r} y1={y(10 ** e)} y2={y(10 ** e)} className="gl" />
+            <text x={P.l - 8} y={y(10 ** e) + 4} className="ax" textAnchor="end">{humanCount(10 ** e)}</text>
           </g>
         ))}
-        <line x1={P.l} x2={W - P.r} y1={y(threshold)} y2={y(threshold)} className="threshold" />
-        <text x={P.l + 6} y={y(threshold) - 6} className="axis warn" textAnchor="start">a room ({threshold})</text>
-        <polygon points={band} className="trail-band" />
-        <path d={d50} className="trail-line" />
+        <line x1={P.l} x2={W - P.r} y1={y(threshold)} y2={y(threshold)} className="room-line" />
+        <text x={P.l + 6} y={y(threshold) - 7} className="ax room" textAnchor="start">A ROOM ({threshold})</text>
+        <polygon points={band} className="band" />
+        <path d={d50} className="step" />
         {years.map((yr) => (
-          <text key={yr} x={x(`${yr}-07-01`)} y={H - 10} className="axis" textAnchor="middle">{yr}</text>
+          <text key={yr} x={x(`${yr}-07-01`)} y={H - 10} className="ax" textAnchor="middle">{yr}</text>
         ))}
         {left && (
           <g>
-            <line x1={x(left.date)} x2={x(left.date)} y1={P.t} y2={H - P.b} className="left-line" />
-            <text x={x(left.date) + (x(left.date) > W - 160 ? -6 : 6)} y={P.t + 12} className="axis danger" textAnchor={x(left.date) > W - 160 ? 'end' : 'start'}>
-              {W < 500 ? 'left the crowd' : `you left the crowd · ${left.date.slice(0, 10)}`}
+            <line x1={x(left.date)} x2={x(left.date)} y1={P.t - 4} y2={H - P.b} className="left-line" />
+            <text x={x(left.date) + (x(left.date) > W - 200 ? -8 : 8)} y={P.t - 8} className="ax left" textAnchor={x(left.date) > W - 200 ? 'end' : 'start'}>
+              {W < 500 ? 'LEFT THE CROWD' : `YOU LEFT THE CROWD ${left.date.slice(0, 10)}`}
             </text>
           </g>
         )}
         {points.map((p, i) => (
-          <g key={i} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} onClick={() => setHover(i)} style={{ cursor: 'pointer' }}>
+          <g key={i} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} onClick={() => setHover(i)} onFocus={() => setHover(i)} onBlur={() => setHover(null)} tabIndex={0} role="button" aria-label={`${p.date.slice(0, 10)}: ${p.added[0]}, one of about ${humanCount(p.estimate.p50)}`} className="hit">
             {/* Larger invisible target for fingers. */}
             <circle cx={x(p.date)} cy={y(p.estimate.p50)} r={14} fill="transparent" />
-            <circle cx={x(p.date)} cy={y(p.estimate.p50)} r={hover === i ? 6 : 4} className="trail-pt" />
+            <rect x={x(p.date) - (hover === i ? 7 : 5)} y={y(p.estimate.p50) - (hover === i ? 7 : 5)} width={hover === i ? 14 : 10} height={hover === i ? 14 : 10} className={`pt ${hover === i ? 'on' : ''}`} />
           </g>
         ))}
       </svg>
       <div className="trail-caption mono">
-        {h ? <>{h.date.slice(0, 10)} · + {h.added[0]} → one of ~{humanCount(h.estimate.p50)}</> : 'Hover or tap a crumb to see what each post added.'}
+        {h ? <><b>{h.date.slice(0, 10)}</b> added {h.added[0]}, leaving one of ~<b>{humanCount(h.estimate.p50)}</b></> : 'Hover or tap a crumb to see what each post added.'}
       </div>
     </div>
   );

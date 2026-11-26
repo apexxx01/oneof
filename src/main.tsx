@@ -1,7 +1,13 @@
 import { StrictMode, lazy, Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
+import '@fontsource-variable/archivo/wdth.css';
+import '@fontsource-variable/jetbrains-mono';
 import './index.css';
 import App from './App.tsx';
+import { applyTheme, storedTheme } from './ui/bits';
+
+// A saved theme wins; otherwise the stylesheet follows prefers-color-scheme (dark when unknown).
+applyTheme(storedTheme());
 
 // /?spike keeps the day-1 extraction benchmark reachable for re-running receipts.
 const Spike = lazy(() => import('./spike/S1.tsx'));

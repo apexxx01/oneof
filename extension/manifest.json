@@ -2,22 +2,59 @@
   "manifest_version": 3,
   "name": "OneOf — check before you post",
   "short_name": "OneOf",
-  "version": "0.1.0",
-  "description": "While you write on Reddit, shows how identifiable the draft makes you. Read on-device with Gemini Nano; nothing is sent.",
+  "version": "0.2.0",
+  "description": "While you write a post or comment, shows how identifiable the draft makes you. Read on-device with Gemini Nano; nothing is sent. Works on Reddit, the practice page, and any site you allow.",
   "minimum_chrome_version": "138",
-  "permissions": ["sidePanel", "storage"],
-  "host_permissions": ["https://www.reddit.com/*", "https://old.reddit.com/*", "https://sh.reddit.com/*"],
-  "background": { "service_worker": "sw.js", "type": "module" },
-  "side_panel": { "default_path": "sidepanel.html" },
+  "permissions": [
+    "sidePanel",
+    "storage",
+    "scripting",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://www.reddit.com/*",
+    "https://old.reddit.com/*",
+    "https://sh.reddit.com/*",
+    "https://apexxx01.github.io/oneof/practice/*",
+    "http://localhost:5173/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "sw.js",
+    "type": "module"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
   "action": {
     "default_title": "Open OneOf",
-    "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
-  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
-      "matches": ["https://www.reddit.com/*", "https://old.reddit.com/*", "https://sh.reddit.com/*"],
-      "js": ["content.js"],
+      "matches": [
+        "https://www.reddit.com/*",
+        "https://old.reddit.com/*",
+        "https://sh.reddit.com/*",
+        "https://apexxx01.github.io/oneof/practice/*",
+        "http://localhost:5173/*"
+      ],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }

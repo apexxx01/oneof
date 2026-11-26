@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { extractFromPost, onDeviceAvailability, setPromptOverride, type Availability } from '../lib/ai';
 import { EXTRACT_PROMPT_VERSION, EXTRACT_SYSTEM } from '../lib/prompts';
+import { PageTop } from '../ui/PageTop';
 import { COMMITTED, PREFILTER, receiptUrl } from './receipts';
 import { SYNTHPAI_URL, isTestPersona, isDevPersona, parseJsonl, sampleSet, scoreItem, summarize, countable, type ItemResult, type PaiItem } from './synthpai';
 
@@ -77,62 +78,72 @@ export default function Eval() {
   const pct = (x: number) => `${Math.round(x * 100)}%`;
 
   return (
-    <main className="spike">
-      <a className="home-link" href={import.meta.env.BASE_URL}>← OneOf</a>
-      <h1>Held-out eval · SynthPAI</h1>
-      <p className="small muted">300 synthetic personas, human-labelled. Test split = odd persona ids, never used to write prompts or verify rules. Labels counted: hardness 1–2, certainty ≥ 3. Income has no OneOf category and is excluded.</p>
+    <div className="app spike-page">
+      <PageTop />
+      <section className="sec pad">
+        <span className="lbl mut">Held-out evaluation</span>
+        <h1>SynthPAI, held out</h1>
+        <p className="lede mt">300 synthetic personas, human-labelled. Test split = odd persona ids, never used to write prompts or verify rules. Labels counted: hardness 1–2, certainty ≥ 3. Income has no OneOf category and is excluded.</p>
+      </section>
 
-      <h2>Committed results</h2>
-      <p className="small muted">Read from the receipts in the repo at build time. Shipped extraction prompt: <span className="mono">{EXTRACT_PROMPT_VERSION}</span>.</p>
-      <div className="receipts" style={{ overflowX: 'auto' }}>
-        <table>
-          <thead><tr><th>run</th><th>label recall</th><th>quiet comments with no fact</th><th>latency p50 / p95</th><th>ran on device</th><th>errors</th><th>receipt</th></tr></thead>
-          <tbody>
-            {COMMITTED.map((r) => (
-              <tr key={r.file}>
-                <td>{r.label}</td>
-                <td className="mono">{pct(r.summary.labelRecall)} ({r.summary.hit}/{r.summary.total})</td>
-                <td className="mono">{pct(r.summary.quietRate)} ({r.summary.neg - r.summary.negWithFacts}/{r.summary.neg})</td>
-                <td className="mono">{(r.summary.p50 / 1000).toFixed(1)} s / {(r.summary.p95 / 1000).toFixed(1)} s</td>
-                <td className="mono">{r.summary.onDevice}/{r.summary.n}</td>
-                <td className="mono">{r.summary.errors}</td>
-                <td><a href={receiptUrl(r.file)} target="_blank" rel="noreferrer">{r.file}</a></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {PREFILTER && (
-        <p className="small muted">Keyword prefilter on {PREFILTER.comments.toLocaleString('en-US')} held-out comments: it kept {PREFILTER.revealing.recall} of revealing ones, so it now only orders the scan and never excludes a post. <a href={receiptUrl('heldout-prefilter-synthpai.json')} target="_blank" rel="noreferrer">heldout-prefilter-synthpai.json</a></p>
-      )}
+      <section className="sec">
+        <div className="sec-head"><h2>Committed results</h2><p>Read from the receipts in the repo at build time. Shipped extraction prompt: <span className="mono">{EXTRACT_PROMPT_VERSION}</span>.</p></div>
+        <div className="pad tbl-wrap">
+          <table className="tbl">
+            <thead><tr><th>Run</th><th>Label recall</th><th>Quiet comments with no fact</th><th>Latency p50 / p95</th><th>Ran on device</th><th>Errors</th><th>Receipt</th></tr></thead>
+            <tbody>
+              {COMMITTED.map((r) => (
+                <tr key={r.file}>
+                  <td>{r.label}</td>
+                  <td><span className="big">{pct(r.summary.labelRecall)}</span> {r.summary.hit}/{r.summary.total}</td>
+                  <td><span className="big">{pct(r.summary.quietRate)}</span> {r.summary.neg - r.summary.negWithFacts}/{r.summary.neg}</td>
+                  <td>{(r.summary.p50 / 1000).toFixed(1)} s / {(r.summary.p95 / 1000).toFixed(1)} s</td>
+                  <td>{r.summary.onDevice}/{r.summary.n}</td>
+                  <td>{r.summary.errors}</td>
+                  <td><a href={receiptUrl(r.file)} target="_blank" rel="noreferrer">{r.file}</a></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {PREFILTER && (
+            <p className="small mut mt">Keyword prefilter on {PREFILTER.comments.toLocaleString('en-US')} held-out comments: it kept {PREFILTER.revealing.recall} of revealing ones, so it now only orders the scan and never excludes a post. <a href={receiptUrl('heldout-prefilter-synthpai.json')} target="_blank" rel="noreferrer">heldout-prefilter-synthpai.json</a></p>
+          )}
+        </div>
+      </section>
 
-      <h2>Run it yourself (needs Gemini Nano)</h2>
-      {!nanoReady && <p className="small warn-text mono">{nano === 'checking' ? 'Checking for Gemini Nano…' : 'Gemini Nano isn’t available in this browser, so the runs are off: the cloud baseline would only spend the free tier. Open this page in desktop Chrome with Gemini Nano to reproduce the receipts.'}</p>}
-      <div className="row">
-        <label>per side <input type="number" value={n} min={5} max={200} onChange={(e) => setN(+e.target.value)} /></label>
-        <label><input type="radio" checked={arm === 'on_device'} onChange={() => setArm('on_device')} /> Gemini Nano (ONLY_ON_DEVICE)</label>
-        <label><input type="radio" checked={arm === 'cloud'} onChange={() => setArm('cloud')} /> Cloud baseline (ONLY_IN_CLOUD)</label>
-        <label><select value={split} onChange={(e) => setSplit(e.target.value as 'test' | 'dev')}><option value="test">test split (report)</option><option value="dev">dev split (tune)</option></select></label>
-        <label><select value={which} onChange={(e) => setWhich(e.target.value as 'both' | 'pos' | 'neg')}><option value="both">revealing + quiet</option><option value="pos">revealing only</option><option value="neg">quiet only</option></select></label>
-        <button onClick={run} disabled={!nanoReady || (status !== 'idle' && status !== 'done' && !status.startsWith('Gemini'))} title={nanoReady ? undefined : 'Needs Gemini Nano'}>Run</button>
-        <button className="ghost" onClick={() => (stop.current = true)}>Stop</button>
-        <button className="ghost" disabled={!results.length} onClick={exportReceipt}>Export receipt</button>
-      </div>
-      {split === 'dev' && (
-        <details>
-          <summary className="small">Prompt override (dev split only; empty = shipped prompt {EXTRACT_PROMPT_VERSION})</summary>
-          <textarea rows={10} style={{ width: '100%' }} value={prompt} placeholder={EXTRACT_SYSTEM} onChange={(e) => setPrompt(e.target.value)} />
-        </details>
-      )}
-      <p className="mono">{status}</p>
-      {results.length > 0 && (
-        <pre>{`label recall      ${pct(sum.labelRecall)}  (${sum.hit}/${sum.total} labels caught on revealing comments)
+      <section className="sec">
+        <div className="sec-head"><h2>Run it yourself</h2><p>Needs Gemini Nano. The cloud baseline only runs next to an on-device run.</p></div>
+        <div className="pad stack">
+          {!nanoReady && <p className="locked">{nano === 'checking' ? 'Checking for Gemini Nano' : 'Gemini Nano isn’t available in this browser, so the runs are off: the cloud baseline would only spend the free tier. Open this page in desktop Chrome with Gemini Nano to reproduce the receipts.'}</p>}
+          <div className="controls">
+            <label>Per side <input type="number" value={n} min={5} max={200} onChange={(e) => setN(+e.target.value)} /></label>
+            <label><input type="radio" checked={arm === 'on_device'} onChange={() => setArm('on_device')} /> Gemini Nano (ONLY_ON_DEVICE)</label>
+            <label><input type="radio" checked={arm === 'cloud'} onChange={() => setArm('cloud')} /> Cloud baseline (ONLY_IN_CLOUD)</label>
+            <label><select value={split} onChange={(e) => setSplit(e.target.value as 'test' | 'dev')}><option value="test">test split (report)</option><option value="dev">dev split (tune)</option></select></label>
+            <label><select value={which} onChange={(e) => setWhich(e.target.value as 'both' | 'pos' | 'neg')}><option value="both">revealing + quiet</option><option value="pos">revealing only</option><option value="neg">quiet only</option></select></label>
+          </div>
+          <div className="row">
+            <button className="primary" onClick={run} disabled={!nanoReady || (status !== 'idle' && status !== 'done' && !status.startsWith('Gemini'))} title={nanoReady ? undefined : 'Needs Gemini Nano'}>Run</button>
+            <button className="ghost" onClick={() => (stop.current = true)}>Stop</button>
+            <button className="ghost" disabled={!results.length} onClick={exportReceipt}>Export receipt</button>
+          </div>
+          {split === 'dev' && (
+            <details>
+              <summary>Prompt override (dev split only; empty = shipped prompt {EXTRACT_PROMPT_VERSION})</summary>
+              <textarea rows={10} value={prompt} placeholder={EXTRACT_SYSTEM} onChange={(e) => setPrompt(e.target.value)} />
+            </details>
+          )}
+          <p className="lbl">Status: {status}</p>
+          {results.length > 0 && (
+            <pre className="box">{`label recall      ${pct(sum.labelRecall)}  (${sum.hit}/${sum.total} labels caught on revealing comments)
 quiet comments    ${pct(sum.quietRate)} produced no fact  (${sum.negWithFacts}/${sum.neg} produced at least one)
-latency           p50 ${Math.round(sum.p50)} ms · p95 ${Math.round(sum.p95)} ms
-ran on device     ${sum.onDevice}/${sum.n} · errors ${sum.errors}`}</pre>
-      )}
-      {set && <p className="small muted">Sampled {set.pos.length} revealing + {set.neg.length} quiet comments (seed 7).</p>}
-      <p className="small muted">Note: "quiet" means annotators found none of SynthPAI's 8 attributes. A fact about a pet or hobby there is not necessarily wrong, so this is an upper bound on false alarms.</p>
-    </main>
+latency           p50 ${Math.round(sum.p50)} ms, p95 ${Math.round(sum.p95)} ms
+ran on device     ${sum.onDevice}/${sum.n}, errors ${sum.errors}`}</pre>
+          )}
+          {set && <p className="small mut">Sampled {set.pos.length} revealing + {set.neg.length} quiet comments (seed 7).</p>}
+          <p className="small mut">Note: “quiet” means annotators found none of SynthPAI’s 8 attributes. A fact about a pet or hobby there is not necessarily wrong, so this is an upper bound on false alarms.</p>
+        </div>
+      </section>
+    </div>
   );
 }

@@ -234,3 +234,45 @@ describe('message flow', () => {
     expect(ctl.pill.root.querySelector('.wrap')!.getAttribute('class')).toContain('on');
   });
 });
+
+describe('any site', () => {
+  it(`checks a contenteditable composer (X-style) on another host after the ${DEBOUNCE_MS} ms pause, and ignores a search box`, async () => {
+    document.body.innerHTML = `<input type="search" id="q"><div id="ed" contenteditable="true" role="textbox" aria-multiline="true"><div><span>Twelve years in the ICU.</span></div></div>`;
+    const fc = fakeChrome();
+    installRelay(fc.chromeLike);
+    const panel = fc.openPanel(() => ({ state: 'result', text: 'one of ~50 → ~1 if you post this', tone: 'danger', num: '~1', note: 'was ~50 · if you post this', shrinks: true }));
+    ctl = createController(document, fc.bridge, { host: 'x.com' });
+    const q = document.getElementById('q') as HTMLInputElement;
+    q.value = 'icu nurse columbus twins';
+    q.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    await vi.advanceTimersByTimeAsync(DEBOUNCE_MS + 10);
+    expect(panel.drafts).toHaveLength(0);
+    const ed = document.getElementById('ed')!;
+    ed.querySelector('span')!.textContent = 'Twelve years in the ICU and my twins just started kindergarten.';
+    ed.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+    await vi.advanceTimersByTimeAsync(DEBOUNCE_MS - 100);
+    expect(panel.drafts).toHaveLength(0);
+    await vi.advanceTimersByTimeAsync(110);
+    await flushPromises();
+    expect(panel.drafts).toEqual([{ kind: 'draft', tabId: TAB, seq: 1, text: 'Twelve years in the ICU and my twins just started kindergarten.', host: 'x.com' }]);
+    // The pill: full sentence for screen readers, condensed numeral and mono note on screen, signal when it shrinks.
+    expect(pillText(ctl)).toBe('one of ~50 → ~1 if you post this');
+    expect(ctl.pill.root.querySelector('.num')!.textContent).toBe('~1');
+    expect(ctl.pill.root.querySelector('.note')!.textContent).toBe('was ~50 · if you post this');
+    const cls = ctl.pill.root.querySelector('.wrap')!.getAttribute('class')!;
+    expect(cls).toContain('rich');
+    expect(cls).toContain('shrinks');
+    expect(cls).toContain('t-danger');
+  });
+
+  it('status-only verdicts render as plain mono text', async () => {
+    document.body.innerHTML = `<textarea></textarea>`;
+    const fc = fakeChrome();
+    installRelay(fc.chromeLike);
+    ctl = createController(document, fc.bridge, { host: 'news.ycombinator.com' });
+    type(document.querySelector('textarea')!, 'My twins start kindergarten in Boise next week.');
+    await vi.advanceTimersByTimeAsync(DEBOUNCE_MS + 10);
+    expect(pillText(ctl)).toBe('Open OneOf to check');
+    expect(ctl.pill.root.querySelector('.wrap')!.getAttribute('class')).toContain('plain');
+  });
+});

@@ -6,33 +6,64 @@
  * or the submit buttons.
  */
 import type { Tone, Verdict } from '../shared/messages';
+import monoFont from './fonts/pill-mono.woff2?inline';
+import numFont from './fonts/pill-numeral.woff2?inline';
 
-const CSS = `
+/**
+ * Fonts: tiny subsets of the self-hosted Archivo (condensed numerals) and JetBrains Mono, inlined
+ * in this script and registered from bytes, so nothing is fetched and the page's CSP never applies.
+ * Shadow-root @font-face rules are ignored by Chrome, hence document.fonts.
+ */
+const FAMILY = { num: 'OneOf Pill Numeral', mono: 'OneOf Pill Mono' };
+let fontsAdded = false;
+function addFonts(doc: Document) {
+  if (fontsAdded || typeof FontFace === 'undefined' || !doc.fonts) return;
+  fontsAdded = true;
+  const bytes = (dataUrl: string) => Uint8Array.from(atob(dataUrl.slice(dataUrl.indexOf(',') + 1)), (c) => c.charCodeAt(0));
+  try {
+    doc.fonts.add(new FontFace(FAMILY.num, bytes(numFont), { weight: '900' }));
+    doc.fonts.add(new FontFace(FAMILY.mono, bytes(monoFont), { weight: '700' }));
+  } catch { /* fall back to system fonts */ }
+}
+
+const MONO = `"${FAMILY.mono}", ui-monospace, Menlo, Consolas, monospace`;
+const NUM = `"${FAMILY.num}", "Arial Narrow", Arial, sans-serif`;
+
+export const CSS = `
 :host { all: initial; }
-.wrap { position: fixed; top: 0; left: 0; display: none; pointer-events: none; z-index: 2147483646; }
+.wrap { position: fixed; top: 0; left: 0; display: none; pointer-events: none; z-index: 2147483646;
+  --bg: #000; --fg: #f5f5f2; --mut: #9b9b9b; --line: #3a3a3a; --signal: #ff4a1c; --device: #1fe07f; --amber: #f5b544; }
+@media (prefers-color-scheme: light) { .wrap { --bg: #fff; --fg: #0a0a0a; --mut: #5e5e5e; --line: #bdbdbd; --signal: #e8380d; --device: #007a3f; --amber: #a86500; } }
 .wrap.on { display: block; }
 .pill { pointer-events: auto; display: inline-flex; align-items: stretch; max-width: min(460px, calc(100vw - 16px));
-  background: #0c0c0d; color: #ecebe6; border: 1px solid #26262a; border-radius: 999px;
-  font: 500 12px/1.2 "Inter Tight", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  box-shadow: 0 6px 24px #0007; overflow: hidden; animation: pop .25s ease; }
+  background: var(--bg); color: var(--fg); border: 2px solid var(--fg); border-radius: 0;
+  box-shadow: 4px 4px 0 var(--fg); font: 700 11px/1.2 ${MONO}; letter-spacing: .06em; text-transform: uppercase;
+  animation: pop .2s ease; }
 @keyframes pop { from { transform: translateY(3px); opacity: 0; } to { transform: none; opacity: 1; } }
-button { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-.main { padding: 6px 4px 6px 7px; min-width: 0; }
-.main:focus-visible, .x:focus-visible { outline: 2px solid #ff5b2e; outline-offset: -2px; }
-.logo { font: 700 10.5px/1 ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace; background: #ff5b2e; color: #120604; border-radius: 6px; padding: 3px 5px; flex: none; }
-.dot { width: 7px; height: 7px; border-radius: 50%; flex: none; background: currentColor; }
-.text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-feature-settings: "tnum"; }
-.x { padding: 0 9px 0 6px; color: #9a988f; font-size: 14px; border-left: 1px solid #26262a; }
-.x:hover { color: #ecebe6; }
-.t-device { color: #39d98a; } .t-signal { color: #ff5b2e; } .t-amber { color: #f5b544; }
-.t-danger { color: #ff4d5e; } .t-muted, .t-idle { color: #9a988f; }
-.t-device .pill { border-color: color-mix(in srgb, #39d98a 45%, transparent); }
-.t-danger .pill { border-color: color-mix(in srgb, #ff4d5e 55%, transparent); }
-.t-signal .pill { border-color: color-mix(in srgb, #ff5b2e 55%, transparent); }
-.t-amber .pill { border-color: color-mix(in srgb, #f5b544 45%, transparent); }
-.text { color: #ecebe6; }
-.checking .dot { animation: blink 1s ease-in-out infinite; }
-@keyframes blink { 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .pill, .checking .sq { animation: none !important; } }
+button { all: unset; cursor: pointer; display: inline-flex; align-items: center; }
+.main { gap: 9px; padding: 0 10px 0 0; min-width: 0; }
+.main:focus-visible, .x:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+.mark { display: grid; place-items: center; align-self: stretch; min-width: 30px; padding: 0 4px; background: var(--fg); color: var(--bg);
+  font: 900 17px/1 ${NUM}; letter-spacing: -.02em; flex: none; }
+.sq { width: 8px; height: 8px; flex: none; background: var(--mut); }
+.lbl { color: var(--mut); flex: none; }
+.num { font: 900 30px/.86 ${NUM}; letter-spacing: -.01em; text-transform: none; padding: 5px 0 2px; flex: none; }
+.note, .text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; padding: 9px 0; }
+.rich .text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); padding: 0; }
+.plain .lbl, .plain .num, .plain .note, .rich .sq { display: none; }
+.x { padding: 0 10px; color: var(--mut); font-size: 15px; border-left: 2px solid var(--fg); }
+.x:hover { color: var(--bg); background: var(--fg); }
+.t-device .sq { background: var(--device); }
+.t-amber .num { color: var(--amber); } .t-amber .sq { background: var(--amber); }
+.t-muted .num { color: var(--mut); }
+.t-signal .num, .shrinks .num { color: var(--signal); }
+.t-danger .num { color: var(--signal); }
+.shrinks .pill { border-color: var(--signal); box-shadow: 4px 4px 0 var(--signal); }
+.shrinks .mark { background: var(--signal); color: #000; }
+.shrinks .x { border-color: var(--signal); }
+.checking .sq { animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .2; } }
 `;
 
 /**
@@ -64,10 +95,13 @@ export function createPill(doc: Document, handlers: { onOpen: () => void; onDism
   const host = doc.createElement('oneof-pill');
   host.setAttribute('data-oneof-pill', '');
   const root = host.attachShadow({ mode: 'closed' });
-  root.innerHTML = `<style>${CSS}</style><div class="wrap" part="wrap"><div class="pill" role="status" aria-live="polite"><button class="main" type="button"><span class="logo">OneOf</span><span class="dot"></span><span class="text"></span></button><button class="x" type="button" aria-label="Hide OneOf for this box" title="Hide for this box">×</button></div></div>`;
+  root.innerHTML = `<style>${CSS}</style><div class="wrap" part="wrap"><div class="pill" role="status" aria-live="polite"><button class="main" type="button"><span class="mark" aria-hidden="true">1/</span><span class="sq" aria-hidden="true"></span><span class="lbl" aria-hidden="true">one of</span><span class="num" aria-hidden="true"></span><span class="note" aria-hidden="true"></span><span class="text"></span></button><button class="x" type="button" aria-label="Hide OneOf for this box" title="Hide for this box">×</button></div></div>`;
+  addFonts(doc);
   const wrap = root.querySelector('.wrap') as HTMLElement;
   const main = root.querySelector('.main') as HTMLElement;
   const text = root.querySelector('.text') as HTMLElement;
+  const num = root.querySelector('.num') as HTMLElement;
+  const note = root.querySelector('.note') as HTMLElement;
   const x = root.querySelector('.x') as HTMLElement;
   let anchor: Element | null = null;
   let editable: Element | null = null;
@@ -103,10 +137,14 @@ export function createPill(doc: Document, handlers: { onOpen: () => void; onDism
       mount();
       anchor = a;
       editable = ed ?? null;
+      // .text carries the whole sentence (the live region screen readers hear); the numeral and
+      // the short note are its visual form.
       text.textContent = v.text;
+      num.textContent = v.num ?? '';
+      note.textContent = v.note ?? '';
       main.title = v.detail ?? v.text;
       main.setAttribute('aria-label', `OneOf: ${v.text}. Open the OneOf side panel.`);
-      wrap.className = `wrap on t-${v.tone satisfies Tone}${v.state === 'checking' ? ' checking' : ''}`;
+      wrap.className = `wrap on t-${v.tone satisfies Tone} ${v.num ? 'rich' : 'plain'}${v.shrinks ? ' shrinks' : ''}${v.state === 'checking' ? ' checking' : ''}`;
       visible = true;
       place();
     },

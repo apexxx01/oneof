@@ -75,7 +75,7 @@ Cost: the pill needs the panel open. With the panel closed the pill says **"Open
 
 | File | Role |
 |---|---|
-| `manifest.json` | MV3 manifest: `sidePanel`, `storage`, three Reddit host patterns, strict CSP (`connect-src 'self'`) |
+| `manifest.json` | MV3 manifest: `sidePanel`, `storage`, `scripting`, `activeTab`, built-in hosts (three Reddit patterns, the practice page, the dev server), optional `https://*/*` granted one origin at a time, strict CSP (`connect-src 'self'`) |
 | `sidepanel.html`, `src/panel/main.tsx`, `src/panel/App.tsx`, `src/panel/panel.css` | Side panel UI (reuses `src/ui/bits.tsx` and `src/index.css`) |
 | `src/panel/engine.ts` | Draft engine: sentence cache, one model call at a time, supersede on new text, verdict text |
 | `src/panel/guard.ts` | Refuses any extension model call the router wouldn't run `ONLY_ON_DEVICE` |
@@ -84,5 +84,6 @@ Cost: the pill needs the panel open. With the panel closed the pill says **"Open
 | `src/background/sw.ts`, `src/background/relay.ts` | Worker: relay + open panel; dev auto-reload |
 | `src/content/index.ts`, `controller.ts`, `composer.ts`, `pill.ts` | Content script |
 | `src/shared/messages.ts`, `src/shared/history.ts` | Message types; history storage |
+| `src/shared/sites.ts` | "Check drafts on this site": per-origin permission request, `scripting.registerContentScripts`, removal, startup reconcile |
 | `scripts/build.ts`, `scripts/demo-file.ts`, `vite.config.ts`, `vitest.config.ts`, `tsconfig.json` | Build and test config |
 | `test/*.test.ts` | Unit tests (see README) |

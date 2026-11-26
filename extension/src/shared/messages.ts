@@ -21,6 +21,12 @@ export interface Verdict {
   tone: Tone;
   /** Longer explanation, used as the pill's tooltip. */
   detail?: string;
+  /** The crowd numeral the pill shows big ("~1"); absent for status-only verdicts. */
+  num?: string;
+  /** The short mono status next to the numeral ("was ~50 · if you post this"). */
+  note?: string;
+  /** The draft makes the crowd smaller: the pill turns signal. */
+  shrinks?: boolean;
 }
 
 // ---- content script -> service worker ----

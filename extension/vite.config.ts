@@ -38,6 +38,9 @@ export function extConfig(pass: Pass, dev: boolean): UserConfig {
       reportCompressedSize: false,
       chunkSizeWarningLimit: 1500, // one local panel bundle; nothing is downloaded
       modulePreload: false,
+      // Never inline assets as data: URLs: the panel's CSP (default-src 'self') would block a data: font.
+      // The pill's fonts are inlined on purpose with ?inline (see src/content/pill.ts).
+      assetsInlineLimit: 0,
     },
   };
   if (pass === 'content') {
@@ -103,20 +106,37 @@ function extensionFiles(dev: boolean): Plugin {
   };
 }
 
-/** A small PNG: the web app's orange logo tile with a dark ring. */
+/** A small PNG of the "1/" mark (same drawing as public/favicon.svg): off-white tile, black 1, signal slash. */
 function icon(size: number): Uint8Array {
+  // The mark on a 32-unit grid; 4×4 supersampling for clean edges at 16 px.
+  const one: Array<[number, number]> = [[8.5, 9.5], [12.5, 7], [15.5, 7], [15.5, 25], [11.5, 25], [11.5, 12.2], [8.5, 13.8]];
+  const slash: Array<[number, number]> = [[19.5, 25], [24, 7], [27.2, 7], [22.7, 25]];
+  const inside = (poly: Array<[number, number]>, x: number, y: number) => {
+    let hit = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const [xi, yi] = poly[i], [xj, yj] = poly[j];
+      if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) hit = !hit;
+    }
+    return hit;
+  };
+  const colour = (x: number, y: number): [number, number, number] => {
+    if (x < 2 || y < 2 || x > 30 || y > 30) return [0x0a, 0x0a, 0x0a];
+    if (inside(one, x, y)) return [0x0a, 0x0a, 0x0a];
+    if (inside(slash, x, y)) return [0xff, 0x4a, 0x1c];
+    return [0xf5, 0xf5, 0xf2];
+  };
   const px = new Uint8Array(size * (size * 4 + 1));
-  const c = (size - 1) / 2, r = size * 0.22;
+  const S = 4;
   for (let y = 0; y < size; y++) {
     px[y * (size * 4 + 1)] = 0;
     for (let x = 0; x < size; x++) {
-      const dx = Math.max(0, Math.abs(x - c) - (c - r)), dy = Math.max(0, Math.abs(y - c) - (c - r));
-      const inTile = dx * dx + dy * dy <= r * r;
-      const d = Math.hypot(x - c, y - c) / size;
-      const ring = d > 0.17 && d < 0.29;
-      const [R, G, B, A] = !inTile ? [0, 0, 0, 0] : ring ? [0x12, 0x06, 0x04, 255] : [0xff, 0x5b, 0x2e, 255];
+      let r = 0, g = 0, b = 0;
+      for (let sy = 0; sy < S; sy++) for (let sx = 0; sx < S; sx++) {
+        const [cr, cg, cb] = colour(((x + (sx + 0.5) / S) / size) * 32, ((y + (sy + 0.5) / S) / size) * 32);
+        r += cr; g += cg; b += cb;
+      }
       const o = y * (size * 4 + 1) + 1 + x * 4;
-      px[o] = R; px[o + 1] = G; px[o + 2] = B; px[o + 3] = A;
+      px[o] = Math.round(r / (S * S)); px[o + 1] = Math.round(g / (S * S)); px[o + 2] = Math.round(b / (S * S)); px[o + 3] = 255;
     }
   }
   const crcTable = Array.from({ length: 256 }, (_, n) => { let k = n; for (let i = 0; i < 8; i++) k = k & 1 ? 0xedb88320 ^ (k >>> 1) : k >>> 1; return k >>> 0; });

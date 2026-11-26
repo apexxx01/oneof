@@ -204,11 +204,12 @@ export function verdictFor(a: DraftAnalysis, opts: { scanning?: boolean } = {}):
       text: `one of ~${before} → ~${after} if you post this`,
       tone: toneFor(a.after.band),
       detail: `This draft adds: ${adds.join(', ')}. With your history that leaves about ${after} people (${range}). Read on this computer; 0 bytes sent.`,
+      num: `~${after}`, note: `was ~${before} · if you post this`, shrinks: true,
     };
   }
   if (a.facts.length > 0) {
-    return { state: a.pending ? 'checking' : 'result', text: `one of ~${before} · ${s(a.facts.length, 'detail')} found, not counted`, tone: 'amber', detail: 'OneOf found details in this draft but has no cited base rate for them, so they don’t move the number. Open the panel to see them.' };
+    return { state: a.pending ? 'checking' : 'result', text: `one of ~${before} · ${s(a.facts.length, 'detail')} found, not counted`, tone: 'amber', detail: 'OneOf found details in this draft but has no cited base rate for them, so they don’t move the number. Open the panel to see them.', num: `~${before}`, note: `${s(a.facts.length, 'detail')} found, not counted` };
   }
-  if (a.error) return { state: 'error', text: `one of ~${before} · not fully read`, tone: 'muted', detail: a.error };
-  return { state: a.pending ? 'checking' : 'result', text: `one of ~${before} · no identifying details found`, tone: toneFor(a.before.band), detail: `Nothing in this draft narrows the crowd that OneOf can count. Estimates, not guarantees (${range}).` };
+  if (a.error) return { state: 'error', text: `one of ~${before} · not fully read`, tone: 'muted', detail: a.error, num: `~${before}`, note: 'not fully read' };
+  return { state: a.pending ? 'checking' : 'result', text: `one of ~${before} · no identifying details found`, tone: toneFor(a.before.band), detail: `Nothing in this draft narrows the crowd that OneOf can count. Estimates, not guarantees (${range}).`, num: `~${before}`, note: 'no identifying details found' };
 }

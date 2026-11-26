@@ -1,19 +1,34 @@
 /**
- * Finding the composer the user is typing in, on both Reddit UIs:
+ * Finding the composer the user is typing in, on any site:
  *  - www/sh.reddit.com: shreddit web components. The comment and post editors live inside
  *    open shadow roots (shreddit-composer, faceplate-textarea-input, a Lexical contenteditable).
- *  - old.reddit.com: plain <textarea>s.
- * focusin/input events are composed, so event.composedPath()[0] is the real element even
- * when it sits several shadow roots deep. Pure DOM code: unit-tested under jsdom.
+ *  - old.reddit.com, Hacker News, GitHub comments, forums: plain <textarea>s.
+ *  - X, LinkedIn, Discord web, Gmail compose: a contenteditable (Draft.js, Quill, Slate, Gmail's own).
+ * Ignored: password, search, URL, email and other non-text inputs; search boxes and comboboxes;
+ * read-only or disabled fields; and tiny single-line fields under 40px tall (a name or a subject
+ * line, not a post). focusin/input events are composed, so event.composedPath()[0] is the real
+ * element even when it sits several shadow roots deep. Pure DOM code: unit-tested under jsdom.
  */
 
-export type Editable = HTMLTextAreaElement | HTMLElement;
+export type Editable = HTMLTextAreaElement | HTMLInputElement | HTMLElement;
 
 /** Hosts whose bounding box is a better anchor for the pill than the inner editable. */
 const COMPOSER_HOSTS = 'shreddit-composer, comment-composer-host, faceplate-textarea-input, shreddit-markdown-composer, .usertext-edit';
 
+/** Shorter than this and single-line: a name, subject or chat-style one-liner, not a post. */
+export const MIN_SINGLE_LINE_HEIGHT = 40;
+
 export function isTextarea(el: unknown): el is HTMLTextAreaElement {
   return !!el && (el as Element).nodeType === 1 && (el as Element).localName === 'textarea';
+}
+
+export function isInput(el: unknown): el is HTMLInputElement {
+  return !!el && (el as Element).nodeType === 1 && (el as Element).localName === 'input';
+}
+
+/** A field whose value is the text: <textarea> or a plain text <input>. */
+function isTextField(el: unknown): el is HTMLTextAreaElement | HTMLInputElement {
+  return isTextarea(el) || isInput(el);
 }
 
 function isContentEditable(el: Element): boolean {
@@ -36,11 +51,48 @@ export function deepActiveElement(doc: Document | ShadowRoot): Element | null {
   return a;
 }
 
-/** Ignore our own pill, hidden fields, read-only boxes and tiny single-line widgets. */
-function usable(el: Editable): boolean {
+const SEARCHY = /\b(search|query|filter)\b/i;
+/** Name/id hints of account fields on a text input (login forms often use type=text). */
+const ACCOUNT = /(user(name)?|login|e-?mail|url|website|password|otp)/i;
+
+/** Single-line by nature: an <input>, a textarea with rows=1, or a textbox that says so. */
+function singleLine(el: Editable): boolean {
+  if (isInput(el)) return true;
+  if (isTextarea(el)) return el.getAttribute('rows') === '1';
+  return el.getAttribute('aria-multiline') === 'false';
+}
+
+/**
+ * Ignore our own pill, hidden, read-only and disabled fields, search boxes, credential and URL
+ * fields, and tiny single-line widgets. Only real post/comment/message boxes get checked.
+ */
+export function usable(el: Editable): boolean {
   if (el.closest?.('[data-oneof-pill]')) return false;
-  if (isTextarea(el)) return !el.readOnly && !el.disabled && el.type !== 'hidden';
-  return el.getAttribute('aria-readonly') !== 'true';
+  const role = (el.getAttribute('role') ?? '').toLowerCase();
+  if (role === 'searchbox' || role === 'combobox') return false;
+  if (el.closest?.('[role="search"], form[role="search"], search')) return false;
+  if (isInput(el)) {
+    // Only free-text inputs; never password, search, url, email, tel, number, hidden…
+    const type = (el.getAttribute('type') ?? 'text').toLowerCase();
+    if (type !== 'text') return false;
+    if ((el.getAttribute('autocomplete') ?? '').match(/username|email|password|one-time-code|url/)) return false;
+    if (ACCOUNT.test(`${el.getAttribute('name') ?? ''} ${el.id}`)) return false;
+  }
+  if (isTextField(el)) {
+    if (el.readOnly || el.disabled) return false;
+    const hint = `${el.getAttribute('name') ?? ''} ${el.getAttribute('placeholder') ?? ''} ${el.getAttribute('aria-label') ?? ''} ${el.id}`;
+    if (SEARCHY.test(hint)) return false;
+  } else {
+    if (el.getAttribute('aria-readonly') === 'true' || el.getAttribute('aria-disabled') === 'true') return false;
+    if (SEARCHY.test(el.getAttribute('aria-label') ?? '')) return false;
+  }
+  if (singleLine(el)) {
+    // Inputs must be measured tall enough; textareas/textboxes are skipped only when measured short
+    // (an unrendered box reports 0 and is given the benefit of the doubt).
+    const h = el.getBoundingClientRect?.().height ?? 0;
+    if (isInput(el) ? h < MIN_SINGLE_LINE_HEIGHT : h > 0 && h < MIN_SINGLE_LINE_HEIGHT) return false;
+  }
+  return true;
 }
 
 /**
@@ -51,7 +103,7 @@ export function findEditable(path: readonly EventTarget[]): Editable | null {
   for (const t of path) {
     const el = t as Element;
     if (!el || el.nodeType !== 1) continue;
-    if (isTextarea(el)) return usable(el) ? el : null;
+    if (isTextField(el)) return usable(el) ? el : null;
     if (isContentEditable(el)) {
       const root = editableRoot(el);
       return usable(root) ? root : null;
@@ -72,7 +124,7 @@ const BLOCK = new Set(['p', 'div', 'li', 'ul', 'ol', 'h1', 'h2', 'h3', 'h4', 'h5
  * dependent and missing in jsdom): blocks and <br> become line breaks, hidden bits are skipped.
  */
 export function extractText(el: Editable): string {
-  if (isTextarea(el)) return normalizeText(el.value);
+  if (isTextField(el)) return normalizeText(el.value);
   const out: string[] = [];
   const walk = (n: Node) => {
     if (n.nodeType === 3) {
@@ -128,7 +180,7 @@ export function anchorFor(el: Editable): Element {
 export function replaceText(el: Editable, text: string): boolean {
   el.focus();
   const doc = el.ownerDocument;
-  if (isTextarea(el)) {
+  if (isTextField(el)) {
     el.select();
     if (doc.execCommand?.('insertText', false, text)) return true;
     el.value = text;

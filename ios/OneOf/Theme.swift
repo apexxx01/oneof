@@ -183,8 +183,15 @@ struct CrowdField: View, Animatable {
   }
 }
 
-/// Lit dots for an estimate against its region's adults.
-func crowdLit(_ e: CrowdEstimate, _ r: Region) -> Double { CrowdField.litCount(p50: e.p50, adults: r.population * r.adultShare) }
+/// The population the field starts from: every adult in the country (src/ui/crowd.ts fieldBase). A US region
+/// narrows from all US adults, so naming a county darkens the field too.
+func fieldBase(_ r: Region) -> Double {
+  let country = r.key.split(separator: ":").first.map(String.init) == DEFAULT_REGION.key ? DEFAULT_REGION : r
+  return country.population * country.adultShare
+}
+
+/// Lit dots for an estimate: same mapping, base and shuffle as the web build and the extension.
+func crowdLit(_ e: CrowdEstimate, _ r: Region) -> Double { CrowdField.litCount(p50: e.p50, adults: fieldBase(r)) }
 
 /// "one of ~50" with its range, bits and a hard log meter from 1 to 100M.
 struct Meter: View {

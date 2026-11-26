@@ -3,6 +3,7 @@ import { getGenerativeModel } from 'firebase/ai';
 import { getFirebase, configProblems } from '../lib/firebase';
 import { prefilter } from '../lib/prefilter';
 import { onDeviceExtractor, cloudExtractor, runBatch, quoteVerified, CLOUD_MODEL } from './extract';
+import { PageTop } from '../ui/PageTop';
 import { score, type Predicted, type Score, type Truth } from './score';
 
 interface Persona { id: string; handle: string; posts: { id: string; text: string }[]; truth: Truth[]; traps: Truth[] }
@@ -183,59 +184,75 @@ export default function S1() {
   const gate = (r: RunReport) => {
     const s = r.score;
     if (r.target === 'cloud') return 'baseline';
-    if (s.recall >= 0.7 && s.precision >= 0.8 && r.secPerCallP50 <= 6 && r.validJsonRate >= 0.95) return '✅ GO';
-    if (s.recall >= 0.5) return '🟡 RESCOPE';
-    return '❌ PIVOT';
+    if (s.recall >= 0.7 && s.precision >= 0.8 && r.secPerCallP50 <= 6 && r.validJsonRate >= 0.95) return 'GO';
+    if (s.recall >= 0.5) return 'RESCOPE';
+    return 'PIVOT';
   };
 
   return (
-    <main className="spike">
-      <a className="home-link" href={import.meta.env.BASE_URL}>← OneOf</a>
-      <h1>Spike S1 · on-device extraction</h1>
-      <p className="muted">Synthetic persona only. Measures Gemini Nano (via Firebase AI Logic, ONLY_ON_DEVICE) against a planted answer key, with a cloud baseline.</p>
-      {problems.length > 0 && <div className="warn">{problems.map((p) => <div key={p}>{p}</div>)}</div>}
-
-      <section className="row">
-        <button onClick={load} disabled={busy}>1 · Load persona</button>
-        <button onClick={checkAvailability} disabled={busy}>2 · Check availability</button>
-        <button onClick={prepare} disabled={busy}>3 · Prepare on-device model</button>
-        <button onClick={runSuite} disabled={busy || !persona || !nanoReady} title={needsNano}>4 · Run full suite</button>
-        <button onClick={testGrounding} disabled={busy || !nanoReady} title={needsNano}>5 · Test grounding</button>
-        <button onClick={exportResults} disabled={!reports.length && !grounding}>6 · Download results</button>
+    <div className="app spike-page">
+      <PageTop />
+      <section className="sec pad">
+        <span className="lbl mut">Day-one benchmark</span>
+        <h1>Spike S1: on-device extraction</h1>
+        <p className="lede mt">Synthetic persona only. Measures Gemini Nano (via Firebase AI Logic, ONLY_ON_DEVICE) against a planted answer key, with a cloud baseline.</p>
       </section>
-      <p>Availability: <b>{availability}</b>{download !== null && <> · download {pct(download)}</>}</p>
-      {!nanoReady && <p className="small warn-text mono">Run buttons need Gemini Nano (desktop Chrome). The committed results are in <a href="https://github.com/apexxx01/oneof/blob/main/receipts/s1-nano-promptv2.json" target="_blank" rel="noreferrer">receipts/s1-nano-promptv2.json</a>.</p>}
+      {problems.length > 0 && <div className="notice warn">{problems.map((p) => <div key={p}>{p}</div>)}</div>}
 
-      <section className="row small">
-        Single runs:
-        {([['on_device', 1, 1], ['on_device', 5, 1], ['on_device', 10, 1], ['on_device', 5, 2], ['on_device', 20, 1], ['cloud', 10, 1]] as const).map(([t, b, c]) => (
-          <button key={`${t}${b}${c}`} onClick={() => run(t, b, c)} disabled={busy || !persona || !nanoReady} title={needsNano}>{t} b{b} x{c}</button>
-        ))}
+      <section className="sec">
+        <div className="sec-head"><h2>Run</h2><p>Availability: <b className="mono">{availability}</b>{download !== null && <> (download {pct(download)})</>}</p></div>
+        <div className="pad stack">
+          <div className="controls">
+            <button onClick={load} disabled={busy}>1. Load persona</button>
+            <button onClick={checkAvailability} disabled={busy}>2. Check availability</button>
+            <button onClick={prepare} disabled={busy}>3. Prepare on-device model</button>
+            <button className="primary" onClick={runSuite} disabled={busy || !persona || !nanoReady} title={needsNano}>4. Run full suite</button>
+            <button onClick={testGrounding} disabled={busy || !nanoReady} title={needsNano}>5. Test grounding</button>
+            <button onClick={exportResults} disabled={!reports.length && !grounding}>6. Download results</button>
+          </div>
+          {!nanoReady && <p className="locked">Run buttons need Gemini Nano (desktop Chrome). The committed results are in <a href="https://github.com/apexxx01/oneof/blob/main/receipts/s1-nano-promptv2.json" target="_blank" rel="noreferrer">receipts/s1-nano-promptv2.json</a>.</p>}
+          <div className="controls">
+            <span className="lbl mut">Single runs</span>
+            {([['on_device', 1, 1], ['on_device', 5, 1], ['on_device', 10, 1], ['on_device', 5, 2], ['on_device', 20, 1], ['cloud', 10, 1]] as const).map(([t, b, c]) => (
+              <button key={`${t}${b}${c}`} onClick={() => run(t, b, c)} disabled={busy || !persona || !nanoReady} title={needsNano}>{t} b{b} x{c}</button>
+            ))}
+          </div>
+        </div>
       </section>
 
       {reports.length > 0 && (
-        <table>
-          <thead>
-            <tr><th>run</th><th>gate</th><th>recall</th><th>precision</th><th>traps hit</th><th>extra</th><th>quote fail</th><th>valid JSON</th><th>s/call p50</th><th>p95</th><th>wall s</th><th>source</th><th>errors</th></tr>
-          </thead>
-          <tbody>
-            {reports.map((r, i) => (
-              <tr key={i}>
-                <td>{r.label}</td><td>{gate(r)}</td>
-                <td>{pct(r.score.recall)} ({r.score.tp})</td><td>{pct(r.score.precision)}</td>
-                <td>{r.score.trapHits}</td><td>{r.score.unlabeled}</td><td>{pct(r.score.quoteFailRate)}</td>
-                <td>{pct(r.validJsonRate)}</td>
-                <td>{r.secPerCallP50.toFixed(2)}</td><td>{r.secPerCallP95.toFixed(2)}</td><td>{r.wallSec.toFixed(1)}</td>
-                <td>{Object.entries(r.sources).map(([k, v]) => `${k}:${v}`).join(' ')}</td>
-                <td>{Object.entries(r.errors).map(([k, v]) => `${k}:${v}`).join(' ')}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <section className="sec">
+          <div className="sec-head"><h2>Reports</h2></div>
+          <div className="pad tbl-wrap">
+            <table className="tbl">
+              <thead>
+                <tr><th>Run</th><th>Gate</th><th>Recall</th><th>Precision</th><th>Traps hit</th><th>Extra</th><th>Quote fail</th><th>Valid JSON</th><th>s/call p50</th><th>p95</th><th>Wall s</th><th>Source</th><th>Errors</th></tr>
+              </thead>
+              <tbody>
+                {reports.map((r, i) => (
+                  <tr key={i}>
+                    <td>{r.label}</td><td>{gate(r)}</td>
+                    <td>{pct(r.score.recall)} ({r.score.tp})</td><td>{pct(r.score.precision)}</td>
+                    <td>{r.score.trapHits}</td><td>{r.score.unlabeled}</td><td>{pct(r.score.quoteFailRate)}</td>
+                    <td>{pct(r.validJsonRate)}</td>
+                    <td>{r.secPerCallP50.toFixed(2)}</td><td>{r.secPerCallP95.toFixed(2)}</td><td>{r.wallSec.toFixed(1)}</td>
+                    <td>{Object.entries(r.sources).map(([k, v]) => `${k}:${v}`).join(' ')}</td>
+                    <td>{Object.entries(r.errors).map(([k, v]) => `${k}:${v}`).join(' ')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       )}
 
-      {grounding && <pre>{JSON.stringify(grounding, null, 2)}</pre>}
-      <pre className="log">{log.join('\n')}</pre>
-    </main>
+      <section className="sec">
+        <div className="sec-head"><h2>Log</h2></div>
+        <div className="pad stack">
+          {grounding && <pre className="box">{JSON.stringify(grounding, null, 2)}</pre>}
+          <pre className="box log">{log.join('\n') || 'Nothing yet.'}</pre>
+        </div>
+      </section>
+    </div>
   );
 }

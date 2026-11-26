@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Practice composer · OneOf</title>
+<meta name="description" content="A practice page for the OneOf Chrome extension. Nothing here is posted anywhere." />
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+<!--
+  Practice composer for the OneOf Chrome extension. A made-up forum thread with a reply box, so the
+  extension's pill can be tried without posting anywhere. This page has no network code and no
+  model code: no fetch, no forms that submit, no third-party anything. The extension does the
+  checking, on-device, in its own side panel.
+-->
+<style>
+@font-face { font-family: "Archivo Variable"; font-style: normal; font-display: swap; font-weight: 100 900; font-stretch: 62% 125%; src: url(fonts/archivo-wdth.woff2) format("woff2-variations"); }
+@font-face { font-family: "JetBrains Mono Variable"; font-style: normal; font-display: swap; font-weight: 100 800; src: url(fonts/jetbrains-mono.woff2) format("woff2-variations"); }
+:root {
+  --bg: #000; --fg: #f5f5f2; --mut: #9b9b9b; --faint: #5c5c5c; --line: #232323; --line2: #3a3a3a; --well: #0e0e0e;
+  --signal: #ff4a1c; --device: #1fe07f; --amber: #f5b544;
+  --mono: "JetBrains Mono Variable", ui-monospace, Menlo, monospace;
+  --disp: "Archivo Variable", "Arial Narrow", Arial, sans-serif;
+  --pad: clamp(16px, 2.4vw, 32px);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) { :root { --bg: #fff; --fg: #0a0a0a; --mut: #5e5e5e; --faint: #a3a3a3; --line: #d9d9d9; --line2: #bdbdbd; --well: #f1f1ef; --signal: #e8380d; --device: #007a3f; --amber: #a86500; color-scheme: light; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.5 var(--disp); -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+a { color: inherit; }
+.lbl { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+.mut { color: var(--mut); }
+.top { display: flex; align-items: stretch; height: 56px; border-bottom: 2px solid var(--fg); }
+.brand { display: flex; align-items: center; gap: 10px; padding: 0 var(--pad); border-right: 2px solid var(--fg); text-decoration: none; }
+.mark { display: grid; place-items: center; width: 32px; height: 32px; background: var(--fg); color: var(--bg); font-weight: 900; font-stretch: 62%; font-size: 21px; }
+.word { font-weight: 900; font-size: 23px; font-stretch: 118%; }
+.fill { flex: 1; }
+.cell { display: flex; align-items: center; gap: 8px; padding: 0 14px; border-left: 2px solid var(--fg); }
+.sq { width: 9px; height: 9px; background: var(--amber); }
+.stripe { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 10px var(--pad); background: repeating-linear-gradient(135deg, var(--bg) 0 10px, var(--well) 10px 20px); border-bottom: 2px solid var(--fg); font: 700 13px/1.4 var(--mono); }
+.stripe b { background: var(--fg); color: var(--bg); padding: 2px 8px; letter-spacing: .09em; }
+main { display: grid; grid-template-columns: minmax(0, 1fr) 320px; }
+.thread { padding: var(--pad); border-right: 2px solid var(--fg); min-width: 0; }
+.crumbs { display: flex; gap: 10px; flex-wrap: wrap; color: var(--mut); }
+h1 { margin: 14px 0 6px; font-weight: 900; font-stretch: 62%; font-size: clamp(44px, 6vw, 76px); line-height: .88; letter-spacing: -.01em; text-wrap: balance; }
+.op-meta { display: flex; gap: 0; flex-wrap: wrap; margin: 16px 0 0; }
+.op-meta span { border: 1px solid var(--line2); padding: 3px 8px; margin: 0 -1px -1px 0; }
+.post { border-top: 2px solid var(--fg); padding: 16px 0; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
+.post + .post { border-top: 1px solid var(--line2); }
+.op-meta + .post { margin-top: 18px; }
+.av { width: 44px; height: 44px; display: grid; place-items: center; border: 2px solid var(--fg); font-weight: 900; font-stretch: 62%; font-size: 22px; }
+.who { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.who b { font-weight: 800; }
+.post p { margin: 6px 0 0; font-size: 16px; }
+.reply { margin-top: 8px; border: 2px solid var(--fg); box-shadow: 6px 6px 0 var(--fg); padding: 16px; display: grid; gap: 12px; }
+.reply h2 { margin: 0; font-weight: 900; font-stretch: 62%; font-size: 40px; line-height: .9; }
+label.lbl { display: block; margin-bottom: 6px; color: var(--mut); }
+textarea, input, .rich { width: 100%; background: var(--well); color: var(--fg); border: 2px solid var(--line2); border-radius: 0; padding: 12px; font: 16px/1.5 var(--disp); }
+textarea { min-height: 150px; resize: vertical; }
+textarea:focus, input:focus, .rich:focus { border-color: var(--fg); outline: none; }
+.rich { min-height: 90px; }
+.rich:empty::before { content: attr(data-placeholder); color: var(--faint); }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+button { font: 800 15px/1.2 var(--disp); color: var(--fg); background: transparent; border: 2px solid var(--fg); padding: 10px 16px; cursor: pointer; border-radius: 0; }
+button:hover { background: var(--fg); color: var(--bg); }
+button.primary { background: var(--signal); color: #000; box-shadow: 4px 4px 0 var(--fg); transition: transform .08s, box-shadow .08s; }
+button.primary:hover { background: var(--signal); color: #000; }
+button.primary:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--fg); }
+.said { font: 700 12px/1.5 var(--mono); color: var(--amber); min-height: 18px; }
+aside { padding: var(--pad); display: grid; gap: 18px; align-content: start; }
+aside section { border-top: 2px solid var(--fg); padding-top: 12px; display: grid; gap: 8px; }
+aside h3 { margin: 0; font-weight: 900; font-stretch: 62%; font-size: 30px; line-height: .9; }
+aside p, aside li { font-size: 14px; color: var(--mut); margin: 0; }
+aside ol { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+aside li b { color: var(--fg); }
+.small-input input { padding: 6px 10px; font-size: 14px; height: 34px; }
+footer { border-top: 2px solid var(--fg); padding: 14px var(--pad); font-size: 13px; color: var(--mut); }
+@media (max-width: 860px) { main { grid-template-columns: 1fr; } .thread { border-right: 0; border-bottom: 2px solid var(--fg); } .cell.hide { display: none; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../" aria-label="OneOf home"><span class="mark" aria-hidden="true">1/</span><span class="word">OneOf</span></a>
+  <div class="fill"></div>
+  <span class="cell lbl hide"><i class="sq" aria-hidden="true"></i>Practice composer</span>
+</header>
+<div class="stripe" role="note"><b>PRACTICE</b><span>Practice composer — nothing here is posted anywhere. A made-up thread for trying the OneOf extension.</span></div>
+
+<main>
+  <article class="thread">
+    <div class="crumbs lbl"><span>Forum</span><span>/</span><span>Shift Work Lounge</span><span>/</span><span>Thread</span></div>
+    <h1>Night shift people: what actually helps you sleep after?</h1>
+    <div class="op-meta lbl mut"><span>Started by lamplighter</span><span>3 replies</span><span>Made-up thread</span></div>
+
+    <div class="post">
+      <div class="av" aria-hidden="true">L</div>
+      <div><div class="who"><b>lamplighter</b><span class="lbl mut">Original post</span></div>
+      <p>Three weeks into nights and I'm still waking up at 1pm wired. Blackout curtains, no screens, the works. What's your routine for the drive home and the first hour after?</p></div>
+    </div>
+    <div class="post">
+      <div class="av" aria-hidden="true">G</div>
+      <div><div class="who"><b>graveyard_shift_gus</b><span class="lbl mut">Reply</span></div>
+      <p>Sunglasses on the drive home, even when it's cloudy. Then a small snack, a shower, and straight to bed. Coffee cut-off is four hours before the end of the shift, no exceptions.</p></div>
+    </div>
+    <div class="post">
+      <div class="av" aria-hidden="true">M</div>
+      <div><div class="who"><b>moth_hours</b><span class="lbl mut">Reply</span></div>
+      <p>White noise plus a fan. And I tell everyone I live with that my 2pm is their 2am, so the doorbell is off-limits.</p></div>
+    </div>
+
+    <form class="reply" id="reply" autocomplete="off" aria-labelledby="reply-h">
+      <h2 id="reply-h">Write a reply</h2>
+      <div class="small-input">
+        <label class="lbl" for="name">Display name</label>
+        <input id="name" type="text" value="night_reader" />
+      </div>
+      <div>
+        <label class="lbl" for="body">Reply</label>
+        <textarea id="body" placeholder="Share what works for you. Pause typing and the OneOf pill appears above this box."></textarea>
+      </div>
+      <div>
+        <label class="lbl" id="rich-l">Rich text note (contenteditable)</label>
+        <div class="rich" id="rich" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="rich-l" data-placeholder="The same check works in rich-text editors too."></div>
+      </div>
+      <div class="row">
+        <button type="submit" class="primary">Post reply</button>
+        <button type="button" id="sample">Use a sample draft</button>
+        <button type="button" id="clear">Clear</button>
+      </div>
+      <div class="said" id="said" role="status" aria-live="polite"></div>
+    </form>
+  </article>
+
+  <aside>
+    <section>
+      <span class="lbl mut">How to use this page</span>
+      <h3>Try the pill, post nothing</h3>
+      <ol>
+        <li>Install the OneOf extension and open its side panel (toolbar icon).</li>
+        <li>In the panel, pick <b>Use the demo history</b>.</li>
+        <li>Type in the reply box and pause. The pill shows the crowd you’d be in if you posted.</li>
+        <li>Click the pill for the details, then <b>Blur it on this device</b>.</li>
+      </ol>
+    </section>
+    <section>
+      <span class="lbl mut">What this page does</span>
+      <p>Nothing leaves this page. It has no network or model code, and “Post reply” only says it didn’t post. The extension reads the box you type in, on your device, with Gemini Nano.</p>
+    </section>
+    <section class="small-input">
+      <label class="lbl" for="q">Search this thread</label>
+      <input id="q" type="search" placeholder="Ignored by OneOf" />
+    </section>
+  </aside>
+</main>
+<footer>OneOf practice composer. Made-up people, made-up thread. <a href="../">Back to OneOf</a></footer>
+
+<script>
+  // Local only: nothing here sends anything anywhere.
+  (function () {
+    var body = document.getElementById('body');
+    var said = document.getElementById('said');
+    var sample = 'Twelve years in the ICU and my twins just started kindergarten, so if anyone knows a sitter who covers nights, DM me.';
+    document.getElementById('reply').addEventListener('submit', function (e) {
+      e.preventDefault();
+      said.textContent = 'Not posted. This is a practice page: nothing here is posted anywhere.';
+    });
+    document.getElementById('sample').addEventListener('click', function () {
+      body.focus();
+      body.value = sample;
+      body.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      said.textContent = '';
+    });
+    document.getElementById('clear').addEventListener('click', function () {
+      body.value = '';
+      document.getElementById('rich').textContent = '';
+      body.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+      said.textContent = '';
+    });
+  })();
+</script>
+</body>
+</html>
