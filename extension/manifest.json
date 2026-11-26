@@ -15,6 +15,7 @@
     "https://www.reddit.com/*",
     "https://old.reddit.com/*",
     "https://sh.reddit.com/*",
+    "https://oneof-app.vercel.app/practice/*",
     "https://apexxx01.github.io/oneof/practice/*",
     "http://localhost:5173/*"
   ],
@@ -49,6 +50,7 @@
         "https://www.reddit.com/*",
         "https://old.reddit.com/*",
         "https://sh.reddit.com/*",
+        "https://oneof-app.vercel.app/practice/*",
         "https://apexxx01.github.io/oneof/practice/*",
         "http://localhost:5173/*"
       ],

@@ -19,7 +19,7 @@ const built = existsSync(join(dist, 'manifest.json'));
 const read = (p: string) => readFileSync(p, 'utf8');
 const walk = (d: string): string[] => readdirSync(d).flatMap((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : [join(d, f)]));
 
-const HOSTS = ['https://www.reddit.com/*', 'https://old.reddit.com/*', 'https://sh.reddit.com/*', 'https://apexxx01.github.io/oneof/practice/*', 'http://localhost:5173/*'];
+const HOSTS = ['https://www.reddit.com/*', 'https://old.reddit.com/*', 'https://sh.reddit.com/*', 'https://oneof-app.vercel.app/practice/*', 'https://apexxx01.github.io/oneof/practice/*', 'http://localhost:5173/*'];
 /** Permissions that would let the extension reach the network, read browsing data, or talk to other apps. */
 const NETWORK_CAPABLE = ['webRequest', 'webRequestBlocking', 'webRequestAuthProvider', 'declarativeNetRequest', 'declarativeNetRequestWithHostAccess', 'declarativeNetRequestFeedback', 'proxy', 'cookies', 'history', 'tabs', 'identity', 'identity.email', 'nativeMessaging', 'downloads', 'debugger', 'webNavigation', 'gcm', 'pageCapture', 'tabCapture', 'desktopCapture', 'clipboardRead', 'management', 'bookmarks', 'topSites', 'browsingData', 'privacy', 'enterprise.platformKeys', 'vpnProvider', 'offscreen', 'background'];
 const NETWORK = /\bfetch\s*\(|XMLHttpRequest|WebSocket|sendBeacon|EventSource|importScripts|navigator\.connection/;

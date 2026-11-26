@@ -9,7 +9,7 @@ OneOf reads your own post history with on-device AI, builds the dossier an AI at
 [![CI](https://github.com/apexxx01/oneof/actions/workflows/ci.yml/badge.svg)](https://github.com/apexxx01/oneof/actions/workflows/ci.yml)
 ![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue)
 
-Live demo: **https://apexxx01.github.io/oneof/** (desktop Chrome with Gemini Nano for on-device mode, tested on Chrome 158; other browsers get a labelled replay of a recorded on-device run, or cloud fallback for the synthetic demo)
+Live demo: **https://oneof-app.vercel.app** (mirror: apexxx01.github.io/oneof) (desktop Chrome with Gemini Nano for on-device mode, tested on Chrome 158; other browsers get a labelled replay of a recorded on-device run, or cloud fallback for the synthetic demo)
 
 Chrome extension: [`extension/`](extension/README.md) — checks a Reddit draft in the comment box before you post it, on-device with Gemini Nano, with no network access at all (CSP `connect-src 'self'`).
 
@@ -188,7 +188,7 @@ npm run build                # production build in dist/
 - No `.env.local` is needed to try it: the public Firebase web config is built in, and the recorded replay works offline. Copy `.env.example` to `.env.local` only to point at your own Firebase project.
 - App Check: in dev the console prints a debug token; register it under App Check → Manage debug tokens (never commit it). Set `VITE_APPCHECK=off` to skip App Check for a local run. Production builds read `VITE_RECAPTCHA_ENTERPRISE_SITE_KEY` or `VITE_APPCHECK_DEBUG_TOKEN` from repository variables.
 - `/?replay` offers the recorded run even in a browser that has Nano.
-- A synthetic Reddit export to try the importer: [`quietnight_rn-reddit-export.zip`](https://apexxx01.github.io/oneof/personas/quietnight_rn-reddit-export.zip) (it includes decoy `ip_logs.csv` and `messages.csv` files that OneOf never opens).
+- A synthetic Reddit export to try the importer: [`quietnight_rn-reddit-export.zip`](https://oneof-app.vercel.app/personas/quietnight_rn-reddit-export.zip) (it includes decoy `ip_logs.csv` and `messages.csv` files that OneOf never opens).
 - Cloud model chain: `gemini-3.5-flash-lite` first; on a timeout or quota error, `gemini-3.5-flash`.
 - Click "Download Gemini Nano (one time)" on the home page. The download needs a user gesture.
 - The spike benchmark page is at `/?spike`; the held-out SynthPAI evaluation is at `/?eval`.

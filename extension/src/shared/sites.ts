@@ -21,6 +21,7 @@ export const BUILT_IN_MATCHES = [
   'https://www.reddit.com/*',
   'https://old.reddit.com/*',
   'https://sh.reddit.com/*',
+  'https://oneof-app.vercel.app/practice/*',
   'https://apexxx01.github.io/oneof/practice/*',
   'http://localhost:5173/*',
 ];
@@ -153,5 +154,5 @@ export async function reconcile(c: SitesChrome): Promise<{ added: string[]; remo
 /** Hosts that serve OneOf's practice composer (a made-up thread). The content script only runs on the
  * practice path of these hosts, so a draft from them comes from the practice page. */
 export function isPracticeHost(host: string): boolean {
-  return host === 'apexxx01.github.io' || host === 'localhost:5173' || host === 'localhost';
+  return host === 'oneof-app.vercel.app' || host === 'apexxx01.github.io' || host === 'localhost:5173' || host === 'localhost';
 }

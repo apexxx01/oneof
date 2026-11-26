@@ -53,6 +53,8 @@ describe('siteOrigin', () => {
 
   it('knows the built-in hosts', () => {
     expect(isBuiltIn('https://www.reddit.com/r/nursing/comments/1')).toBe(true);
+    expect(isBuiltIn('https://oneof-app.vercel.app/practice/')).toBe(true);
+    expect(isBuiltIn('https://oneof-app.vercel.app/')).toBe(false);
     expect(isBuiltIn('https://apexxx01.github.io/oneof/practice/')).toBe(true);
     expect(isBuiltIn('https://apexxx01.github.io/oneof/practice')).toBe(true);
     expect(isBuiltIn('http://localhost:5173/practice/')).toBe(true);
@@ -137,8 +139,9 @@ describe('removing and reconciling', () => {
 import { isPracticeHost } from '../src/shared/sites';
 describe('practice host', () => {
   it('only the practice hosts auto-load the synthetic demo history', () => {
+    expect(isPracticeHost('oneof-app.vercel.app')).toBe(true);
     expect(isPracticeHost('apexxx01.github.io')).toBe(true);
     expect(isPracticeHost('localhost:5173')).toBe(true);
-    for (const h of ['www.reddit.com', 'old.reddit.com', 'news.ycombinator.com', 'github.com', 'evil.github.io']) expect(isPracticeHost(h)).toBe(false);
+    for (const h of ['www.reddit.com', 'old.reddit.com', 'news.ycombinator.com', 'github.com', 'evil.github.io', 'oneof-app-evil.vercel.app']) expect(isPracticeHost(h)).toBe(false);
   });
 });

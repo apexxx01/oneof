@@ -4,7 +4,7 @@ While you write a post, comment or message, a small pill next to the box shows h
 
 > **1/** ONE OF **~1** WAS ~50 · IF YOU POST THIS
 
-It works out of the box on Reddit and on the [practice composer](https://apexxx01.github.io/oneof/practice/), and on any other site you turn on (Hacker News, X, LinkedIn, GitHub, Discord web, Gmail…). Click the pill and the OneOf side panel opens with:
+It works out of the box on Reddit and on the [practice composer](https://oneof-app.vercel.app/practice/), and on any other site you turn on (Hacker News, X, LinkedIn, GitHub, Discord web, Gmail…). Click the pill and the OneOf side panel opens with:
 
 - the details found in this draft, as chips (counted ones outlined in signal orange; found but uncounted ones dimmed);
 - a small **crowd field**: 1,600 dots, one lit for every slice of the crowd you could still be. Dots this draft would darken are outlined before you post;
@@ -52,7 +52,7 @@ Chrome downloads Gemini Nano itself, once, as a browser component. That download
 | `storage` | Keeps the history dossier (facts only, never post text) in `chrome.storage.local`. |
 | `scripting` | Registers the content script on sites you turn on, and injects it into the open tab once. |
 | `activeTab` | Lets Chrome show the panel the open tab's address when it grants it, so "Check drafts on this site" can name the site. No install warning, no standing access. |
-| Host access: `www/old/sh.reddit.com`, `apexxx01.github.io/oneof/practice/*`, `localhost:5173` | Built-in sites: Reddit, the practice page, and the dev server's practice page. |
+| Host access: `www/old/sh.reddit.com`, `oneof-app.vercel.app/practice/*`, `apexxx01.github.io/oneof/practice/*`, `localhost:5173` | Built-in sites: Reddit, the practice page, and the dev server's practice page. |
 | Optional: `https://*/*` | Never granted as a whole. Each site you turn on asks Chrome for that one origin (`https://x.com/*`), with Chrome's own prompt. |
 
 No `tabs`, history, cookies, web requests, network rules, `externally_connectable` or web-accessible resources (`test/bundle.test.ts` checks the manifest for each of these).
@@ -72,7 +72,7 @@ What counts as a composer: `<textarea>`s and `contenteditable` editors (Reddit's
 
 ## Practice page
 
-[apexxx01.github.io/oneof/practice/](https://apexxx01.github.io/oneof/practice/) is a made-up forum thread with a reply box, a rich-text box, a short display-name field and a search box (the last two are ignored, on purpose). It is clearly labelled "Practice composer — nothing here is posted anywhere": it has no network or model code, and "Post reply" only says it didn't post. It's built in, so the extension works there with no setup, and **Use a sample draft** fills the reply box with the demo draft. Locally, `npm run dev` serves it at `http://localhost:5173/practice/`, which is built in too.
+[oneof-app.vercel.app/practice/](https://oneof-app.vercel.app/practice/) (mirrored at apexxx01.github.io/oneof/practice/) is a made-up forum thread with a reply box, a rich-text box, a short display-name field and a search box (the last two are ignored, on purpose). It is clearly labelled "Practice composer — nothing here is posted anywhere": it has no network or model code, and "Post reply" only says it didn't post. It's built in, so the extension works there with no setup, and **Use a sample draft** fills the reply box with the demo draft. Locally, `npm run dev` serves it at `http://localhost:5173/practice/`, which is built in too.
 
 ## Install
 
@@ -94,7 +94,7 @@ Tests: `npm run ext:test` (run `npm run ext:build` first so the bundle checks ha
 
 1. Open the OneOf side panel (toolbar icon). The header should say **Gemini Nano · on device**. If it offers **Download Gemini Nano**, click it and wait.
 2. In the panel, click **Use the demo history (SYNTHETIC)**. "Your crowd before any draft" shows about one of ~50.
-3. Open the [practice composer](https://apexxx01.github.io/oneof/practice/) (or a Reddit thread), click into the reply box, and type, for example: `I work nights as an ICU nurse in Columbus. My twins start school in May.` Or click **Use a sample draft**.
+3. Open the [practice composer](https://oneof-app.vercel.app/practice/) (or a Reddit thread), click into the reply box, and type, for example: `I work nights as an ICU nurse in Columbus. My twins start school in May.` Or click **Use a sample draft**.
 4. Pause. After about 1.2 s the pill above the box shows "reading on-device…", then something like **ONE OF ~1 · WAS ~50 · IF YOU POST THIS**, in signal orange because the draft shrinks your crowd.
 5. Click the pill: the panel shows the chips, the crowd field with the dots this draft would darken outlined, before and after, and "0 B of this draft left your computer".
 6. Click **Blur it on this device**, then **Put it in the composer**. The pill re-checks the new text.
