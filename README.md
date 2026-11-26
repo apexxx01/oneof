@@ -11,7 +11,7 @@ OneOf reads your own post history with on-device AI, builds the dossier an AI at
 
 Live site: **https://oneof-app.vercel.app** (mirror: https://apexxx01.github.io/oneof/). It works in any browser: the explainer and the crowd calculator need no AI, browsers without Gemini Nano get a labelled replay of a recorded on-device run, and desktop Chrome with Gemini Nano (tested on Chrome 158) scans live.
 
-Chrome extension: [`extension/`](extension/README.md) — checks the draft in any reply box you allow (Reddit and the [practice page](https://oneof-app.vercel.app/practice/) are built in) before you post it, on-device with Gemini Nano, with no network access at all (CSP `connect-src 'self'`).
+Chrome extension: [`extension/`](extension/README.md) ([download the .zip](https://oneof-app.vercel.app/downloads/oneof-extension.zip), load unpacked) — checks the draft in any reply box you allow (Reddit and the [practice page](https://oneof-app.vercel.app/practice/) are built in) before you post it, on-device with Gemini Nano, with no network access at all (CSP `connect-src 'self'`).
 
 iOS app: [`ios/`](ios/README.md) — SwiftUI on Firebase AI Logic hybrid inference, with Apple Intelligence on-device and Gemini in the cloud. It shares the web core through a golden-tested Swift port. [Receipt: 200/200 posts on-device, 0 cloud, same dossier and same number as the web build](receipts/ios/README.md)
 
@@ -202,8 +202,9 @@ Requirements: Node.js, and desktop Chrome with the Prompt API and Gemini Nano fo
 
 ```bash
 npm ci
-npm test                     # 147 unit, property, regression and privacy-invariant tests
-npm run ext:test             # 65 extension tests (cd ios/OneOfCore && swift test: 18 more, 435 golden cases)
+npm test                     # 147 tests: 82 web (unit, property, regression, privacy invariants) + 65 extension
+npm run ext:build            # the extension's bundle tests run against extension/dist when it exists
+# cd ios/OneOfCore && swift test   → 18 Swift tests over 435 golden cases
 npm run dev                  # http://localhost:5173
 npm run build                # production build in dist/
 ```

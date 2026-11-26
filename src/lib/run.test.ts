@@ -63,7 +63,7 @@ describe('planScan (the live cloud demo limit)', () => {
     expect(dates[0] <= history[20].date).toBe(true);
     expect(dates.at(-1)! >= history[180].date).toBe(true);
   });
-  it('prefers a cue post inside each slice and keeps cue posts first', () => {
+  it('a capped run reads cue posts first and only fills with chatter when they run out', () => {
     const out = planScan(history, 25);
     expect(out.fastPass).toBe(25);
     const mixed = planScan(history, 50);

@@ -12,9 +12,9 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npx tsc -b
+      - run: npm run ext:build
       - run: npx vitest run
       - run: npm run build
-      - run: npm run ext:build
       # The golden fixtures must be what the current TypeScript core produces.
       - run: npx tsx scripts/golden-ios.ts && git diff --exit-code ios/OneOfCore/Tests/OneOfCoreTests/Resources/golden.json
   swift-core:

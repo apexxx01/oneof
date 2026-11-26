@@ -7,7 +7,7 @@ import type { Attribute, CrowdEstimate, Grade, Post as CorePost } from '../lib/t
 /** p1.json posts carry the subreddit as `subreddit`. */
 type Post = CorePost & { subreddit?: string };
 import { COMMITTED, PREFILTER, REPO, receiptUrl } from '../eval/receipts';
-import type { Replay } from '../lib/replay';
+import { recheck, type Replay } from '../lib/replay';
 import { CrowdField } from './CrowdField';
 import { FIELD_N, fieldBase, litCount } from './crowd';
 
@@ -31,12 +31,12 @@ interface Step {
 }
 
 /** Sizes of the test suites at the commit this page ships with (npm test, ext:test, swift test). */
-const SUITE = { web: 147, ext: 65, swift: 18, golden: 435 };
+const SUITE = { web: 82, ext: 65, swift: 18, golden: 435 };
 /** P50 from the iPhone receipt (receipts/ios, Apple Foundation Models, typed generation). */
 const IOS_P50 = '50.13432259896638';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
-const pct = (x: number) => (x * 100 >= 10 ? `${Math.round(x * 100)}%` : `${(x * 100).toFixed(1)}%`);
+const pct = (x: number) => (x * 100 >= 10 ? `${Math.round(x * 100)}%` : x * 100 >= 0.1 ? `${(x * 100).toFixed(1)}%` : `${Number((x * 100).toPrecision(1))}%`);
 const month = (iso: string) => new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 
 /** Eases a number toward its target with rAF; jumps under reduced motion. */
@@ -101,8 +101,9 @@ export function Story({ dossier, replay, onTry }: { dossier: Dossier | null; rep
   const fixed = estimate(dossier.region, dossier.attributes.filter((a) => !fix.includes(a)));
   const fixPosts = new Set(fix.flatMap((a) => a.facts.map((f) => f.postId))).size;
   const postBytes = posts ? [...posts.values()].reduce((s, p) => s + new TextEncoder().encode(p.text).length, 0) : 0;
-  const kept = replay.log.reduce((s, e) => s + e.facts.length, 0);
-  const proposed = kept + replay.rejected;
+  const recorded = replay.log.flatMap((e) => e.facts);
+  const proposed = recorded.length + replay.rejected;
+  const kept = posts ? recheck(recorded, posts).length : recorded.length;
   const years = posts && posts.size ? (() => { const d = [...posts.values()].map((p) => p.date).sort(); return Math.round((Date.parse(d[d.length - 1]) - Date.parse(d[0])) / 3.156e10); })() : 6;
   const msSorted = replay.log.map((e) => e.ms).sort((a, b) => a - b);
   const medianMs = msSorted[Math.floor(msSorted.length / 2)] ?? 0;
@@ -125,7 +126,7 @@ export function Story({ dossier, replay, onTry }: { dossier: Dossier | null; rep
       <Together steps={steps} final={final} fixPosts={fixPosts} fixed={fixed.p50} />
       <Calculator />
       <Words postBytes={postBytes} postsTotal={replay.postsTotal} onDevice={replay.onDevice} />
-      <Checker proposed={proposed} kept={kept} rejected={replay.rejected} />
+      <Checker proposed={proposed} kept={kept} rejected={proposed - kept} />
       <Surfaces final={final} />
       <Receipts replay={replay} medianMs={medianMs} />
       <Limits />
@@ -190,7 +191,7 @@ function Scrolly({ steps, final, leftDate, base, postsTotal }: { steps: Step[]; 
           </div>
           <div className="field-box sc-field"><CrowdField p50={s.est.p50} base={base} band={s.est.band} label={`${litCount(s.est.p50, base)} of ${FIELD_N} dots lit`} /></div>
           <ol className="sc-pips" aria-hidden>
-            {steps.map((x, j) => <li key={j} className={`${j <= i ? 'on' : ''} band-${x.est.band}`}><span>{x.date ? x.date.slice(0, 4) : 'Start'}</span></li>)}
+            {steps.map((x, j) => <li key={j} className={`${j <= i ? 'on' : ''} band-${x.est.band}`}><span>{x.date ? new Date(x.date).toLocaleDateString('en-US', { month: 'short', year: '2-digit', timeZone: 'UTC' }) : 'Start'}</span></li>)}
           </ol>
           {isLast && <p className="sc-left">She left the crowd in {leftDate ? month(leftDate) : 'the end'}. No single post did it.</p>}
         </div>
@@ -336,7 +337,7 @@ function Checker({ proposed, kept, rejected }: { proposed: number; kept: number;
           <i className="rej" style={{ flexGrow: rejected }}><span>{rejected} rejected</span></i>
           <i className="kep" style={{ flexGrow: Math.max(kept, proposed * 0.08) }}><span>{kept} kept</span></i>
         </div>
-        <p className="small mut">From the recorded run of all {fmt(proposed)} claims Gemini Nano made about the demo persona.</p>
+        <p className="small mut">Every claim Gemini Nano made in the recorded run of the demo persona, re-checked by today’s checker (the same check the replay applies).</p>
       </div>
       <div className="ck-traps">
         <div>
@@ -360,23 +361,23 @@ function Surfaces({ final }: { final: CrowdEstimate }) {
       <SecHead k="One core, three places" title={<span id="sf-h">Before you post, wherever you post</span>} />
       <div className="sf">
         <figure>
-          <img src={`${base}shots/web-result.jpg`} alt="OneOf on the web: the result screen showing one of about 50, the crowd field and the crumb trail" loading="lazy" />
+          <a href={`${base}shots/web-result.jpg`} target="_blank" rel="noreferrer"><img src={`${base}shots/web-result.jpg`} alt="OneOf on the web: the result screen showing one of about 50, the crowd field and the crumb trail" loading="lazy" /></a>
           <figcaption><b>Web</b><span>Scan years of history in Chrome with Gemini Nano. Crowd, crumb trail, the math, and the posts to edit.</span></figcaption>
         </figure>
         <figure className="phone">
-          <img src={`${base}shots/ios-dossier.jpg`} alt="OneOf on iPhone: the dossier screen, built with Apple Intelligence" loading="lazy" />
-          <figcaption><b>iPhone</b><span>Native SwiftUI on Firebase’s hybrid API: Apple Intelligence on the phone, Gemini only for public statistics.</span></figcaption>
+          <a href={`${base}shots/ios-dossier.jpg`} target="_blank" rel="noreferrer"><img src={`${base}shots/ios-dossier.jpg`} alt="OneOf on iPhone: the dossier screen, built with Apple Intelligence" loading="lazy" /></a>
+          <figcaption><b>iPhone</b><span>Native SwiftUI on Firebase’s hybrid API: Apple Intelligence on the phone, Gemini only for public statistics. Runs from source in Xcode (shown in the iOS 27.2 simulator); not on the App Store.</span></figcaption>
         </figure>
         <figure>
-          <img src={`${base}shots/ext-pill.jpg`} alt="The OneOf Chrome extension pill over a reply box: one of about 1, was about 50, if you post this" loading="lazy" />
-          <figcaption><b>Chrome extension</b><span>Checks the draft in any reply box you allow, before you hit post. It has no network access at all.</span></figcaption>
+          <a href={`${base}shots/ext-pill.jpg`} target="_blank" rel="noreferrer"><img src={`${base}shots/ext-pill.jpg`} alt="The OneOf Chrome extension pill over a reply box: one of about 1, was about 50, if you post this" loading="lazy" /></a>
+          <figcaption><b>Chrome extension</b><span>Checks the draft in any reply box you allow, before you hit post. It has no network access at all.</span><span><a href={`${base}downloads/oneof-extension.zip`}>Download the extension (.zip)</a>, unzip it, open chrome://extensions, turn on Developer mode and choose Load unpacked. Then try it on <a href={`${base}practice/`}>the practice page</a>. Needs Gemini Nano.</span></figcaption>
         </figure>
       </div>
       <div className="same">
-        <span className="lbl mut">Same dossier, two different on-device models, same answer</span>
+        <span className="lbl mut">Two different on-device models found the same dossier, so the same number</span>
         <div className="same-row"><span className="lbl">Gemini Nano in Chrome, computed in this browser</span><b>{webP50}</b></div>
         <div className="same-row"><span className="lbl">Apple Intelligence on iPhone, from its receipt</span><b>{IOS_P50}</b></div>
-        <p className="small mut">Both platforms run one estimator: a Swift port checked against {SUITE.golden} golden cases generated by the TypeScript core, bit for bit on the random stream.{webP50 === IOS_P50 ? ' Here the two agree to the last digit.' : ' Any difference in the last digit is floating-point rounding between engines.'}</p>
+        <p className="small mut">Both platforms run one estimator: a Swift port checked against {SUITE.golden} golden cases generated by the TypeScript core, bit for bit on the random stream. The estimator is seeded, so the match in the digits proves the two codebases compute the same thing; the match between the models is the dossier itself (the same four details and the same county).{webP50 === IOS_P50 ? '' : ' The last digit differs by floating-point rounding between engines.'}</p>
       </div>
     </section>
   );
@@ -386,7 +387,7 @@ function Surfaces({ final }: { final: CrowdEstimate }) {
 function Receipts({ replay, medianMs }: { replay: Replay; medianMs: number }) {
   const rows = COMMITTED.map((r) => ({
     ...r,
-    name: r.file.includes('cloud') ? 'Cloud baseline' : r.file.includes('x3') ? 'Prompt v3' : r.file.includes('x2r') ? 'Prompt v2r (shipped)' : 'Prompt v2',
+    name: r.file.includes('cloud') ? 'Cloud baseline' : r.file.includes('x3') ? 'Prompt x3' : r.file.includes('x2r') ? 'Prompt x2r' : 'Prompt x2',
     tag: r.file.includes('x3') ? 'rolled back' : r.file.includes('x2r') ? 'shipped' : r.file.includes('cloud') ? `${r.summary.errors}/${r.summary.n} rate-limited` : '',
     fa: r.summary.neg ? r.summary.negWithFacts / r.summary.neg : 0,
   }));
@@ -413,7 +414,7 @@ function Receipts({ replay, medianMs }: { replay: Replay; medianMs: number }) {
         <div className="rc-stats">
           <div><b>{replay.onDevice}/{replay.postsTotal}</b><span>posts read on-device in the recorded run</span></div>
           <div><b>{(replay.totalMs / 60000).toFixed(1)} min</b><span>for six years of history, {(medianMs / 1000).toFixed(1)} s median per post</span></div>
-          <div><b>{SUITE.web + SUITE.ext + SUITE.swift}</b><span>automated tests across web, extension and Swift core, green in CI</span></div>
+          <div><b>{SUITE.web + SUITE.ext + SUITE.swift}</b><span>automated tests ({SUITE.web} web, {SUITE.ext} extension, {SUITE.swift} Swift), plus {SUITE.golden} golden cases, run in CI</span></div>
           <div><b>$0</b><span>Built and run on Firebase’s free plan. On-device inference has no quota.</span></div>
         </div>
       </div>

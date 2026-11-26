@@ -87,7 +87,8 @@ export default function App() {
   const actionRef = useRef<HTMLDivElement>(null);
   const problems = useMemo(configProblems, []);
 
-  useEffect(() => { onDeviceAvailability().then(setAvail); }, []);
+  // Phones and tablets can't run Gemini Nano in Chrome: say so up front instead of offering a download.
+  useEffect(() => { onDeviceAvailability().then((a) => setAvail(coarse && (a === 'downloadable' || a === 'downloading') ? 'unavailable' : a)); }, [coarse]);
   // Browser Back from a scan or result returns to the home page instead of leaving the site.
   useEffect(() => {
     if (phase !== 'home' && history.state?.phase !== phase) history.pushState({ phase }, '');
@@ -253,9 +254,9 @@ export default function App() {
     ]
     : phase === 'result'
       ? [
-        { t: `${plural(posts.length, 'post')} read` },
+        { t: progress?.limited ? `${progress.done} of ${plural(posts.length, 'post')} read` : `${plural(posts.length, 'post')} read` },
         { t: `${plural(facts.length, 'fact')} found` },
-        { t: `${dossier.attributes.length} counted` },
+        { t: `${dossier.attributes.length + (dossier.region.key !== 'us' ? 1 : 0)} counted` },
         { t: `one of ~${humanCount(now.p50)}`, s: true },
         { t: `range ${humanCount(now.p10)}–${humanCount(now.p90)}` },
         { t: `${sentLabel} of your posts sent` },
@@ -306,8 +307,11 @@ export default function App() {
                 OneOf builds that dossier first, <b>on your own device</b>, and shows how small a crowd you’re really hiding in.
               </p>
               <div className="hero-cta">
-                <button className="primary" onClick={scrollToTry}>Try it now</button>
+                {avail === 'available' && !forceReplay
+                  ? <button className="primary" onClick={async () => start((await loadPersona()).posts, 'synthetic')}>Scan the demo person live</button>
+                  : <button className="primary" disabled={!replay} onClick={watchReplay}>Watch a real on-device scan</button>}
                 <a className="ghost-a" href="#story">See how a stranger finds her</a>
+                <a className="hero-own" href="#try" onClick={(e) => { e.preventDefault(); scrollToTry(); }}>Check your own posts</a>
               </div>
               <div className="hero-facts">
                 <div><b>3</b><span>places: web, iPhone, Chrome extension</span></div>
@@ -352,7 +356,7 @@ export default function App() {
                     </>
                   ) : <p className="locked">The recorded run didn’t load. You can still run a short live demo.</p>}
                   <button className={replay ? 'ghost' : 'primary'} onClick={async () => start((await loadPersona()).posts, 'synthetic', CLOUD_LIVE_LIMIT)}>{replay ? 'Or run' : 'Run'} {CLOUD_LIVE_LIMIT} posts live through the cloud</button>
-                  <p className="small mut">Free tier, rate-limited. Reads {CLOUD_LIVE_LIMIT} of {replay?.postsTotal ?? 200} posts, so expect a partial dossier. The full on-device run reaches ~{fullRunCrowd}.</p>
+                  <p className="small mut">Free tier, rate-limited. Reads {CLOUD_LIVE_LIMIT} of {replay?.postsTotal ?? 200} posts (ones with life details, spread across six years), so expect a partial dossier. The full on-device run reaches ~{fullRunCrowd}.</p>
                 </>
               )}
             </article>
@@ -441,13 +445,23 @@ export default function App() {
               <figure className="field-fig scan-field">
                 <div className="field-box"><CrowdField p50={liveEst.p50} base={base} band={liveEst.band} /></div>
               </figure>
+              <span className="lbl">Counted: narrows the crowd</span>
               <div className="chips">
-                {facts.slice().reverse().map((f) => (
-                  <span key={f.id} className={`chip new ${countedIds.has(f.id) ? 'on' : 'dim'}`} title={countedIds.has(f.id) ? 'Counted: has a cited base rate' : 'Found, but not counted: no cited base rate, so it doesn’t narrow the crowd'}>
+                {facts.filter((f) => countedIds.has(f.id) || dossier.regionFacts.some((r) => r.id === f.id)).reverse().map((f) => (
+                  <span key={f.id} className="chip new on" title="Counted: has a bundled or cited base rate">
                     <span className="cat">{CAT_LABEL[f.cat] ?? f.cat}</span>{f.value} <SourceBadge source={f.source} />
                   </span>
                 ))}
               </div>
+              {(() => {
+                const rest = facts.filter((f) => !countedIds.has(f.id) && !dossier.regionFacts.some((r) => r.id === f.id));
+                return rest.length > 0 && (
+                  <details className="uncounted">
+                    <summary className="lbl mut">{plural(rest.length, 'other detail')} found, not counted (no cited base rate, or too common to matter)</summary>
+                    <div className="chips">{rest.slice().reverse().map((f) => <span key={f.id} className="chip dim"><span className="cat">{CAT_LABEL[f.cat] ?? f.cat}</span>{f.value}</span>)}</div>
+                  </details>
+                );
+              })()}
             </section>
           </div>
         </main>
@@ -465,15 +479,15 @@ export default function App() {
             <div className="r-num">
               <div className="eyecells">
                 <span className="inv">{persona && data === 'synthetic' ? `u/${persona.handle}` : 'Your history'}</span>
-                <span>{plural(posts.length, 'post')}</span>
+                <span>{progress?.limited ? `${progress.done} of ${posts.length} posts read` : plural(posts.length, 'post')}</span>
                 <span>{plural(facts.length, 'fact')} found</span>
-                <span>{dossier.attributes.length} counted</span>
+                <span>{dossier.attributes.length + (dossier.region.key !== 'us' ? 1 : 0)} counted</span>
                 <span>{dossier.region.label}</span>
               </div>
               <Meter e={now} />
               <p className="upper"><b>This is an upper bound.</b> OneOf can miss details an attacker would still find (on held-out data the on-device model caught about 4 in 10 labelled attributes), so your real crowd is probably smaller.</p>
               <div className="row">
-                <button className={formulaOpen ? 'primary' : 'ghost'} aria-expanded={formulaOpen} aria-controls="math" onClick={() => setFormulaOpen((v) => !v)}>{formulaOpen ? 'Hide' : 'Show'} the math</button>
+                <button className={formulaOpen ? 'primary' : 'ghost'} aria-expanded={formulaOpen} aria-controls="math" onClick={() => { const open = !formulaOpen; setFormulaOpen(open); if (open) requestAnimationFrame(() => document.getElementById('math')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' })); }}>{formulaOpen ? 'Hide' : 'Show'} the math</button>
                 <button className="ghost" onClick={goHome}>Start over</button>
                 {lastRun && data === 'synthetic' && lastRun.onDevice > 0 && (
                   <button className="ghost" onClick={() => downloadJson('p1-replay.json', toReplay(lastRun, persona?.handle ?? 'quietnight_rn'))}>Export this run as a replay</button>
@@ -506,7 +520,7 @@ export default function App() {
               <div className="col-head"><h2>What a stranger learns</h2><p>Built on this device from your own words. Never a name, never a verdict, just the evidence.</p></div>
               <div className="col-body">
                 <DossierList attrs={dossier.attributes} posts={postMap} />
-                {facts.length > dossier.attributes.length && <p className="small mut">{plural(facts.length, 'detail')} were found; {dossier.attributes.length} {dossier.attributes.length === 1 ? 'has' : 'have'} a bundled or cited base rate and {dossier.attributes.length === 1 ? 'is' : 'are'} counted. The rest (weekdays, hobbies, group chats) don’t narrow the crowd, so they don’t change the number.</p>}
+                {facts.length > dossier.attributes.length && <p className="small mut">{plural(facts.length, 'detail')} {facts.length === 1 ? 'was' : 'were'} found; {dossier.attributes.length} {dossier.attributes.length === 1 ? 'has' : 'have'} a bundled or cited base rate and {dossier.attributes.length === 1 ? 'is' : 'are'} counted. The rest (weekdays, hobbies, group chats) don’t narrow the crowd, so they don’t change the number.</p>}
                 {dossier.localOnly.length > 0 && <p className="small">{plural(dossier.localOnly.length, 'sensitive fact')} (health, religion) {dossier.localOnly.length === 1 ? 'stays' : 'stay'} on this device and {dossier.localOnly.length === 1 ? 'isn’t' : 'aren’t'} counted.</p>}
                 {data === 'own' && pendingLookups && lookupState !== 'declined' && (
                   <div className="consent">

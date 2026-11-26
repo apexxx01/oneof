@@ -27,7 +27,7 @@ The same product as the web app, native on iOS: OneOf reads your own posts with 
 
 ## Receipts
 
-Full persona runs on the iOS 27.2 simulator: 200/200 posts on-device, 0 cloud, Columbus + nurse + single mother + night shift + divorced → one of ~9. See [`../receipts/ios/`](../receipts/ios/README.md). On a device without Apple Intelligence the app offers a labelled replay of that recorded run, facts re-checked by today's checker.
+Full persona runs on the iOS 27.2 simulator: 200/200 posts on-device, 0 cloud, Columbus + nurse + single mother + night shift + divorced → one of ~50 (P50 50.13432259896638), the same dossier and number as the web run. See [`../receipts/ios/`](../receipts/ios/README.md). On a device without Apple Intelligence the app offers a labelled replay of that recorded run, facts re-checked by today's checker.
 
 ## Run it
 

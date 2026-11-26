@@ -39,16 +39,25 @@ export interface ScanProgress {
  */
 export function planScan(posts: Post[], maxPosts?: number): { considered: Post[]; fastPass: number; scannable: number } {
   const verdicts = posts.map((p) => ({ p, cue: prefilter(p.text) }));
-  const scannable = verdicts.filter(({ cue }) => cue.reason !== 'too_short' && cue.reason !== 'link_only').map(({ p, cue }) => ({ p, cue: cue.keep }));
+  const scannable = verdicts.filter(({ cue }) => cue.reason !== 'too_short' && cue.reason !== 'link_only')
+    .map(({ p, cue }) => ({ p, cue: cue.keep, self: cue.reason === 'self+cue' }));
   let picked = scannable;
   if (maxPosts !== undefined && maxPosts < scannable.length) {
+    // A capped run (the free-tier cloud demo) reads the same posts the fast pass would start with:
+    // posts with a life-detail cue, spread across the whole timeline, preferring ones where the
+    // author talks about themselves. Chatter only fills the cap if there aren't enough cue posts.
     const byDate = scannable.map((x, i) => ({ ...x, i })).sort((a, b) => (a.p.date < b.p.date ? -1 : a.p.date > b.p.date ? 1 : a.i - b.i));
     const n = Math.max(0, Math.floor(maxPosts));
-    picked = [];
-    for (let k = 0; k < n; k++) {
-      const slice = byDate.slice(Math.floor((k * byDate.length) / n), Math.floor(((k + 1) * byDate.length) / n));
-      if (slice.length) picked.push(slice.find((x) => x.cue) ?? slice[Math.floor(slice.length / 2)]);
-    }
+    const spread = <T extends { self: boolean }>(arr: T[], k: number): T[] => {
+      const out: T[] = [];
+      for (let j = 0; j < k; j++) {
+        const slice = arr.slice(Math.floor((j * arr.length) / k), Math.floor(((j + 1) * arr.length) / k));
+        if (slice.length) out.push(slice.find((x) => x.self) ?? slice[Math.floor(slice.length / 2)]);
+      }
+      return out;
+    };
+    const cues = byDate.filter((x) => x.cue), rest = byDate.filter((x) => !x.cue);
+    picked = cues.length >= n ? spread(cues, n) : [...cues, ...spread(rest, n - cues.length)];
   }
   const fast = picked.filter((x) => x.cue).map((x) => x.p);
   const deep = picked.filter((x) => !x.cue).map((x) => x.p);
