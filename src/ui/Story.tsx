@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { DEFAULT_REGION } from '../data/baserates';
-import { crumbTrail, crowdNow, leftTheCrowd, minimumFix, type Dossier } from '../lib/dossier';
+import { DEFAULT_REGION, PACK, REGIONS } from '../data/baserates';
+import { crumbTrail, crowdNow, leftTheCrowd, minimumFix, NOT_IDENTIFYING, type Dossier } from '../lib/dossier';
 import { estimate, humanCount } from '../lib/estimate';
 import type { Attribute, CrowdEstimate, Grade, Post as CorePost } from '../lib/types';
 
@@ -112,6 +112,7 @@ export function Story({ dossier, replay, onTry }: { dossier: Dossier | null; rep
       <nav className="toc" aria-label="On this page">
         <a href="#story">How a stranger finds her</a>
         <a href="#together">Alone vs together</a>
+        <a href="#calc">Try the math</a>
         <a href="#words">Where your words go</a>
         <a href="#checker">The checker</a>
         <a href="#surfaces">Web, iPhone, Chrome</a>
@@ -122,6 +123,7 @@ export function Story({ dossier, replay, onTry }: { dossier: Dossier | null; rep
       <Threat steps={steps} years={years} postsTotal={replay.postsTotal} />
       <Scrolly steps={steps} final={final} leftDate={left?.date} base={fieldBase(dossier.region)} postsTotal={replay.postsTotal} />
       <Together steps={steps} final={final} fixPosts={fixPosts} fixed={fixed.p50} />
+      <Calculator />
       <Words postBytes={postBytes} postsTotal={replay.postsTotal} onDevice={replay.onDevice} />
       <Checker proposed={proposed} kept={kept} rejected={replay.rejected} />
       <Surfaces final={final} />
@@ -435,6 +437,77 @@ function Limits() {
       <SecHead k="Read before trusting" title={<span id="lim-h">What OneOf won’t tell you</span>} />
       <div className="lim">
         {items.map(([t, d]) => <div key={t}><h4>{t}</h4><p>{d}</p></div>)}
+      </div>
+    </section>
+  );
+}
+
+/* ── the crowd calculator: the estimator with your own toggles, no model involved ── */
+const PRESET = ['occupation:nurse', 'family:single_mother', 'work:night_shift', 'relationship:divorced'];
+const US_REGIONS = REGIONS.filter((r) => r.key.startsWith('us'));
+
+function Calculator() {
+  const [on, setOn] = useState<Set<string>>(new Set());
+  const [regionKey, setRegionKey] = useState('us');
+  const region = US_REGIONS.find((r) => r.key === regionKey) ?? DEFAULT_REGION;
+  const toggle = (k: string) => setOn((s) => { const n = new Set(s); if (n.has(k)) n.delete(k); else n.add(k); return n; });
+  const { est, counted, ignored } = useMemo(() => {
+    const picked = PACK.filter((e) => on.has(e.key));
+    const ignored = picked.filter((e) => e.low > NOT_IDENTIFYING);
+    const fam = new Map<string, typeof picked[number]>();
+    for (const e of picked.filter((x) => x.low <= NOT_IDENTIFYING)) {
+      const root = e.within ?? e.key;
+      const cur = fam.get(root);
+      if (!cur || e.high < cur.high) fam.set(root, e);
+    }
+    const attrs: Attribute[] = [...fam.values()].sort((a, b) => a.high - b.high)
+      .map((e) => ({ rate: { ...e, origin: 'bundled' as const }, facts: [], firstSeen: '' }));
+    return { est: estimate(region, attrs), counted: attrs.length, ignored };
+  }, [on, region]);
+  const base = fieldBase(DEFAULT_REGION);
+  const n = useTween(est.p50, 500);
+  const groups = new Map<string, typeof PACK>();
+  for (const e of PACK) groups.set(e.cat, [...(groups.get(e.cat) ?? []), e]);
+  return (
+    <section className="x calc" id="calc" aria-labelledby="calc-h">
+      <SecHead k="Try the math" title={<span id="calc-h">Build a person. Watch the crowd shrink.</span>}>
+        Pick a few ordinary details. This is the same estimator the app runs, on the same bundled public tables, right in your browser. No model, and nothing you click is sent anywhere.
+      </SecHead>
+      <div className="calc-grid">
+        <div className="calc-pick">
+          <div className="calc-row">
+            <label className="lbl mut" htmlFor="calc-region">Lives in</label>
+            <select id="calc-region" value={regionKey} onChange={(e) => setRegionKey(e.target.value)}>
+              {US_REGIONS.map((r) => <option key={r.key} value={r.key}>{r.label}</option>)}
+            </select>
+          </div>
+          {[...groups.entries()].map(([cat, list]) => (
+            <div className="calc-row" key={cat}>
+              <span className="lbl mut">{cat.replace(/_/g, ' ')}</span>
+              <div className="chips">
+                {list.map((e) => (
+                  <button key={e.key} type="button" className={`chip pick ${on.has(e.key) ? 'on' : ''}`} aria-pressed={on.has(e.key)} onClick={() => toggle(e.key)}>
+                    {e.label}<span className="mono small">{pct(e.low)}{e.low !== e.high ? `–${pct(e.high)}` : ''}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div className="row">
+            <button type="button" className="ghost" onClick={() => { setOn(new Set(PRESET)); setRegionKey('us:oh:franklin'); }}>Load the nurse from the case file</button>
+            <button type="button" className="ghost" onClick={() => { setOn(new Set()); setRegionKey('us'); }}>Clear</button>
+          </div>
+        </div>
+        <div className="calc-out" aria-live="polite">
+          <div className={`sc-num band-${est.band}`}>
+            <span className="lbl mut">One of</span>
+            <b className="num">{humanCount(n)}</b>
+            <span className="lbl mut">range {humanCount(est.p10)}–{humanCount(est.p90)} · {counted} {counted === 1 ? 'detail' : 'details'} counted</span>
+          </div>
+          <div className="field-box"><CrowdField p50={est.p50} base={base} band={est.band} label={`${litCount(est.p50, base)} of ${FIELD_N} dots lit`} /></div>
+          {ignored.length > 0 && <p className="small mut">{ignored.map((e) => e.label).join(', ')}: true of more than 15% of adults, so {ignored.length === 1 ? 'it doesn’t' : 'they don’t'} narrow anything.</p>}
+          <p className="small mut">Nested details count once: an ICU nurse is already a nurse.</p>
+        </div>
       </div>
     </section>
   );

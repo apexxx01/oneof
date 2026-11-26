@@ -606,3 +606,26 @@ i.k1 { background: var(--fg); } i.k2 { background: var(--signal); }
   .ck-bar { height: 60px; }
 }
 @media (prefers-reduced-motion: reduce) { .sc-card, .sc-pips li { transition: none; } }
+
+/* calculator */
+.calc-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); border-top: 2px solid var(--fg); }
+.calc-pick { padding: var(--pad); display: grid; gap: 14px; align-content: start; }
+.calc-row { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 12px; align-items: start; border-bottom: 1px solid var(--line2); padding-bottom: 12px; }
+.calc-row > .lbl { padding-top: 7px; }
+.calc-row select { max-width: 360px; }
+button.chip.pick { cursor: pointer; font-size: 14px; padding: 6px 10px; border: 1px solid var(--line2); color: var(--fg); background: var(--bg); gap: 8px; }
+button.chip.pick .small { color: var(--mut); font-size: 11px; }
+button.chip.pick.on { border: 2px solid var(--signal); padding: 5px 9px; background: var(--signal); color: #000; }
+button.chip.pick.on .small { color: #000; opacity: .7; }
+@media (hover: hover) { button.chip.pick:hover:not(.on) { background: var(--well); color: var(--fg); border-color: var(--fg); } }
+.calc-out { border-left: 2px solid var(--fg); padding: var(--pad); display: grid; gap: 14px; align-content: start; position: sticky; top: var(--bar); align-self: start; }
+.calc-out .field-box { aspect-ratio: 16 / 10; }
+@media (max-width: 900px) {
+  .calc-grid { grid-template-columns: minmax(0, 1fr); }
+  .calc-out { border-left: 0; border-top: 2px solid var(--fg); border-bottom: 2px solid var(--fg); position: sticky; top: var(--bar); z-index: 5; background: var(--bg); order: -1; grid-template-columns: minmax(0, 1fr) 38%; padding: 12px var(--pad); gap: 8px 14px; }
+  .calc-out .num { font-size: clamp(60px, 18vw, 104px); }
+  .calc-out .field-box { aspect-ratio: 1 / 1; }
+  .calc-out > p { grid-column: 1 / -1; }
+  .calc-out > p:last-child { display: none; }
+  .calc-row { grid-template-columns: minmax(0, 1fr); }
+}
