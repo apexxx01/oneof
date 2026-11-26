@@ -15,8 +15,10 @@ import { plural } from './lib/text';
 import { DossierList, Draft, Formula, Ledger } from './ui/Panels';
 import { Trail } from './ui/Trail';
 import { Story } from './ui/Story';
+import { Rejoin } from './ui/Rejoin';
 import { chromeVersion, downloadJson, playReplay, recheck, toReplay, type Replay } from './lib/replay';
 import { isDemoExport } from './lib/demo';
+import { watchAiRequests } from './lib/netwatch';
 
 type Phase = 'home' | 'scan' | 'result';
 interface Persona { handle: string; posts: Post[]; draft?: string }
@@ -67,6 +69,8 @@ export default function App() {
   const [paste, setPaste] = useState('');
   const [online, setOnline] = useState(navigator.onLine);
   const [cloudCount, setCloudCount] = useState<LedgerSummary>(() => summary([]));
+  // Model requests the browser itself saw go over the network since the scan started.
+  const [aiNet, setAiNet] = useState<{ since: number; n: number } | null>(null);
   // Base-rate lookups for the user's own data wait for consent; the exact strings are shown first.
   const [pendingLookups, setPendingLookups] = useState<PlannedLookup[] | null>(null);
   const [lookupState, setLookupState] = useState<'idle' | 'running' | 'done' | 'declined'>('idle');
@@ -123,6 +127,12 @@ export default function App() {
   }, []);
   useEffect(() => subscribe((e) => setCloudCount(summary(e))), []);
   useEffect(() => {
+    if (phase !== 'scan' || !aiNet) return;
+    const since = aiNet.since;
+    return watchAiRequests(since, (n) => setAiNet((v) => (v && v.since === since && v.n !== n ? { since, n } : v)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, aiNet?.since]);
+  useEffect(() => {
     const on = () => setOnline(true), off = () => setOnline(false);
     window.addEventListener('online', on); window.addEventListener('offline', off);
     const key = (e: KeyboardEvent) => { if (e.key === 'Escape') { setLedgerOpen(false); setFormulaOpen(false); } };
@@ -174,10 +184,15 @@ export default function App() {
     setReplaying(false);
     setLastRun(null);
     setPhase('scan');
+    setAiNet({ since: performance.now(), n: 0 });
     abort.current = new AbortController();
     try {
       const signal = abort.current.signal;
-      const res = await scan(list, kind, (p) => { setProgress(p); setFacts(p.facts); }, signal, { maxPosts });
+      // A capped synthetic demo reads the posts the recorded on-device run found details in first.
+      const prefer = kind === 'synthetic' && maxPosts !== undefined && fullRunDossier
+        ? new Set([...fullRunDossier.attributes.flatMap((x) => x.facts), ...fullRunDossier.regionFacts].map((f) => f.postId).concat(replay ? replay.log.filter((e) => e.facts.length).map((e) => e.postId) : []))
+        : undefined;
+      const res = await scan(list, kind, (p) => { setProgress(p); setFacts(p.facts); }, signal, { maxPosts, prefer });
       // Leaving via the logo aborts the scan; don't yank the user back to a result page.
       if (signal.aborted && signal.reason === 'leave') return;
       setFacts(res.facts);
@@ -207,7 +222,7 @@ export default function App() {
     // Each run gets its own receipts: a second replay must not stack on the first.
     resetLedger();
     setError(null); setOwnBlocked(null); setPosts(p.posts); setData('synthetic'); setFacts([]); setLastRun(null);
-    setReplaying(true); setPhase('scan');
+    setReplaying(true); setPhase('scan'); setAiNet({ since: performance.now(), n: 0 });
     skipReplay.current = false;
     abort.current = new AbortController();
     const postIndex = new Map(p.posts.map((x) => [x.id, x]));
@@ -292,7 +307,7 @@ export default function App() {
         </button>
         <ThemeToggle />
       </header>
-      <Ticker items={ticker} />
+      {phase !== 'home' && <Ticker items={ticker} />}
 
       {problems.length > 0 && <div className="notice warn">{problems.join(' ')}</div>}
       {error && <div className="notice err" ref={errorRef} role="alert">{error}</div>}
@@ -309,12 +324,12 @@ export default function App() {
               <div className="hero-cta">
                 {avail === 'available' && !forceReplay
                   ? <button className="primary" onClick={async () => start((await loadPersona()).posts, 'synthetic')}>Scan the demo person live</button>
-                  : <button className="primary" disabled={!replay} onClick={watchReplay}>Watch a real on-device scan</button>}
+                  : <button className="primary" disabled={!replay} onClick={watchReplay}>Watch a recorded on-device scan</button>}
                 <a className="ghost-a" href="#story">See how a stranger finds her</a>
                 <a className="hero-own" href="#try" onClick={(e) => { e.preventDefault(); scrollToTry(); }}>Check your own posts</a>
               </div>
               <div className="hero-facts">
-                <div><b>3</b><span>places: web, iPhone, Chrome extension</span></div>
+                <div><b>Web</b><span>try it right here; there’s also a Chrome extension and an iPhone app</span></div>
                 <div><b className="dev">0 B</b><span>of your posts ever sent</span></div>
                 <div><b>1</b><span>generic phrase to the cloud, after you say yes</span></div>
               </div>
@@ -356,7 +371,7 @@ export default function App() {
                     </>
                   ) : <p className="locked">The recorded run didn’t load. You can still run a short live demo.</p>}
                   <button className={replay ? 'ghost' : 'primary'} onClick={async () => start((await loadPersona()).posts, 'synthetic', CLOUD_LIVE_LIMIT)}>{replay ? 'Or run' : 'Run'} {CLOUD_LIVE_LIMIT} posts live through the cloud</button>
-                  <p className="small mut">Free tier, rate-limited. Reads {CLOUD_LIVE_LIMIT} of {replay?.postsTotal ?? 200} posts (ones with life details, spread across six years), so expect a partial dossier. The full on-device run reaches ~{fullRunCrowd}.</p>
+                  <p className="small mut">Free tier, rate-limited. Reads {CLOUD_LIVE_LIMIT} of {replay?.postsTotal ?? 200} posts: {replay ? 'the ones where the recorded on-device run found details' : 'ones with life details, spread across six years'}. A different model may still find less. The full on-device run reaches ~{fullRunCrowd}.</p>
                 </>
               )}
             </article>
@@ -419,6 +434,7 @@ export default function App() {
                 <div className="stat"><span className="lbl mut">On device</span><span className="v device">{progress.onDevice}</span></div>
                 <div className="stat"><span className="lbl mut">In cloud</span><span className="v cloud">{progress.inCloud}</span></div>
                 <div className="stat"><span className="lbl mut">{data === 'synthetic' ? 'Demo bytes sent' : 'Your bytes sent'}</span><span className="v">{data === 'synthetic' ? cloudCount.demoPostBytesOut : cloudCount.ownPostBytesOut}</span></div>
+                {aiNet && <div className="stat" title="Counted by your browser (Resource Timing), not by OneOf's own ledger: requests to the Gemini / Firebase AI Logic endpoints since this scan started"><span className="lbl mut">Model requests on the network</span><span className={`v ${aiNet.n ? 'cloud' : 'device'}`}>{aiNet.n}</span></div>}
               </div>
               <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={progress.considered} aria-valuenow={progress.done}><div style={{ width: `${(progress.done / Math.max(1, progress.considered)) * 100}%` }} /></div>
               <p className="note">
@@ -447,9 +463,14 @@ export default function App() {
               </figure>
               <span className="lbl">Counted: narrows the crowd</span>
               <div className="chips">
-                {facts.filter((f) => countedIds.has(f.id) || dossier.regionFacts.some((r) => r.id === f.id)).reverse().map((f) => (
-                  <span key={f.id} className="chip new on" title="Counted: has a bundled or cited base rate">
-                    <span className="cat">{CAT_LABEL[f.cat] ?? f.cat}</span>{f.value} <SourceBadge source={f.source} />
+                {dossier.regionFacts.length > 0 && (
+                  <span className="chip new on" title="Counted: the region's adult population">
+                    <span className="cat">lives in</span>{dossier.region.label}{dossier.regionFacts.length > 1 && <span className="x3">×{dossier.regionFacts.length}</span>} <SourceBadge source={dossier.regionFacts[0].source} />
+                  </span>
+                )}
+                {dossier.attributes.map((a) => (
+                  <span key={a.rate.key} className="chip new on" title={`Counted: ${a.rate.label}, grade ${a.rate.grade}. Found in ${plural(new Set(a.facts.map((f) => f.postId)).size, 'post')}.`}>
+                    <span className="cat">{CAT_LABEL[a.rate.cat] ?? a.rate.cat}</span>{a.rate.label}{new Set(a.facts.map((f) => f.postId)).size > 1 && <span className="x3">×{new Set(a.facts.map((f) => f.postId)).size} posts</span>} <SourceBadge source={a.facts[0].source} />
                   </span>
                 ))}
               </div>
@@ -549,17 +570,8 @@ export default function App() {
             <div>
               <div className="col-head"><h2>Rejoin the crowd</h2></div>
               <div className="col-body">
-                {fix.length ? (
-                  <>
-                    <p className="rejoin">Edit or delete <b>{plural(new Set(fix.flatMap((a) => a.facts.map((f) => f.postId))).size, 'post')}</b> and you’re back to one of ~<b>{humanCount(fixed.p50)}</b>.</p>
-                    <ul className="fix">
-                      {fix.map((a) => a.facts.map((f) => {
-                        const p = postMap.get(f.postId);
-                        return <li key={f.id}><span className="mono">{f.date.slice(0, 10)}</span><span>“{p?.text.slice(0, 90) ?? f.quote}”</span>{p?.permalink && /^\/r\/[\w/-]+$/.test(p.permalink) ? <a href={`https://www.reddit.com${p.permalink}`} target="_blank" rel="noreferrer">Open</a> : <span />}</li>;
-                      }))}
-                    </ul>
-                  </>
-                ) : <p className="rejoin">You’re already hiding in a crowd of 1,000+.</p>}
+                {fix.length > 0 && <p className="rejoin">Edit or delete <b>{plural(new Set(fix.flatMap((a) => a.facts.map((f) => f.postId))).size, 'post')}</b> and you’re back to one of ~<b>{humanCount(fixed.p50)}</b>. Try it: switch posts off below.</p>}
+                <Rejoin d={dossier} posts={postMap} fix={fix} base={base} />
               </div>
               <div className="col-head"><h2>Before your next post</h2></div>
               <div className="col-body">

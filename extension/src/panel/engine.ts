@@ -54,6 +54,8 @@ export interface DraftAnalysis {
   after: CrowdEstimate;
   /** Old attributes this draft combines with, when it makes the crowd noticeably smaller. */
   combines: Attribute[];
+  /** Some sentences came from a recorded on-device run, not a live model call (practice page only). */
+  recorded?: boolean;
 }
 
 /** One model call at a time: the SDK destroys the previous on-device session when a new one starts. */
@@ -78,11 +80,18 @@ export class DraftEngine {
   private latest: { text: string; cb: Listener } | null = null;
   private looping = false;
   private blocked = false;
+  /** Recorded on-device results by sentence, used only when there is no on-device model. */
+  private recordings = new Map<string, Fact[]>();
+  private replayed = new Set<string>();
+  /** Set per draft by the panel: recordings may stand in only on OneOf's practice page. */
+  useRecordings = false;
   scanning = false;
 
   constructor(private deps: Deps = REAL) {}
 
   setHistory(facts: Fact[]) { this.history = facts; this.beforeCache = null; }
+  /** Recorded Gemini Nano results for exact sentences (the practice page's sample draft). */
+  seedRecordings(sentences: Array<{ text: string; facts: Fact[] }>) { for (const s of sentences) this.recordings.set(s.text.trim(), s.facts); }
   /** The crowd from history alone ("before this draft"). */
   before(): CrowdEstimate {
     if (!this.beforeCache) { const d = buildDossier(this.history); this.beforeCache = estimate(d.region, d.attributes); }
@@ -105,7 +114,7 @@ export class DraftEngine {
       : [];
     return {
       text, sentences: sentences.length, read: sentences.filter((s) => this.cache.has(s)).length,
-      pending: false, blocked: this.blocked, failed: sentences.filter((s) => this.failed.has(s)).length,
+      pending: false, blocked: this.blocked && sentences.some((s) => !this.cache.has(s)), recorded: sentences.some((s) => this.replayed.has(s)), failed: sentences.filter((s) => this.failed.has(s)).length,
       facts, attrs: own.attributes, region: own.regionFacts.length && full.region.key !== hist.region.key ? full.region : undefined,
       uncounted: Math.max(0, facts.length - counted), before, after, combines,
       countedIds: [...own.attributes.flatMap((a) => a.facts.map((f) => f.id)), ...own.regionFacts.map((f) => f.id)],
@@ -145,7 +154,11 @@ export class DraftEngine {
               this.blocked = false;
               this.cache.set(s, r.facts);
             } catch (e) {
-              if (e instanceof BlockedError) { this.blocked = true; stop = e.message; return; }
+              if (e instanceof BlockedError) {
+                const rec = this.useRecordings ? this.recordings.get(s) : undefined;
+                if (rec) { this.cache.set(s, rec); this.replayed.add(s); continue; }
+                this.blocked = true; stop = e.message; return;
+              }
               this.failed.add(s);
               stop = 'The on-device model is busy. Keep typing; it will catch up.';
             }
@@ -201,10 +214,12 @@ export function verdictFor(a: DraftAnalysis, opts: { scanning?: boolean } = {}):
     const adds = [...(a.region ? [a.region.label] : []), ...a.attrs.map((x) => x.rate.label)];
     return {
       state: a.pending ? 'checking' : 'result',
-      text: `one of ~${before} → ~${after} if you post this`,
+      text: `${a.recorded ? 'recorded · ' : ''}one of ~${before} → ~${after} if you post this`,
       tone: toneFor(a.after.band),
-      detail: `This draft adds: ${adds.join(', ')}. With your history that leaves about ${after} people (${range}). Read on this computer; 0 bytes sent.`,
-      num: `~${after}`, note: `was ~${before} · if you post this`, shrinks: true,
+      detail: a.recorded
+        ? `REPLAY: this computer has no Gemini Nano, so the practice page shows the recorded on-device check of this sample draft. It adds: ${adds.join(', ')}, leaving about ${after} people (${range}). Nothing was sent.`
+        : `This draft adds: ${adds.join(', ')}. With your history that leaves about ${after} people (${range}). Read on this computer; 0 bytes sent.`,
+      num: `~${after}`, note: a.recorded ? `was ~${before} · recorded result` : `was ~${before} · if you post this`, shrinks: true,
     };
   }
   if (a.facts.length > 0) {

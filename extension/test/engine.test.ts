@@ -118,6 +118,29 @@ describe('draft check', () => {
     expect(verdictFor(a).text).toBe('not checked · no on-device model');
     expect(getLedger().every((x) => x.source === 'blocked' && x.sentToCloud === '')).toBe(true);
   });
+
+  it('without a model, only the practice page plays the recorded sample draft, labelled', async () => {
+    delete (globalThis as { LanguageModel?: unknown }).LanguageModel;
+    const file = demoFile() as DemoFile;
+    expect(file.draft?.sentences.length).toBeGreaterThan(0);
+    const e = new DraftEngine();
+    e.setHistory(demoHistory(file).facts);
+    e.seedRecordings(file.draft!.sentences);
+    // Anywhere else: still blocked, even for the exact sample sentence.
+    const elsewhere = await done(e, file.draft!.text);
+    expect(elsewhere.blocked).toBe(true);
+    e.useRecordings = true;
+    const sample = await done(e, file.draft!.text);
+    expect(sample.blocked).toBe(false);
+    expect(sample.recorded).toBe(true);
+    expect(sample.after.p50).toBeLessThan(sample.before.p50);
+    expect(verdictFor(sample).text).toMatch(/^recorded · one of ~/);
+    expect(calls.modes).toHaveLength(0);
+    // Your own words on the practice page are not faked.
+    const own = await done(e, 'I live in Duluth and I teach high school chemistry.');
+    expect(own.blocked).toBe(true);
+    expect(own.recorded).toBe(false);
+  });
 });
 
 describe('blur and history scan', () => {

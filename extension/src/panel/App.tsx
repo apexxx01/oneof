@@ -12,7 +12,7 @@ import { fieldBase } from '../../../src/ui/crowd';
 import { disableSite, enableSite, isBuiltIn, isBuiltInHost, listSites, siteOrigin, type SitesChrome } from '../shared/sites';
 import { loadHistory, NO_HISTORY, saveHistory, type StoredHistory } from '../shared/history';
 import { DraftEngine, MAX_HISTORY_POSTS, verdictFor, type DraftAnalysis } from './engine';
-import { loadDemo } from './demo';
+import { loadDemo, loadDemoFile } from './demo';
 import { isPracticeHost } from '../shared/sites';
 import { watchNetwork } from './netwatch';
 import { connectEngine } from './port';
@@ -67,8 +67,11 @@ export function App() {
 
   useEffect(() => {
     void loadHistory(chrome.storage.local).then((h) => { engine.setHistory(h.facts); histRef.current = h; setHistory(h); });
+    // The recorded on-device check of the practice page's sample draft (used there only, without Nano).
+    void loadDemoFile(chrome.runtime.getURL('demo/p1-demo.json')).then((d) => { if (d.draft) engine.seedRecordings(d.draft.sentences); }).catch(() => undefined);
     const l = connectEngine((m) => {
       last.current = { tabId: m.tabId, seq: m.seq, host: m.host, text: m.text };
+      engine.useRecordings = isPracticeHost(m.host);
       // The practice page is a made-up thread for trying OneOf: if no history is chosen yet, compare
       // against the synthetic demo persona once, clearly labelled. Never on any other site.
       if (isPracticeHost(m.host) && histRef.current.source === 'none' && !autoDemo.current) {
@@ -162,6 +165,7 @@ export function App() {
               {a.failed > 0 && <span className="warn-text"> {a.failed} not read (model busy)</span>}
               {a.error && !a.blocked && <span className="err"> {a.error}</span>}
             </div>
+            {a.recorded && <p className="locked">REPLAY: this computer has no Gemini Nano, so the practice page plays the recorded on-device check of its sample draft. Anything else you type stays unchecked, and nothing is sent.</p>}
             <DetailChips a={a} />
           </>
         )}

@@ -16,5 +16,8 @@ export function demoFile() {
   const facts = (replay.log as Array<{ facts: Array<{ postId: string }> }>).flatMap((e) => e.facts);
   const ids = new Set(facts.map((f) => f.postId));
   const posts = (persona.posts as Array<{ id: string; date: string; text: string }>).filter((p) => ids.has(p.id)).map(({ id, date, text }) => ({ id, date, text }));
-  return { persona: replay.persona, synthetic: true, recordedAt: replay.recordedAt, userAgent: replay.userAgent, postsTotal: replay.postsTotal, facts, posts };
+  // The recorded on-device check of the sample draft: played on the practice page, labelled, when
+  // this computer has no Gemini Nano.
+  const draft = replay.draft ? { text: replay.draft.text, recordedAt: replay.draft.recordedAt, userAgent: replay.draft.userAgent, sentences: replay.draft.sentences } : undefined;
+  return { persona: replay.persona, synthetic: true, recordedAt: replay.recordedAt, userAgent: replay.userAgent, postsTotal: replay.postsTotal, facts, posts, draft };
 }

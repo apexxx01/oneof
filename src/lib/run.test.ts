@@ -72,4 +72,13 @@ describe('planScan (the live cloud demo limit)', () => {
     expect(mixed.considered.slice(0, mixed.fastPass).every((p) => p.text.includes('hospital'))).toBe(true);
     expect(mixed.considered.slice(mixed.fastPass).every((p) => !p.text.includes('hospital'))).toBe(true);
   });
+  it('a capped demo reads preferred posts first, in priority order, then fills from cue posts', () => {
+    const prefer = new Set(['p199', 'p3', 'p50']);
+    const out = planScan(history, 5, prefer);
+    expect(out.considered).toHaveLength(5);
+    const ids = out.considered.map((p) => p.id);
+    for (const id of prefer) expect(ids).toContain(id);
+    const tight = planScan(history, 2, prefer);
+    expect(tight.considered.map((p) => p.id).sort()).toEqual(['p199', 'p3']);
+  });
 });

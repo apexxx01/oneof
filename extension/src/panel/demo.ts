@@ -6,7 +6,7 @@
  * facts, and only the posts those facts quote) into the extension package; it is read from
  * chrome-extension://, never from the network. The persona's answer key is not included.
  */
-import { chromeVersion, recheck } from '../../../src/lib/replay';
+import { chromeVersion, recheck, type DraftRecording } from '../../../src/lib/replay';
 import type { Fact, Post } from '../../../src/lib/types';
 import type { StoredHistory } from '../shared/history';
 
@@ -18,6 +18,8 @@ export interface DemoFile {
   postsTotal: number;
   facts: Fact[];
   posts: Post[];
+  /** The recorded on-device check of the practice page's sample draft. */
+  draft?: DraftRecording;
 }
 
 export function demoHistory(d: DemoFile): StoredHistory {
@@ -29,7 +31,11 @@ export function demoHistory(d: DemoFile): StoredHistory {
   };
 }
 
-export async function loadDemo(url: string): Promise<StoredHistory> {
+export async function loadDemoFile(url: string): Promise<DemoFile> {
   const r = await fetch(url);
-  return demoHistory((await r.json()) as DemoFile);
+  return (await r.json()) as DemoFile;
+}
+
+export async function loadDemo(url: string): Promise<StoredHistory> {
+  return demoHistory(await loadDemoFile(url));
 }

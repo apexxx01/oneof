@@ -202,7 +202,7 @@ Requirements: Node.js, and desktop Chrome with the Prompt API and Gemini Nano fo
 
 ```bash
 npm ci
-npm test                     # 147 tests: 82 web (unit, property, regression, privacy invariants) + 65 extension
+npm test                     # 150 tests: 84 web (unit, property, regression, privacy invariants) + 66 extension
 npm run ext:build            # the extension's bundle tests run against extension/dist when it exists
 # cd ios/OneOfCore && swift test   → 18 Swift tests over 435 golden cases
 npm run dev                  # http://localhost:5173

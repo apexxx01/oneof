@@ -37,7 +37,7 @@ export interface ScanProgress {
  * one post, a cue post when it has one. Reading only the first N posts would show one year of a
  * six-year history and misrepresent how a dossier builds up.
  */
-export function planScan(posts: Post[], maxPosts?: number): { considered: Post[]; fastPass: number; scannable: number } {
+export function planScan(posts: Post[], maxPosts?: number, prefer?: ReadonlySet<string>): { considered: Post[]; fastPass: number; scannable: number } {
   const verdicts = posts.map((p) => ({ p, cue: prefilter(p.text) }));
   const scannable = verdicts.filter(({ cue }) => cue.reason !== 'too_short' && cue.reason !== 'link_only')
     .map(({ p, cue }) => ({ p, cue: cue.keep, self: cue.reason === 'self+cue' }));
@@ -56,8 +56,15 @@ export function planScan(posts: Post[], maxPosts?: number): { considered: Post[]
       }
       return out;
     };
-    const cues = byDate.filter((x) => x.cue), rest = byDate.filter((x) => !x.cue);
-    picked = cues.length >= n ? spread(cues, n) : [...cues, ...spread(rest, n - cues.length)];
+    // `prefer`: posts a recorded on-device run of the same synthetic persona found details in. They
+    // go first so a capped demo can reach the same dossier; the UI says so.
+    // Set order is priority order (counted facts first), so trim by that, not by date.
+    const rank = new Map([...(prefer ?? [])].map((id, i) => [id, i]));
+    const first = prefer ? byDate.filter((x) => rank.has(x.p.id)).sort((a, b) => rank.get(a.p.id)! - rank.get(b.p.id)!).slice(0, n) : [];
+    const taken = new Set(first.map((x) => x.p.id));
+    const left = n - first.length;
+    const cues = byDate.filter((x) => x.cue && !taken.has(x.p.id)), rest = byDate.filter((x) => !x.cue && !taken.has(x.p.id));
+    picked = [...first, ...(cues.length >= left ? spread(cues, left) : [...cues, ...spread(rest, left - cues.length)])];
   }
   const fast = picked.filter((x) => x.cue).map((x) => x.p);
   const deep = picked.filter((x) => !x.cue).map((x) => x.p);
@@ -75,9 +82,9 @@ export async function scan(
   data: DataKind,
   onUpdate: (p: ScanProgress) => void,
   signal?: AbortSignal,
-  opts: { coolMs?: number; maxPosts?: number } = {},
+  opts: { coolMs?: number; maxPosts?: number; prefer?: ReadonlySet<string> } = {},
 ): Promise<ScanProgress> {
-  const { considered, fastPass, scannable } = planScan(posts, opts.maxPosts);
+  const { considered, fastPass, scannable } = planScan(posts, opts.maxPosts, opts.prefer);
   const st: ScanProgress = { total: posts.length, considered: considered.length, fastPass, empty: posts.length - scannable, limited: scannable - considered.length, done: 0, facts: [], rejected: 0, onDevice: 0, inCloud: 0, lastMs: 0, log: [] };
   onUpdate({ ...st });
   // Gemini Nano slows down or stalls under long sustained load (seen live after ~100 prompts).
